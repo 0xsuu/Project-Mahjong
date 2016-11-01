@@ -1,0 +1,9 @@
+language: cpp
+
+branches:
+  only: 
+    - master
+
+script:
+  - ./build_lib.sh test
+
