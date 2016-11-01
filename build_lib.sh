@@ -27,8 +27,8 @@ fi
 
 # Run test.
 if [ "$1" == "test" ]; then
-    cmake ../Project-Mahjong/mahjong_lib/ -DBUILD_TEST="YES"
-    make
+    cmake ../Project-Mahjong/mahjong_lib/
+    make libma_test
     ../libma_gtest/libma_test
     exit 0
 fi
@@ -39,6 +39,6 @@ if [ "$1" == "help" ]; then
     exit 0
 fi
 
-cmake ../Project-Mahjong/mahjong_lib/ -DBUILD_TEST=""
-make
+cmake ../Project-Mahjong/mahjong_lib/
+make mahjong
 
