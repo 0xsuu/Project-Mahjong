@@ -14,9 +14,3 @@
 //  limitations under the License.
 //
 
-#include <test.h>
-
-int sampleFunction() {
-    return 10;
-}
-

@@ -14,11 +14,29 @@
 //  limitations under the License.
 //
 
-#include <gtest/gtest.h>
+#include <assert.h>
 
-#include <test.h>
+#include "Tile.h"
 
-TEST(TESTTEST, TEST) {
-    EXPECT_EQ(sampleFunction(), 1);
+using mahjong::Tile;
+using mahjong::TileFlag;
+using mahjong::TileType;
+
+Tile::Tile(const TileFlag flag, const TileType type, const int number) {
+    // Make sure the number is legal.
+    assert(number <= 9 && number >= 1);
+
+    mTileData = flag << 6 | type << 4 | number;
 }
 
+TileFlag Tile::getFlag() {
+    return static_cast<TileFlag>(mTileData >> 6);
+}
+
+TileType Tile::getType() {
+    return static_cast<TileType>(mTileData >> 4 & 0b11);
+}
+
+int Tile::getNumber() {
+    return mTileData & 0b1111;
+};
