@@ -96,7 +96,7 @@ class Tile {
 
     /**
      * Get the string for display.
-     * @return
+     * @return A string ready for print in terminal.
      */
     std::string getPrintable();
 
