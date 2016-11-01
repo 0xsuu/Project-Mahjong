@@ -18,7 +18,7 @@
 
 #include <Hand.h>
 
-TEST(TESTTEST, TEST) {
-    EXPECT_EQ(sampleFunction(), 10);
+TEST(, ) {
+
 }
 

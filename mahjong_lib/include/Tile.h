@@ -14,26 +14,29 @@
 //  limitations under the License.
 //
 
-#ifndef MAHJONG_LIB_HAND_H
-#define MAHJONG_LIB_HAND_H
+#ifndef MAHJONG_LIB_TILE_H
+#define MAHJONG_LIB_TILE_H
 
-#include <vector>
-
-#include "Tile.h"
-
+/** Encoding Rule.
+ *
+ * 1 Tile = 1 Byte
+ *
+ * 00   | 00   | 0000
+ * flag | type | number
+ *
+ * 
+ */
 namespace mahjong {
 
-class Hand {
+class Tile {
  public:
-    /** Constructor for an empty hand.
+    /** Constructor with information of one tile.
+     *
+     * @
      */
-    Hand() {
-
-    }
- private:
-    std::vector<Tile> mHand;
+    Tile();
 };
 
-} // namespace mahjong.
+} // namespace mahjong
 
-#endif // MAHJONG_LIB_HAND_H
+#endif //MAHJONG_LIB_TILE_H

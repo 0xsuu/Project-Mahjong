@@ -13,27 +13,3 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-
-#ifndef MAHJONG_LIB_HAND_H
-#define MAHJONG_LIB_HAND_H
-
-#include <vector>
-
-#include "Tile.h"
-
-namespace mahjong {
-
-class Hand {
- public:
-    /** Constructor for an empty hand.
-     */
-    Hand() {
-
-    }
- private:
-    std::vector<Tile> mHand;
-};
-
-} // namespace mahjong.
-
-#endif // MAHJONG_LIB_HAND_H
