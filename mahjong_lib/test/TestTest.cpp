@@ -16,9 +16,9 @@
 
 #include <gtest/gtest.h>
 
-#include <test.h>
+#include <Hand.h>
 
 TEST(TESTTEST, TEST) {
-    EXPECT_EQ(sampleFunction(), 1);
+    EXPECT_EQ(sampleFunction(), 10);
 }
 
