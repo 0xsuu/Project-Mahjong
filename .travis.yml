@@ -11,7 +11,10 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
 
-compiler: g++-4.8
+compiler: g++
+
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 
 script:
   - git clone https://github.com/google/googletest.git
