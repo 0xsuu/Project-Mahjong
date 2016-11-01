@@ -17,24 +17,42 @@
 #ifndef MAHJONG_LIB_TILE_H
 #define MAHJONG_LIB_TILE_H
 
-/** Encoding Rule.
+namespace mahjong {
+
+class Tile {
+/**
+ * @brief Encoding Rule:
  *
  * 1 Tile = 1 Byte
  *
  * 00   | 00   | 0000
- * flag | type | number
  *
- * 
+ * flag | type | number
  */
-namespace mahjong {
-
-class Tile {
  public:
-    /** Constructor with information of one tile.
+    /**
+     * Constructor with information of one tile.
      *
-     * @
+     * @param [in] flag: The first 2 bits of the tile byte.
+     * 00: hand.
+     * 01: melded.
+     * 10: concealed.
+     * 11: undefined.
+     *
+     * @param [in] type: The 3rd and 4th bits of the tile byte.
+     * 00: Character.
+     * 01: Dot.
+     * 10: Bamboo.
+     * 11: Special.
+     *
+     * @param [in] number: The last 4 bits of the tile byte.
+     * 0001 - 1001(1 - 9) for C, D and B.
+     * 0001 - 0110(1 - 7) for S.
      */
-    Tile();
+    Tile(const int flag, const int type, const int number);
+
+ private:
+    uint8_t mTileData; //!< The byte and the only stores the actual data of the tile.
 };
 
 } // namespace mahjong

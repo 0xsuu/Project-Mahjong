@@ -25,7 +25,8 @@ namespace mahjong {
 
 class Hand {
  public:
-    /** Constructor for an empty hand.
+    /**
+     * Constructor for an empty hand.
      */
     Hand() {
 

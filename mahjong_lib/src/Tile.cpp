@@ -13,3 +13,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
+
+#include "Tile.h"
+
+using mahjong::Tile;
+
+Tile::Tile(const int flag, const int type, const int number) {
+
+}
