@@ -19,6 +19,8 @@
 
 #include <stdint.h>
 
+#include <string>
+
 namespace mahjong {
 
 /**
@@ -91,6 +93,12 @@ class Tile {
      * @return Number
      */
     int getNumber();
+
+    /**
+     * Get the string for display.
+     * @return
+     */
+    std::string getPrintable();
 
     /**
      * Set this tile to meld.

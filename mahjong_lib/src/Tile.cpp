@@ -48,3 +48,5 @@ void Tile::setMeld() {
 void Tile::setConceal() {
     mTileData = static_cast<uint8_t>(mTileData & 0b00111111 | Conceal);
 }
+
+
