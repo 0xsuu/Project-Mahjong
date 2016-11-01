@@ -4,6 +4,20 @@ branches:
   only: 
     - master
 
+addons:
+  apt:
+    packages:
+      - clang++-3.7
+
 script:
+  - git clone https://github.com/google/googletest.git
+  - mkdir build_gtest
+  - cd build_gtest
+  - cmake ../googletest/
+  - make
+  - sudo make install
+  - cd ..
   - ./build_lib.sh test
+
+sudo: required
 
