@@ -35,16 +35,16 @@ namespace mahjong {
  */
 
 typedef enum TileFlag {
-    Hand = 0b00,
-    Meld = 0b01,
-    Conceal = 0b10
+    Hand = 0b00000000,
+    Meld = 0b01000000,
+    Conceal = 0b10000000
 } TileFlag;
 
 typedef enum TileType {
-    Character = 0b00,
-    Dot = 0b01,
-    Bamboo = 0b10,
-    Special = 0b11
+    Character = 0b000000,
+    Dot = 0b010000,
+    Bamboo = 0b100000,
+    Special = 0b110000
 } TileType;
 
 class Tile {
@@ -53,20 +53,20 @@ class Tile {
      * Constructor with information of one tile.
      *
      * @param [in] flag: The first 2 bits of the tile byte.
-     * encode | flag
-     * ------ | ------
-     * 00     | Hand
-     * 01     | Meld
-     * 10     | Conceal
-     * 11     | <Undefine>
+     * encode   | flag
+     * -------- | ------
+     * 00000000 | Hand
+     * 01000000 | Meld
+     * 10000000 | Conceal
+     * 11000000 | <Undefine>
      *
      * @param [in] type: The 3rd and 4th bits of the tile byte.
      * encode | type
      * ------ | ------
-     * 00     | Character
-     * 01     | Dot
-     * 10     | Bamboo
-     * 11     | Special
+     * 000000 | Character
+     * 010000 | Dot
+     * 100000 | Bamboo
+     * 110000 | Special
      *
      * @param [in] number: The last 4 bits of the tile byte.
      * encode             | applied type
@@ -91,6 +91,15 @@ class Tile {
      * @return Number
      */
     int getNumber();
+
+    /**
+     * Set this tile to meld.
+     */
+    void setMeld();
+    /**
+     * set this tile to conceal.
+     */
+    void setConceal();
 
  private:
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.

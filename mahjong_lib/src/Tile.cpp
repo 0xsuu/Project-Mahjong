@@ -26,17 +26,25 @@ Tile::Tile(const TileFlag flag, const TileType type, const int number) {
     // Make sure the number is legal.
     assert(number <= 9 && number >= 1);
 
-    mTileData = flag << 6 | type << 4 | number;
+    mTileData = flag | type | number;
 }
 
 TileFlag Tile::getFlag() {
-    return static_cast<TileFlag>(mTileData >> 6);
+    return static_cast<TileFlag>(mTileData & 0b11000000);
 }
 
 TileType Tile::getType() {
-    return static_cast<TileType>(mTileData >> 4 & 0b11);
+    return static_cast<TileType>(mTileData & 0b00110000);
 }
 
 int Tile::getNumber() {
-    return mTileData & 0b1111;
-};
+    return mTileData & 0b00001111;
+}
+
+void Tile::setMeld() {
+    mTileData = static_cast<uint8_t>(mTileData & 0b00111111 | Meld);
+}
+
+void Tile::setConceal() {
+    mTileData = static_cast<uint8_t>(mTileData & 0b00111111 | Conceal);
+}

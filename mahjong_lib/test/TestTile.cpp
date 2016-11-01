@@ -33,3 +33,12 @@ TEST(TileTest, CreateNewTile) {
     EXPECT_EQ(testTile.getType(), Special);
     EXPECT_EQ(testTile.getNumber(), 5);
 }
+
+TEST(TileTest, ChangeTileFlag) {
+    Tile testTile(Hand, Special, 5);
+    EXPECT_EQ(testTile.getFlag(), Hand);
+    testTile.setMeld();
+    EXPECT_EQ(testTile.getFlag(), Meld);
+    testTile.setConceal();
+    EXPECT_EQ(testTile.getFlag(), Conceal);
+}
