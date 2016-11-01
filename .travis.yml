@@ -1,0 +1,30 @@
+language: cpp
+
+branches:
+  only: 
+    - master
+
+addons:
+  apt:
+    packages:
+      - g++-4.8
+    sources:
+      - ubuntu-toolchain-r-test
+
+compiler: g++
+
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+
+script:
+  - git clone https://github.com/google/googletest.git
+  - mkdir build_gtest
+  - cd build_gtest
+  - cmake ../googletest/
+  - make
+  - sudo make install
+  - cd ..
+  - ./build_lib.sh test
+
+sudo: required
+
