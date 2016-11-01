@@ -17,8 +17,3 @@
 #include <gtest/gtest.h>
 
 #include <Hand.h>
-
-TEST(, ) {
-
-}
-
