@@ -8,6 +8,8 @@ addons:
   apt:
     packages:
       - clang++-3.7
+    sources:
+      - llvm-toolchain-precise-3.7
 
 compiler: clang++-3.7
 
