@@ -33,6 +33,12 @@ if [ "$1" == "test" ]; then
     exit 0
 fi
 
+# Show help.
+if [ "$1" == "help" ]; then
+    echo "./build_lib.sh [xcode | test]"
+    exit 0
+fi
+
 cmake ../Project-Mahjong/mahjong_lib/ -DBUILD_TEST=""
 make
 
