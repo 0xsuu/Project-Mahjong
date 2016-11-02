@@ -91,6 +91,11 @@ class Tile {
     Tile(const TileFlag flag, const TileType type, const int number);
 
     /**
+     * Constructor that makes a null tile.
+     */
+    Tile() {}
+
+    /**
      * Get this tile's flag.
      * @return Flag
      */

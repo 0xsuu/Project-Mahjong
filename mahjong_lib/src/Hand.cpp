@@ -14,3 +14,19 @@
 //  limitations under the License.
 //
 
+#include <Hand.h>
+
+#include <algorithm>
+
+using std::vector;
+
+using mahjong::Tile;
+using mahjong::Hand;
+
+Hand::Hand(vector<Tile> hand) {
+    mHand = hand;
+}
+
+void Hand::sort() {
+    std::sort(mHand.begin(), mHand.end());
+}

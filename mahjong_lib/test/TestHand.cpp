@@ -17,3 +17,14 @@
 #include <gtest/gtest.h>
 
 #include <Hand.h>
+
+using mahjong::Tile;
+using mahjong::Hand;
+
+TEST(TestHand, Creations) {
+
+}
+
+TEST(TestHand, Sorting) {
+
+}

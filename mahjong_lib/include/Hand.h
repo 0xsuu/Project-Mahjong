@@ -28,11 +28,41 @@ class Hand {
     /**
      * Constructor for an empty hand.
      */
-    Hand() {
+    Hand() {}
+    /**
+     * Constructor for initialise with a vector of Tiles.
+     */
+    Hand(std::vector<Tile> hand);
 
+    /**
+     * Add tile.
+     */
+    void addTile(Tile t) {
+        mHand.push_back(t);
     }
+
+    /**
+     * Sort this hand.
+     */
+    void sort();
+
+    /**
+     * Get whether this hand can win or not.
+     *
+     * Be careful when use this function as it is slow.
+     *
+     * @return Win or not.
+     */
+    bool canWin();
+
+    /**
+     * Accessers.
+     */
+    Tile getTile(int n) { return mHand[n]; }
+    std::vector<Tile> getHand() { return mHand; }
+
  private:
-    std::vector<Tile> mHand;
+    std::vector<Tile> mHand; //!> Stores the tiles data of this hand.
 };
 
 } // namespace mahjong.
