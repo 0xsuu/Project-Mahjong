@@ -36,6 +36,16 @@ namespace mahjong {
  * flag     | type     | number
  */
 
+#define TILE_FLAG_FILTER   0b11000000
+#define TILE_TYPE_FILTER   0b00110000
+#define TILE_NUMBER_FILTER 0b00001111
+
+// The flag may changing while the type and number are static.
+#define TILE_REMOVE_FLAG_FILTER 0b00111111
+
+// As the number starts from 1, we have to add an offset to it.
+#define TILE_NUMBER_OFFSET 1
+
 typedef enum TileFlag {
     Hand = 0b00000000,
     Meld = 0b01000000,
@@ -111,6 +121,17 @@ class Tile {
 
  private:
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.
+
+    /**
+     * Get Flag ID.
+     * @return Flag in 2 bits.
+     */
+    inline uint8_t getFlagID();
+    /**
+     * Get Type ID.
+     * @return Type in 2 bits.
+     */
+    inline uint8_t getTypeID();
 };
 
 } // namespace mahjong

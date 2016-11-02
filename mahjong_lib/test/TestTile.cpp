@@ -18,6 +18,9 @@
 
 #include <Tile.h>
 
+#include <iostream>
+#include <string>
+
 using mahjong::Tile;
 using mahjong::Hand;
 using mahjong::Meld;
@@ -41,4 +44,33 @@ TEST(TileTest, ChangeTileFlag) {
     EXPECT_EQ(testTile.getFlag(), Meld);
     testTile.setConceal();
     EXPECT_EQ(testTile.getFlag(), Conceal);
+}
+
+TEST(TileTest, PrintableTest) {
+    Tile C1(Hand, Character, 1);
+    Tile C2(Hand, Character, 2);
+    Tile C3(Hand, Character, 3);
+    Tile D4(Hand, Dot, 4);
+    Tile D5(Hand, Dot, 5);
+    Tile D6(Hand, Dot, 6);
+    Tile B7(Hand, Bamboo, 7);
+    Tile B8(Hand, Bamboo, 8);
+    Tile B9(Hand, Bamboo, 9);
+    Tile S1(Hand, Special, 1);
+    Tile S2(Hand, Special, 2);
+    Tile S3(Hand, Special, 3);
+    Tile S4(Hand, Special, 4);
+    Tile S5(Hand, Special, 5);
+    Tile S6(Hand, Special, 6);
+    Tile S7(Hand, Special, 7);
+
+    testing::internal::CaptureStdout();
+    std::cout << C1.getPrintable() << C2.getPrintable() << C3.getPrintable() <<
+              D4.getPrintable() << D5.getPrintable() << D6.getPrintable() <<
+              B7.getPrintable() << B8.getPrintable() << B9.getPrintable() <<
+              S1.getPrintable() << S2.getPrintable() << S3.getPrintable() <<
+              S4.getPrintable() << S5.getPrintable() << S6.getPrintable() <<
+              S7.getPrintable();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "一萬二萬三萬四筒五筒六筒七條八條九條東南西北中發白");
 }
