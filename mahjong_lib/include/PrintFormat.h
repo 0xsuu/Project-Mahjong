@@ -28,10 +28,10 @@
 
 #include <string>
 
-static std::string MAHJONG_TYPE[] = {"萬", "筒", "條"};
-static std::string MAHJONG_NUMBER[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九"};
-static std::string MAHJONG_SPECIAL[] = {"東", "南", "西", "北", "中", "發", "白"};
+const std::string MAHJONG_TYPE[] = {"萬", "筒", "條"};
+const std::string MAHJONG_NUMBER[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九"};
+const std::string MAHJONG_SPECIAL[] = {"東", "南", "西", "北", "中", "發", "白"};
 
-static std::string MAHJONG_OTHERS[] = {"X"};
+const std::string MAHJONG_OTHERS[] = {"X"};
 
 #endif //MAHJONG_LIB_PRINTFORMAT_H
