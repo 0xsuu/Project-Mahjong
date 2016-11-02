@@ -22,47 +22,47 @@
 #include <string>
 
 using mahjong::Tile;
-using mahjong::Hand;
-using mahjong::Meld;
-using mahjong::Conceal;
+using mahjong::Handed;
+using mahjong::Melded;
+using mahjong::Concealed;
 using mahjong::Character;
 using mahjong::Dot;
 using mahjong::Bamboo;
 using mahjong::Special;
 
 TEST(TileTest, CreateNewTile) {
-    Tile testTile(Meld, Special, 5);
-    EXPECT_EQ(testTile.getFlag(), Meld);
+    Tile testTile(Melded, Special, 5);
+    EXPECT_EQ(testTile.getFlag(), Melded);
     EXPECT_EQ(testTile.getType(), Special);
     EXPECT_EQ(testTile.getNumber(), 5);
 }
 
 TEST(TileTest, ChangeTileFlag) {
-    Tile testTile(Hand, Special, 5);
-    EXPECT_EQ(testTile.getFlag(), Hand);
+    Tile testTile(Handed, Special, 5);
+    EXPECT_EQ(testTile.getFlag(), Handed);
     testTile.setMeld();
-    EXPECT_EQ(testTile.getFlag(), Meld);
+    EXPECT_EQ(testTile.getFlag(), Melded);
     testTile.setConceal();
-    EXPECT_EQ(testTile.getFlag(), Conceal);
+    EXPECT_EQ(testTile.getFlag(), Concealed);
 }
 
 TEST(TileTest, PrintableTest) {
-    Tile C1(Hand, Character, 1);
-    Tile C2(Hand, Character, 2);
-    Tile C3(Hand, Character, 3);
-    Tile D4(Hand, Dot, 4);
-    Tile D5(Hand, Dot, 5);
-    Tile D6(Hand, Dot, 6);
-    Tile B7(Hand, Bamboo, 7);
-    Tile B8(Hand, Bamboo, 8);
-    Tile B9(Hand, Bamboo, 9);
-    Tile S1(Hand, Special, 1);
-    Tile S2(Hand, Special, 2);
-    Tile S3(Hand, Special, 3);
-    Tile S4(Hand, Special, 4);
-    Tile S5(Hand, Special, 5);
-    Tile S6(Hand, Special, 6);
-    Tile S7(Hand, Special, 7);
+    Tile C1(Handed, Character, 1);
+    Tile C2(Handed, Character, 2);
+    Tile C3(Handed, Character, 3);
+    Tile D4(Handed, Dot, 4);
+    Tile D5(Handed, Dot, 5);
+    Tile D6(Handed, Dot, 6);
+    Tile B7(Handed, Bamboo, 7);
+    Tile B8(Handed, Bamboo, 8);
+    Tile B9(Handed, Bamboo, 9);
+    Tile S1(Handed, Special, 1);
+    Tile S2(Handed, Special, 2);
+    Tile S3(Handed, Special, 3);
+    Tile S4(Handed, Special, 4);
+    Tile S5(Handed, Special, 5);
+    Tile S6(Handed, Special, 6);
+    Tile S7(Handed, Special, 7);
 
     testing::internal::CaptureStdout();
     std::cout << C1.getPrintable() << C2.getPrintable() << C3.getPrintable() <<

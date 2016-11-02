@@ -28,5 +28,5 @@ Hand::Hand(vector<Tile> hand) {
 }
 
 void Hand::sort() {
-    std::sort(mHand.begin(), mHand.end());
+    //std::sort(mHand.begin(), mHand.end());
 }

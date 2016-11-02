@@ -18,11 +18,29 @@
 
 #include <Hand.h>
 
+#include <algorithm>
+
 using mahjong::Tile;
 using mahjong::Hand;
 
-TEST(TestHand, Creations) {
+using mahjong::Handed;
 
+using mahjong::Character;
+using mahjong::Dot;
+using mahjong::Bamboo;
+using mahjong::Special;
+
+TEST(TestHand, Creations) {
+    Hand h1 = Hand();
+    Hand h2({Tile(Handed, Character, 1),
+             Tile(Handed, Dot, 2),
+             Tile(Handed, Bamboo, 3),
+             Tile(Handed, Special, 4)});
+    h1.addTile(Tile(Handed, Character, 1));
+    h1.addTile(Tile(Handed, Dot, 2));
+    h1.addTile(Tile(Handed, Bamboo, 3));
+    h1.addTile(Tile(Handed, Special, 4));
+    EXPECT_EQ(h1.getHand(), h2.getHand());
 }
 
 TEST(TestHand, Sorting) {

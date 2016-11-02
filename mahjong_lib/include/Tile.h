@@ -49,9 +49,9 @@ namespace mahjong {
 #define TILE_NUMBER_OFFSET 1
 
 typedef enum TileFlag {
-    Hand = 0b00000000,
-    Meld = 0b01000000,
-    Conceal = 0b10000000
+    Handed = 0b00000000,
+    Melded = 0b01000000,
+    Concealed = 0b10000000
 } TileFlag;
 
 typedef enum TileType {
@@ -69,9 +69,9 @@ class Tile {
      * @param [in] flag: The first 2 bits of the tile byte.
      * encode   | flag
      * -------- | ------
-     * 00000000 | Hand
-     * 01000000 | Meld
-     * 10000000 | Conceal
+     * 00000000 | Handed
+     * 01000000 | Melded
+     * 10000000 | Concealed
      * 11000000 | <Undefine>
      *
      * @param [in] type: The 3rd and 4th bits of the tile byte.
@@ -97,19 +97,29 @@ class Tile {
 
     /**
      * Get this tile's flag.
+     *
      * @return Flag
      */
     TileFlag getFlag();
     /**
      * Get this tile's type.
+     *
      * @return Type
      */
     TileType getType();
     /**
      * Get this tile's number.
+     *
      * @return Number
      */
     int getNumber();
+
+    /**
+     * Get entire data.
+     *
+     * @return mTileData
+     */
+    uint8_t getData() { return mTileData; }
 
     /**
      * Get the string for display.
@@ -126,11 +136,14 @@ class Tile {
      */
     void setConceal();
 
+    bool operator = (Tile t);
+
  private:
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.
 
     /**
      * Get Type ID.
+     *
      * @return Type in 2 bits.
      */
     inline uint8_t getTypeID();
