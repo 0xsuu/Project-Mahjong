@@ -18,9 +18,6 @@
 
 #include <Tile.h>
 
-#include <iostream>
-#include <string>
-
 using mahjong::Tile;
 using mahjong::Handed;
 using mahjong::Melded;
