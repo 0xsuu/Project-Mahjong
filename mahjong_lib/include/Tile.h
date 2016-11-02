@@ -137,7 +137,9 @@ class Tile {
      */
     void setConceal();
 
-    bool operator==(Tile t);
+    bool operator==(Tile t) const;
+    bool operator<(Tile t) const;
+    bool operator<=(Tile t) const;
 
  private:
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.

@@ -24,6 +24,8 @@ using mahjong::Tile;
 using mahjong::Hand;
 
 using mahjong::Handed;
+using mahjong::Melded;
+using mahjong::Concealed;
 
 using mahjong::Character;
 using mahjong::Dot;
@@ -44,5 +46,40 @@ TEST(TestHand, Creations) {
 }
 
 TEST(TestHand, Sorting) {
+    Hand h({Tile(Handed, Bamboo, 1),
+            Tile(Handed, Bamboo, 1),
+            Tile(Handed, Bamboo, 1),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Handed, Dot, 9),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Character, 5),
+            Tile(Handed, Character, 6),
+            Tile(Handed, Dot, 8),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7)});
+    h.sort();
 
+    Hand h2 ({Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7),
+              Tile(Melded, Special, 4),
+              Tile(Melded, Special, 4),
+              Tile(Melded, Special, 4),
+              Tile(Handed, Character, 3),
+              Tile(Handed, Character, 5),
+              Tile(Handed, Character, 6),
+              Tile(Handed, Dot, 7),
+              Tile(Handed, Dot, 8),
+              Tile(Handed, Dot, 9),
+              Tile(Handed, Bamboo, 1),
+              Tile(Handed, Bamboo, 1),
+              Tile(Handed, Bamboo, 1)});
+
+    EXPECT_EQ(h.getHand(), h2.getHand());
 }
