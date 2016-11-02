@@ -49,9 +49,9 @@ namespace mahjong {
 #define TILE_NUMBER_OFFSET 1
 
 typedef enum TileFlag {
-    Handed = 0b00000000,
+    Concealed = 0b00000000,
     Melded = 0b01000000,
-    Concealed = 0b10000000
+    Handed = 0b10000000
 } TileFlag;
 
 typedef enum TileType {
@@ -69,9 +69,9 @@ class Tile {
      * @param [in] flag: The first 2 bits of the tile byte.
      * encode   | flag
      * -------- | ------
-     * 00000000 | Handed
+     * 00000000 | Concealed
      * 01000000 | Melded
-     * 10000000 | Concealed
+     * 10000000 | Handed
      * 11000000 | <Undefine>
      *
      * @param [in] type: The 3rd and 4th bits of the tile byte.
