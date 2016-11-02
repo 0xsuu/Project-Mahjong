@@ -152,3 +152,23 @@ TEST(TestHand, DiscardTile) {
 
     EXPECT_EQ(h.getHand(), h2.getHand());
 }
+
+TEST(TestHand, TestWinningJudgement) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Handed, Dot, 1),
+            Tile(Handed, Dot, 2),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7)});
+    EXPECT_TRUE(h.canWin());
+}

@@ -32,6 +32,10 @@ Tile::Tile(const TileFlag flag, const TileType type, const int number) {
     mTileData = flag | type | number;
 }
 
+Tile::Tile(const uint8_t data) {
+    mTileData = data;
+}
+
 TileFlag Tile::getFlag() {
     return static_cast<TileFlag>(mTileData & TILE_FLAG_FILTER);
 }
@@ -67,6 +71,10 @@ bool Tile::operator<(Tile t) const {
 
 bool Tile::operator<=(Tile t) const {
     return mTileData <= t.getData();
+}
+
+Tile Tile::operator+(int n) const {
+    return Tile(static_cast<uint8_t>(mTileData + n));
 }
 
 // Private functions.
