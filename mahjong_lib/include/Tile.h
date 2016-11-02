@@ -19,6 +19,8 @@
 
 #include <stdint.h>
 
+#include <string>
+
 namespace mahjong {
 
 /**
@@ -34,10 +36,22 @@ namespace mahjong {
  * flag     | type     | number
  */
 
+#define TILE_FLAG_FILTER   0b11000000
+#define TILE_TYPE_FILTER   0b00110000
+#define TILE_NUMBER_FILTER 0b00001111
+
+#define TILE_TYPE_ID_SPECIAL 3
+
+// The flag may changing while the type and number are static.
+#define TILE_REMOVE_FLAG_FILTER 0b00111111
+
+// As the number starts from 1, we have to add an offset to it.
+#define TILE_NUMBER_OFFSET 1
+
 typedef enum TileFlag {
-    Hand = 0b00000000,
-    Meld = 0b01000000,
-    Conceal = 0b10000000
+    Concealed = 0b00000000,
+    Melded = 0b01000000,
+    Handed = 0b10000000
 } TileFlag;
 
 typedef enum TileType {
@@ -55,9 +69,9 @@ class Tile {
      * @param [in] flag: The first 2 bits of the tile byte.
      * encode   | flag
      * -------- | ------
-     * 00000000 | Hand
-     * 01000000 | Meld
-     * 10000000 | Conceal
+     * 00000000 | Concealed
+     * 01000000 | Melded
+     * 10000000 | Handed
      * 11000000 | <Undefine>
      *
      * @param [in] type: The 3rd and 4th bits of the tile byte.
@@ -77,20 +91,42 @@ class Tile {
     Tile(const TileFlag flag, const TileType type, const int number);
 
     /**
+     * Constructor that makes a null tile.
+     */
+    Tile() {}
+
+    /**
      * Get this tile's flag.
+     *
      * @return Flag
      */
     TileFlag getFlag();
     /**
      * Get this tile's type.
+     *
      * @return Type
      */
     TileType getType();
     /**
      * Get this tile's number.
+     *
      * @return Number
      */
     int getNumber();
+
+    /**
+     * Get entire data.
+     *
+     * @return mTileData
+     */
+    uint8_t getData() { return mTileData; }
+
+    /**
+     * Get the string for display.
+     *
+     * @return A string ready for print in terminal.
+     */
+    std::string getPrintable();
 
     /**
      * Set this tile to meld.
@@ -101,8 +137,19 @@ class Tile {
      */
     void setConceal();
 
+    bool operator==(Tile t) const;
+    bool operator<(Tile t) const;
+    bool operator<=(Tile t) const;
+
  private:
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.
+
+    /**
+     * Get Type ID.
+     *
+     * @return Type in 2 bits.
+     */
+    inline uint8_t getTypeID();
 };
 
 } // namespace mahjong

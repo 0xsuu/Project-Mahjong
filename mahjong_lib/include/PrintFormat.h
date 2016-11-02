@@ -14,37 +14,24 @@
 //  limitations under the License.
 //
 
-#include <Hand.h>
+#ifndef MAHJONG_LIB_PRINTFORMAT_H
+#define MAHJONG_LIB_PRINTFORMAT_H
 
-#include <algorithm>
+/**
+ * @brief The terminal printables for Mahjong tiles.
+ *
+ * A complete tile printable should be one of:
+ * - MAHJONG_[NUMBER] + MAHJONG_[C | D | B]
+ * - MAHJONG_S[NUMBER]
+ * - MAHJONG_HAND
+ */
 
-using std::vector;
+#include <string>
 
-using mahjong::Tile;
-using mahjong::Hand;
+const std::string MAHJONG_TYPE[] = {"萬", "筒", "條"};
+const std::string MAHJONG_NUMBER[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九"};
+const std::string MAHJONG_SPECIAL[] = {"東", "南", "西", "北", "中", "發", "白"};
 
-Hand::Hand(vector<Tile> hand) {
-    mHand = hand;
-}
+const std::string MAHJONG_OTHERS[] = {"X"};
 
-void Hand::sort() {
-    std::sort(mHand.begin(), mHand.end());
-}
-
-void Hand::pickTile(Tile t) {
-    for (auto it = mHand.begin(); it < mHand.end(); it++) {
-        if (t <= *it) {
-            mHand.insert(it, t);
-            break;
-        }
-    }
-}
-
-void Hand::discardTile(int index) {
-    mHand.erase(mHand.begin() + index);
-}
-
-void Hand::discardTile(Tile tile) {
-    auto indexIt = std::find(mHand.begin(), mHand.end(), tile);
-    mHand.erase(indexIt);
-}
+#endif //MAHJONG_LIB_PRINTFORMAT_H

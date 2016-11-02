@@ -14,9 +14,12 @@
 //  limitations under the License.
 //
 
-#include <assert.h>
+#include <cassert>
 
 #include "Tile.h"
+#include "PrintFormat.h"
+
+using std::string;
 
 using mahjong::Tile;
 using mahjong::TileFlag;
@@ -30,21 +33,44 @@ Tile::Tile(const TileFlag flag, const TileType type, const int number) {
 }
 
 TileFlag Tile::getFlag() {
-    return static_cast<TileFlag>(mTileData & 0b11000000);
+    return static_cast<TileFlag>(mTileData & TILE_FLAG_FILTER);
 }
 
 TileType Tile::getType() {
-    return static_cast<TileType>(mTileData & 0b00110000);
+    return static_cast<TileType>(mTileData & TILE_TYPE_FILTER);
 }
 
 int Tile::getNumber() {
-    return mTileData & 0b00001111;
+    return mTileData & TILE_NUMBER_FILTER;
+}
+
+string Tile::getPrintable() {
+    return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumber() - TILE_NUMBER_OFFSET] :
+            MAHJONG_NUMBER[getNumber() - TILE_NUMBER_OFFSET] + MAHJONG_TYPE[getTypeID()];
 }
 
 void Tile::setMeld() {
-    mTileData = static_cast<uint8_t>(mTileData & 0b00111111 | Meld);
+    mTileData = static_cast<uint8_t>(mTileData & TILE_REMOVE_FLAG_FILTER | Melded);
 }
 
 void Tile::setConceal() {
-    mTileData = static_cast<uint8_t>(mTileData & 0b00111111 | Conceal);
+    mTileData = static_cast<uint8_t>(mTileData & TILE_REMOVE_FLAG_FILTER | Concealed);
+}
+
+bool Tile::operator==(Tile t) const {
+    return mTileData == t.getData();
+}
+
+bool Tile::operator<(Tile t) const {
+    return mTileData < t.getData();
+}
+
+bool Tile::operator<=(Tile t) const {
+    return mTileData <= t.getData();
+}
+
+// Private functions.
+
+inline uint8_t Tile::getTypeID() {
+    return static_cast<uint8_t >((mTileData & TILE_TYPE_FILTER) >> 4);
 }
