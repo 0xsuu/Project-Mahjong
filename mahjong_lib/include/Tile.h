@@ -125,11 +125,6 @@ class Tile {
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.
 
     /**
-     * Get Flag ID.
-     * @return Flag in 2 bits.
-     */
-    inline uint8_t getFlagID();
-    /**
      * Get Type ID.
      * @return Type in 2 bits.
      */

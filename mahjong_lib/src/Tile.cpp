@@ -59,10 +59,6 @@ void Tile::setConceal() {
 
 // Private functions.
 
-inline uint8_t Tile::getFlagID() {
-    return static_cast<uint8_t >((mTileData & TILE_FLAG_FILTER) >> 6);
-}
-
 inline uint8_t Tile::getTypeID() {
     return static_cast<uint8_t >((mTileData & TILE_TYPE_FILTER) >> 4);
 }
