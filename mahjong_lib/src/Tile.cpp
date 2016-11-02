@@ -57,8 +57,8 @@ void Tile::setConceal() {
     mTileData = static_cast<uint8_t>(mTileData & TILE_REMOVE_FLAG_FILTER | Concealed);
 }
 
-bool Tile::operator=(Tile t) {
-    return mTileData
+bool Tile::operator==(Tile t) {
+    return mTileData;
 }
 
 // Private functions.

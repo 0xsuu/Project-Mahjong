@@ -123,7 +123,7 @@ class Tile {
 
     /**
      * Get the string for display.
-     * 
+     *
      * @return A string ready for print in terminal.
      */
     std::string getPrintable();
@@ -137,7 +137,7 @@ class Tile {
      */
     void setConceal();
 
-    bool operator = (Tile t);
+    bool operator==(Tile t);
 
  private:
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.
