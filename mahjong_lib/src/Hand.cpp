@@ -74,7 +74,6 @@ bool Hand::canWin() {
     vector<Tile> hand(mHand);
 
     // Removing all melded & concealed tiles.
-    int removedCount = 0;
     auto it = hand.begin();
     while ((*it).getFlag() == Melded || (*it).getFlag() == Concealed) {
         it++;
