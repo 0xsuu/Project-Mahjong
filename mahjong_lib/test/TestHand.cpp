@@ -83,3 +83,72 @@ TEST(TestHand, Sorting) {
 
     EXPECT_EQ(h.getHand(), h2.getHand());
 }
+
+TEST(TestHand, PickTile) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 5),
+            Tile(Handed, Character, 6),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 8),
+            Tile(Handed, Dot, 9),
+            Tile(Handed, Bamboo, 1),
+            Tile(Handed, Bamboo, 1),
+            Tile(Handed, Bamboo, 1)});
+    h.pickTile(Tile(Handed, Character, 2));
+    h.pickTile(Tile(Handed, Character, 3));
+
+    Hand h2 ({Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7),
+              Tile(Melded, Special, 4),
+              Tile(Melded, Special, 4),
+              Tile(Melded, Special, 4),
+              Tile(Handed, Character, 2),
+              Tile(Handed, Character, 3),
+              Tile(Handed, Character, 3),
+              Tile(Handed, Character, 5),
+              Tile(Handed, Character, 6),
+              Tile(Handed, Dot, 7),
+              Tile(Handed, Dot, 8),
+              Tile(Handed, Dot, 9),
+              Tile(Handed, Bamboo, 1),
+              Tile(Handed, Bamboo, 1),
+              Tile(Handed, Bamboo, 1)});
+
+    EXPECT_EQ(h.getHand(), h2.getHand());
+}
+
+TEST(TestHand, DiscardTile) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 8),
+            Tile(Handed, Dot, 9)});
+    h.discardTile(4);
+    h.discardTile(4);
+    h.discardTile(4);
+    h.discardTile(Tile(Handed, Dot, 7));
+    h.discardTile(Tile(Handed, Dot, 8));
+    h.discardTile(Tile(Handed, Dot, 9));
+
+
+    Hand h2 ({Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7),
+              Tile(Concealed, Special, 7)});
+
+    EXPECT_EQ(h.getHand(), h2.getHand());
+}

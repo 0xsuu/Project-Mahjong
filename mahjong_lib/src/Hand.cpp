@@ -30,3 +30,21 @@ Hand::Hand(vector<Tile> hand) {
 void Hand::sort() {
     std::sort(mHand.begin(), mHand.end());
 }
+
+void Hand::pickTile(Tile t) {
+    for (auto it = mHand.begin(); it < mHand.end(); it++) {
+        if (t <= *it) {
+            mHand.insert(it, t);
+            break;
+        }
+    }
+}
+
+void Hand::discardTile(int index) {
+    mHand.erase(mHand.begin() + index);
+}
+
+void Hand::discardTile(Tile tile) {
+    auto indexIt = std::find(mHand.begin(), mHand.end(), tile);
+    mHand.erase(indexIt);
+}
