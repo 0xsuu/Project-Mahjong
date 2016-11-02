@@ -154,7 +154,7 @@ TEST(TestHand, DiscardTile) {
 }
 
 TEST(TestHand, TestWinningJudgement) {
-    Hand h({Tile(Concealed, Special, 7),
+    Hand h1({Tile(Concealed, Special, 7),
             Tile(Concealed, Special, 7),
             Tile(Concealed, Special, 7),
             Tile(Concealed, Special, 7),
@@ -170,5 +170,23 @@ TEST(TestHand, TestWinningJudgement) {
             Tile(Handed, Dot, 4),
             Tile(Handed, Dot, 7),
             Tile(Handed, Dot, 7)});
-    EXPECT_TRUE(h.canWin());
+    EXPECT_TRUE(h1.canWin());
+    
+    Hand h2({Tile(Concealed, Special, 7),
+        Tile(Concealed, Special, 7),
+        Tile(Concealed, Special, 7),
+        Tile(Concealed, Special, 7),
+        Tile(Handed, Character, 1),
+        Tile(Handed, Character, 1),
+        Tile(Handed, Character, 2),
+        Tile(Handed, Character, 2),
+        Tile(Handed, Character, 3),
+        Tile(Handed, Character, 3),
+        Tile(Handed, Dot, 4),
+        Tile(Handed, Dot, 4),
+        Tile(Handed, Dot, 4),
+        Tile(Handed, Dot, 4),
+        Tile(Handed, Dot, 7),
+        Tile(Handed, Dot, 7)});
+    EXPECT_TRUE(h2.canWin());
 }
