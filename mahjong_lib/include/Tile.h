@@ -40,6 +40,8 @@ namespace mahjong {
 #define TILE_TYPE_FILTER   0b00110000
 #define TILE_NUMBER_FILTER 0b00001111
 
+#define TILE_TYPE_ID_SPECIAL 3
+
 // The flag may changing while the type and number are static.
 #define TILE_REMOVE_FLAG_FILTER 0b00111111
 

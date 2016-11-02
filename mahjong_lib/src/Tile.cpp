@@ -45,7 +45,7 @@ int Tile::getNumber() {
 }
 
 string Tile::getPrintable() {
-    return getTypeID() == 3 ? MAHJONG_SPECIAL[getNumber() - TILE_NUMBER_OFFSET] :
+    return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumber() - TILE_NUMBER_OFFSET] :
             MAHJONG_NUMBER[getNumber() - TILE_NUMBER_OFFSET] + MAHJONG_TYPE[getTypeID()];
 }
 
