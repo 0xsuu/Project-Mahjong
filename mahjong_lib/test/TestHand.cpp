@@ -18,8 +18,6 @@
 
 #include <Hand.h>
 
-#include <algorithm>
-
 using mahjong::Tile;
 using mahjong::Hand;
 
@@ -153,8 +151,8 @@ TEST(TestHand, DiscardTile) {
     EXPECT_EQ(h.getHand(), h2.getHand());
 }
 
-TEST(TestHand, TestWinningJudgement) {
-    Hand h1({Tile(Concealed, Special, 7),
+TEST(TestHand, TestWinningJudgement_Simple) {
+    Hand h({Tile(Concealed, Special, 7),
             Tile(Concealed, Special, 7),
             Tile(Concealed, Special, 7),
             Tile(Concealed, Special, 7),
@@ -170,23 +168,65 @@ TEST(TestHand, TestWinningJudgement) {
             Tile(Handed, Dot, 4),
             Tile(Handed, Dot, 7),
             Tile(Handed, Dot, 7)});
-    EXPECT_TRUE(h1.canWin());
-    
-    Hand h2({Tile(Concealed, Special, 7),
-        Tile(Concealed, Special, 7),
-        Tile(Concealed, Special, 7),
-        Tile(Concealed, Special, 7),
-        Tile(Handed, Character, 1),
-        Tile(Handed, Character, 1),
-        Tile(Handed, Character, 2),
-        Tile(Handed, Character, 2),
-        Tile(Handed, Character, 3),
-        Tile(Handed, Character, 3),
-        Tile(Handed, Dot, 4),
-        Tile(Handed, Dot, 4),
-        Tile(Handed, Dot, 4),
-        Tile(Handed, Dot, 4),
-        Tile(Handed, Dot, 7),
-        Tile(Handed, Dot, 7)});
-    EXPECT_TRUE(h2.canWin());
+    EXPECT_TRUE(h.canWin());
+}
+
+TEST(TestHand, TestWinningJudgement_3ContinuousPairs) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7)});
+    EXPECT_TRUE(h.canWin());
+}
+
+TEST(TestHand, TestWinningJudgement_MultipleSolutions) {
+    Hand h({Tile(Concealed, Special, 7),
+             Tile(Concealed, Special, 7),
+             Tile(Concealed, Special, 7),
+             Tile(Concealed, Special, 7),
+             Tile(Handed, Character, 1),
+             Tile(Handed, Character, 1),
+             Tile(Handed, Character, 1),
+             Tile(Handed, Character, 1),
+             Tile(Handed, Character, 2),
+             Tile(Handed, Character, 3),
+             Tile(Handed, Dot, 4),
+             Tile(Handed, Dot, 4),
+             Tile(Handed, Dot, 4),
+             Tile(Handed, Dot, 4),
+             Tile(Handed, Dot, 7),
+             Tile(Handed, Dot, 7)});
+    EXPECT_TRUE(h.canWin());
+}
+
+TEST(TestHand, TestWinningJudgement_Failure) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7)});
+    EXPECT_FALSE(h.canWin());
 }
