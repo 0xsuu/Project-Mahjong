@@ -193,21 +193,57 @@ TEST(TestHand, TestWinningJudgement_3ContinuousPairs) {
 
 TEST(TestHand, TestWinningJudgement_MultipleSolutions) {
     Hand h({Tile(Concealed, Special, 7),
-             Tile(Concealed, Special, 7),
-             Tile(Concealed, Special, 7),
-             Tile(Concealed, Special, 7),
-             Tile(Handed, Character, 1),
-             Tile(Handed, Character, 1),
-             Tile(Handed, Character, 1),
-             Tile(Handed, Character, 1),
-             Tile(Handed, Character, 2),
-             Tile(Handed, Character, 3),
-             Tile(Handed, Dot, 4),
-             Tile(Handed, Dot, 4),
-             Tile(Handed, Dot, 4),
-             Tile(Handed, Dot, 4),
-             Tile(Handed, Dot, 7),
-             Tile(Handed, Dot, 7)});
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7)});
+    EXPECT_TRUE(h.canWin());
+}
+
+TEST(TestHand, TestWinningJudgement_MixingPairWithCombinationsSimple) {
+    Hand h({Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 4),
+            Tile(Handed, Character, 4),
+            Tile(Handed, Character, 4),
+            Tile(Handed, Dot, 1),
+            Tile(Handed, Dot, 2),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7)});
+    EXPECT_TRUE(h.canWin());
+}
+
+TEST(TestHand, TestWinningJudgement_MixingPairWithCombinationsComplex) {
+    Hand h({Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 1),
+            Tile(Handed, Dot, 2),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7)});
     EXPECT_TRUE(h.canWin());
 }
 
@@ -230,3 +266,4 @@ TEST(TestHand, TestWinningJudgement_Failure) {
             Tile(Handed, Dot, 7)});
     EXPECT_FALSE(h.canWin());
 }
+
