@@ -143,6 +143,7 @@ class Tile {
     void setConceal();
 
     bool operator==(Tile t) const;
+    bool operator!=(Tile t) const;
     bool operator<(Tile t) const;
     bool operator<=(Tile t) const;
     Tile operator+(int n) const;

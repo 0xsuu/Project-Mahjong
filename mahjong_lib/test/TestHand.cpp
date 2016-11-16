@@ -168,7 +168,7 @@ TEST(TestHand, TestWinningJudgement_Simple) {
             Tile(Handed, Dot, 4),
             Tile(Handed, Dot, 7),
             Tile(Handed, Dot, 7)});
-    EXPECT_TRUE(h.canWin());
+    EXPECT_TRUE(h.testWin());
 }
 
 TEST(TestHand, TestWinningJudgement_3ContinuousPairs) {
@@ -188,7 +188,7 @@ TEST(TestHand, TestWinningJudgement_3ContinuousPairs) {
             Tile(Handed, Dot, 4),
             Tile(Handed, Dot, 7),
             Tile(Handed, Dot, 7)});
-    EXPECT_TRUE(h.canWin());
+    EXPECT_TRUE(h.testWin());
 }
 
 TEST(TestHand, TestWinningJudgement_MultipleSolutions) {
@@ -208,7 +208,7 @@ TEST(TestHand, TestWinningJudgement_MultipleSolutions) {
             Tile(Handed, Dot, 4),
             Tile(Handed, Dot, 7),
             Tile(Handed, Dot, 7)});
-    EXPECT_TRUE(h.canWin());
+    EXPECT_TRUE(h.testWin());
 }
 
 TEST(TestHand, TestWinningJudgement_MixingPairWithCombinationsSimple) {
@@ -226,7 +226,7 @@ TEST(TestHand, TestWinningJudgement_MixingPairWithCombinationsSimple) {
             Tile(Handed, Special, 7),
             Tile(Handed, Special, 7),
             Tile(Handed, Special, 7)});
-    EXPECT_TRUE(h.canWin());
+    EXPECT_TRUE(h.testWin());
 }
 
 TEST(TestHand, TestWinningJudgement_MixingPairWithCombinationsComplex) {
@@ -244,7 +244,7 @@ TEST(TestHand, TestWinningJudgement_MixingPairWithCombinationsComplex) {
             Tile(Handed, Special, 7),
             Tile(Handed, Special, 7),
             Tile(Handed, Special, 7)});
-    EXPECT_TRUE(h.canWin());
+    EXPECT_TRUE(h.testWin());
 }
 
 TEST(TestHand, TestWinningJudgement_Failure) {
@@ -264,6 +264,6 @@ TEST(TestHand, TestWinningJudgement_Failure) {
             Tile(Handed, Dot, 4),
             Tile(Handed, Dot, 7),
             Tile(Handed, Dot, 7)});
-    EXPECT_FALSE(h.canWin());
+    EXPECT_FALSE(h.testWin());
 }
 

@@ -65,6 +65,10 @@ bool Tile::operator==(Tile t) const {
     return mTileData == t.getData();
 }
 
+bool Tile::operator!=(Tile t) const {
+    return mTileData != t.getData();
+}
+
 bool Tile::operator<(Tile t) const {
     return mTileData < t.getData();
 }
