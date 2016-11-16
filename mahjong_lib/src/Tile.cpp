@@ -32,6 +32,10 @@ Tile::Tile(const TileFlag flag, const TileType type, const int number) {
     mTileData = flag | type | number;
 }
 
+Tile::Tile(const uint8_t data) {
+    mTileData = data;
+}
+
 TileFlag Tile::getFlag() {
     return static_cast<TileFlag>(mTileData & TILE_FLAG_FILTER);
 }
@@ -50,15 +54,19 @@ string Tile::getPrintable() {
 }
 
 void Tile::setMeld() {
-    mTileData = static_cast<uint8_t>(mTileData & TILE_REMOVE_FLAG_FILTER | Melded);
+    mTileData = static_cast<uint8_t>((mTileData & TILE_REMOVE_FLAG_FILTER) | Melded);
 }
 
 void Tile::setConceal() {
-    mTileData = static_cast<uint8_t>(mTileData & TILE_REMOVE_FLAG_FILTER | Concealed);
+    mTileData = static_cast<uint8_t>((mTileData & TILE_REMOVE_FLAG_FILTER) | Concealed);
 }
 
 bool Tile::operator==(Tile t) const {
     return mTileData == t.getData();
+}
+
+bool Tile::operator!=(Tile t) const {
+    return mTileData != t.getData();
 }
 
 bool Tile::operator<(Tile t) const {
@@ -67,6 +75,10 @@ bool Tile::operator<(Tile t) const {
 
 bool Tile::operator<=(Tile t) const {
     return mTileData <= t.getData();
+}
+
+Tile Tile::operator+(int n) const {
+    return Tile(static_cast<uint8_t>(mTileData + n));
 }
 
 // Private functions.

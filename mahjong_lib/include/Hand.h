@@ -113,7 +113,7 @@ class Hand {
      *
      * @return Win or not.
      */
-    bool canWin();
+    bool testWin();
 
     /**
      * Accessers.

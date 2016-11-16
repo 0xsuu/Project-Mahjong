@@ -18,8 +18,6 @@
 
 #include <Hand.h>
 
-#include <algorithm>
-
 using mahjong::Tile;
 using mahjong::Hand;
 
@@ -152,3 +150,120 @@ TEST(TestHand, DiscardTile) {
 
     EXPECT_EQ(h.getHand(), h2.getHand());
 }
+
+TEST(TestHand, TestWinningJudgement_Simple) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Melded, Special, 4),
+            Tile(Handed, Dot, 1),
+            Tile(Handed, Dot, 2),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7)});
+    EXPECT_TRUE(h.testWin());
+}
+
+TEST(TestHand, TestWinningJudgement_3ContinuousPairs) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7)});
+    EXPECT_TRUE(h.testWin());
+}
+
+TEST(TestHand, TestWinningJudgement_MultipleSolutions) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7)});
+    EXPECT_TRUE(h.testWin());
+}
+
+TEST(TestHand, TestWinningJudgement_MixingPairWithCombinationsSimple) {
+    Hand h({Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 4),
+            Tile(Handed, Character, 4),
+            Tile(Handed, Character, 4),
+            Tile(Handed, Dot, 1),
+            Tile(Handed, Dot, 2),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7)});
+    EXPECT_TRUE(h.testWin());
+}
+
+TEST(TestHand, TestWinningJudgement_MixingPairWithCombinationsComplex) {
+    Hand h({Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 1),
+            Tile(Handed, Dot, 2),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7)});
+    EXPECT_TRUE(h.testWin());
+}
+
+TEST(TestHand, TestWinningJudgement_Failure) {
+    Hand h({Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Concealed, Special, 7),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7)});
+    EXPECT_FALSE(h.testWin());
+}
+

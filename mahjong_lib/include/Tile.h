@@ -91,6 +91,11 @@ class Tile {
     Tile(const TileFlag flag, const TileType type, const int number);
 
     /**
+     * Constructor that construct from a pre-cooked data.
+     */
+    Tile(const uint8_t data);
+
+    /**
      * Constructor that makes a null tile.
      */
     Tile() {}
@@ -138,8 +143,10 @@ class Tile {
     void setConceal();
 
     bool operator==(Tile t) const;
+    bool operator!=(Tile t) const;
     bool operator<(Tile t) const;
     bool operator<=(Tile t) const;
+    Tile operator+(int n) const;
 
  private:
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.
