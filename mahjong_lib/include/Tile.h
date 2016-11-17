@@ -48,6 +48,9 @@ namespace mahjong {
 // As the number starts from 1, we have to add an offset to it.
 #define TILE_NUMBER_OFFSET 1
 
+// The dora number id.
+#define TILE_DORA_NUMBER_ID 6
+
 typedef enum TileFlag {
     Concealed = 0b00000000,
     Melded = 0b01000000,
@@ -72,23 +75,25 @@ class Tile {
      * 00000000 | Concealed
      * 01000000 | Melded
      * 10000000 | Handed
-     * 11000000 | <Undefine>
+     * 11000000 | <Undefined>
      *
      * @param [in] type: The 3rd and 4th bits of the tile byte.
-     * encode | type
-     * ------ | ------
-     * 000000 | Character
-     * 010000 | Dot
-     * 100000 | Bamboo
-     * 110000 | Special
+     * encode   | type
+     * -------- | ------
+     * 00000000 | Character
+     * 00010000 | Dot
+     * 00100000 | Bamboo
+     * 00110000 | Special
      *
      * @param [in] number: The last 4 bits of the tile byte.
-     * encode             | applied type
-     * ------------------ | -------------
-     * 0001 - 1001(1 - 9) | C, D and B.
-     * 0001 - 0110(1 - 7) | S.
+     * encode                          | applied type
+     * ------------------------------- | -------------
+     * 0001 - 1010(1 - 5, 5(dora) - 9) | C, D and B.
+     * 0001 - 0110(1 - 7)              | S.
+     *
+     * @param dora: Is dora tile.
      */
-    Tile(const TileFlag flag, const TileType type, const int number);
+    Tile(const TileFlag flag, const TileType type, const int number, bool dora = false);
 
     /**
      * Constructor that construct from a pre-cooked data.
@@ -118,6 +123,13 @@ class Tile {
      * @return Number
      */
     int getNumber();
+
+    /**
+     * Get if this tile is a dora tile.
+     *
+     * @return Is Dora Tile
+     */
+    bool isDora();
 
     /**
      * Get entire data.
@@ -157,6 +169,15 @@ class Tile {
      * @return Type in 2 bits.
      */
     inline uint8_t getTypeID();
+    /**
+     * Get this tile's number ID.
+     *
+     * @return Number
+     */
+    inline int getNumberID();
+
+    inline int numberIDToNumber(int id);
+    inline int numberToNumberID(TileType type, int id, bool dora);
 };
 
 } // namespace mahjong

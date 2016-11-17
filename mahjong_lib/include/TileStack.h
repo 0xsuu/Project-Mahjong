@@ -17,4 +17,21 @@
 #ifndef MAHJONG_LIB_TILESTACK_H
 #define MAHJONG_LIB_TILESTACK_H
 
+namespace Mahjong {
+
+class TileStack {
+ public:
+    /**
+     * Constructor for the Tile Stack, mainly aimed for the abstraction
+     * of the randomicity of the game.
+     *
+     * @param tileCount Number of all the available tiles.
+     * @param doraTile Contains dora tile or not.
+     * @param notPlayingCount Some leftover tiles for
+     * @return
+     */
+    TileStack(int tileCount, bool doraTile, int notPlayingCount);
+};
+
+}
 #endif //MAHJONG_LIB_TILESTACK_H

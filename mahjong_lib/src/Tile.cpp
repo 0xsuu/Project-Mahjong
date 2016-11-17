@@ -25,11 +25,15 @@ using mahjong::Tile;
 using mahjong::TileFlag;
 using mahjong::TileType;
 
-Tile::Tile(const TileFlag flag, const TileType type, const int number) {
+Tile::Tile(const TileFlag flag, const TileType type, const int number, bool dora) {
     // Make sure the number is legal.
-    assert(number <= 9 && number >= 1);
+    assert(number <= 10 && number >= 1);
+    if (dora) {
+        assert(number == 5);
+        assert(type != Special);
+    }
 
-    mTileData = flag | type | number;
+    mTileData = flag | type | numberToNumberID(type, number, dora);
 }
 
 Tile::Tile(const uint8_t data) {
@@ -39,44 +43,42 @@ Tile::Tile(const uint8_t data) {
 TileFlag Tile::getFlag() {
     return static_cast<TileFlag>(mTileData & TILE_FLAG_FILTER);
 }
-
 TileType Tile::getType() {
     return static_cast<TileType>(mTileData & TILE_TYPE_FILTER);
 }
-
 int Tile::getNumber() {
-    return mTileData & TILE_NUMBER_FILTER;
+    return numberIDToNumber(getNumberID());
+}
+bool Tile::isDora() {
+    return getNumberID() == TILE_DORA_NUMBER_ID;
 }
 
 string Tile::getPrintable() {
-    return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumber() - TILE_NUMBER_OFFSET] :
-            MAHJONG_NUMBER[getNumber() - TILE_NUMBER_OFFSET] + MAHJONG_TYPE[getTypeID()];
+    return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumberID() - TILE_NUMBER_OFFSET] :
+            MAHJONG_NUMBER[getNumberID() - TILE_NUMBER_OFFSET] + MAHJONG_TYPE[getTypeID()];
 }
 
 void Tile::setMeld() {
     mTileData = static_cast<uint8_t>((mTileData & TILE_REMOVE_FLAG_FILTER) | Melded);
 }
-
 void Tile::setConceal() {
     mTileData = static_cast<uint8_t>((mTileData & TILE_REMOVE_FLAG_FILTER) | Concealed);
 }
 
+// Operator overloads.
+
 bool Tile::operator==(Tile t) const {
     return mTileData == t.getData();
 }
-
 bool Tile::operator!=(Tile t) const {
     return mTileData != t.getData();
 }
-
 bool Tile::operator<(Tile t) const {
     return mTileData < t.getData();
 }
-
 bool Tile::operator<=(Tile t) const {
     return mTileData <= t.getData();
 }
-
 Tile Tile::operator+(int n) const {
     return Tile(static_cast<uint8_t>(mTileData + n));
 }
@@ -85,4 +87,20 @@ Tile Tile::operator+(int n) const {
 
 inline uint8_t Tile::getTypeID() {
     return static_cast<uint8_t >((mTileData & TILE_TYPE_FILTER) >> 4);
+}
+inline int Tile::getNumberID() {
+    return mTileData & TILE_NUMBER_FILTER;
+}
+
+inline int Tile::numberIDToNumber(int id) {
+    return (getType() != Special && id > 5) ? id - 1 : id;
+}
+
+inline int Tile::numberToNumberID(TileType type, int number, bool dora = false) {
+    if (type == Special) {
+        return number;
+    }
+    else {
+        return ((!dora && number > 5) || (dora && number == 5)) ? number + 1 : number;
+    }
 }
