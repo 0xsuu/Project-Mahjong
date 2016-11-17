@@ -13,3 +13,32 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
+
+#include "Player.h"
+
+using std::string;
+
+using mahjong::Hand;
+using mahjong::SeatPosition;
+using mahjong::Player;
+
+void Player::setupPlayer(int ID,
+                         mahjong::SeatPosition seatPosition,
+                         mahjong::Hand initialHand) {
+    mID = ID;
+    mSeatPosition = seatPosition;
+    mHand = initialHand;
+}
+
+void Player::shiftSeatPosition() {
+    mSeatPosition == North ? mSeatPosition = East :
+       mSeatPosition = static_cast<SeatPosition>(static_cast<int>(mSeatPosition) + 1);
+}
+
+void Player::makeDiscardTile(mahjong::Tile tile) {
+    mHand.discardTile(tile);
+}
+
+void Player::makeDiscardTile(int index) {
+    mHand.discardTile(index);
+}

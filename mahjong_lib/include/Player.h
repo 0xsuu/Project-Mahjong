@@ -17,15 +17,55 @@
 #ifndef MAHJONG_LIB_PLAYER_H
 #define MAHJONG_LIB_PLAYER_H
 
+#include <string>
+#include <vector>
+
+#include "Hand.h"
+#include "Tile.h"
+
+#define ACTION_STATE_WIN   0b00001;
+#define ACTION_STATE_CHI   0b00010;
+#define ACTION_STATE_PONG  0b00100;
+#define ACTION_STATE_KANG  0b01000;
+#define ACTION_STATE_CKANG 0b10000;
+
 namespace mahjong {
+enum SeatPosition {
+    East = 0,
+    South = 1,
+    West = 2,
+    North = 3
+};
 
 class Player {
  public:
+    Player(std::string playerName) : mPlayerName(playerName) {}
+
+    void setupPlayer(int ID, SeatPosition seatPosition, Hand initialHand);
+
+    void shiftSeatPosition();
+
+    // Listener interface.
+    virtual void onNextPlayerDiscard(int actionState, Tile tile); // AS: Chi, Pong, Kang, Win
+    virtual Tile onYourTurn(int actionState); // AS: CKang, Win
+    virtual void onCanWin();
+
+    // Accessers.
+    int getID() { return mID; }
+    std::string getPlayerName() { return mPlayerName; }
+    SeatPosition getSeatPosition() { return mSeatPosition; }
+    Hand getHand() { return mHand; }
+
+ protected:
+    void makeDiscardTile(Tile tile);
+    void makeDiscardTile(int index);
 
  private:
-
+    int mID;
+    std::string mPlayerName;
+    SeatPosition mSeatPosition;
+    Hand mHand;
 };
-
 } // namespace mahjong.
 
 #endif // MAHJONG_LIB_PLAYER_H
