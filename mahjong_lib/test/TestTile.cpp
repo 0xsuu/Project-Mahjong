@@ -49,6 +49,7 @@ TEST(TileTest, PrintableTest) {
     Tile C3(Handed, Character, 3);
     Tile D4(Handed, Dot, 4);
     Tile D5(Handed, Dot, 5);
+    Tile D5D(Handed, Dot, 5, true);
     Tile D6(Handed, Dot, 6);
     Tile B7(Handed, Bamboo, 7);
     Tile B8(Handed, Bamboo, 8);
@@ -63,11 +64,30 @@ TEST(TileTest, PrintableTest) {
 
     testing::internal::CaptureStdout();
     std::cout << C1.getPrintable() << C2.getPrintable() << C3.getPrintable() <<
-              D4.getPrintable() << D5.getPrintable() << D6.getPrintable() <<
+              D4.getPrintable() << D5.getPrintable() << D5D.getPrintable() << D6.getPrintable() <<
               B7.getPrintable() << B8.getPrintable() << B9.getPrintable() <<
               S1.getPrintable() << S2.getPrintable() << S3.getPrintable() <<
               S4.getPrintable() << S5.getPrintable() << S6.getPrintable() <<
               S7.getPrintable();
     std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(output, "一萬二萬三萬四筒五筒六筒七條八條九條東南西北中發白");
+    EXPECT_EQ(output, "一萬二萬三萬四筒五筒.五筒六筒七條八條九條東南西北中發白");
+}
+
+TEST(TileTest, DoraTileTest) {
+    Tile testTile(Melded, Dot, 5, true);
+    EXPECT_TRUE(testTile.isDora()) << "Dora D5";
+    EXPECT_EQ(testTile.getNumber(), 5) << "Dora D5";
+    Tile testTile2(Melded, Special, 5);
+    EXPECT_FALSE(testTile2.isDora());
+    Tile testTile3(Melded, Dot, 7);
+    EXPECT_EQ(testTile3.getNumber(), 7);
+    Tile testTile4(Melded, Dot, 2);
+    EXPECT_EQ(testTile4.getNumber(), 2);
+    Tile testTile5(Melded, Dot, 5);
+    EXPECT_FALSE(testTile5.isDora()) << "Not Dora D5";
+    EXPECT_EQ(testTile5.getNumber(), 5) << "Not Dora D5";
+    Tile testTile6(Melded, Special, 6);
+    EXPECT_EQ(testTile6.getNumber(), 6);
+    Tile testTile7(Melded, Special, 2);
+    EXPECT_EQ(testTile7.getNumber(), 2);
 }
