@@ -13,33 +13,3 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-
-#ifndef MAHJONG_LIB_BOARD_H
-#define MAHJONG_LIB_BOARD_H
-
-#include <string>
-#include <vector>
-
-#include "Hand.h"
-#include "Player.h"
-
-namespace mahjong {
-
-class Board {
- public:
-    Board(std::vector<Player> players, bool enableDora, int doraStackSize);
-
-    void setup();
-
- private:
-    int mPlayerCount;
-    std::vector<Player> mPlayers;
-    bool mEnableDora;
-    int mDoraStackSize;
-
-    // Round Wind.
-};
-
-} // namespace mahjong.
-
-#endif // MAHJONG_LIB_BOARD_H
