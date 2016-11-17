@@ -14,4 +14,43 @@
 //  limitations under the License.
 //
 
+#include <stdexcept>
+#include <iostream>
+
 #include "TileStack.h"
+
+using std::vector;
+
+using mahjong::TileStack;
+
+TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount) {
+    mTileSetType = tileSetType;
+    mEnableDoraTiles = doraTile;
+    mPlayingTileCount = static_cast<int>(tileSetType) - notPlayingCount;
+
+    vector<Tile> candidateTiles;
+    switch (tileSetType) {
+        case JAPANESE_MAHJONG_TILES_COUNT:
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 1; j <= 9; ++j) {
+                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Character, j));
+                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Dot, j));
+                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Bamboo, j));
+                    if (j <= 7) {
+                        candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Special, j));
+                    }
+                }
+            }
+            break;
+        case COMPETITIVE_MAHJONG_TILES_COUNT:
+            // Not implemented.
+            break;
+        default:
+            throw std::invalid_argument("Tile Set Type not recognised.");
+    }
+}
+
+int TileStack::throwDice() {
+    std::uniform_int_distribution<int> diceDistribution(1, 6);
+    return diceDistribution(mRandomDevice);
+}

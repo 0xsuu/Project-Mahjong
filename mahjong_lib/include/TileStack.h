@@ -17,7 +17,17 @@
 #ifndef MAHJONG_LIB_TILESTACK_H
 #define MAHJONG_LIB_TILESTACK_H
 
-namespace Mahjong {
+#include <random>
+#include <vector>
+
+#include "Tile.h"
+
+enum TileSetType {
+    COMPETITIVE_MAHJONG_TILES_COUNT = 144,
+    JAPANESE_MAHJONG_TILES_COUNT = 136
+};
+
+namespace mahjong {
 
 class TileStack {
  public:
@@ -30,7 +40,22 @@ class TileStack {
      * @param notPlayingCount Some leftover tiles for
      * @return
      */
-    TileStack(int tileCount, bool doraTile, int notPlayingCount);
+    TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount);
+
+    /**
+     * Throw a dice.
+     *
+     * @return Dice point.
+     */
+    int throwDice();
+
+ private:
+    TileSetType mTileSetType;
+    int mPlayingTileCount;
+    bool mEnableDoraTiles;
+
+    std::random_device mRandomDevice;
+    std::vector<Tile> mRemainTiles;
 };
 
 }

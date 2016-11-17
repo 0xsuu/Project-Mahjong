@@ -14,4 +14,34 @@
 //  limitations under the License.
 //
 
+#include <numeric>
+#include <vector>
+
 #include <gtest/gtest.h>
+
+#include <TileStack.h>
+
+using std::vector;
+
+using mahjong::TileStack;
+
+TEST(TestTileStack, TileStackDice) {
+    TileStack tileStack(JAPANESE_MAHJONG_TILES_COUNT, false, 0);
+    vector<int> diceCount = {0, 0, 0, 0, 0, 0};
+    for (int i = 0; i < 100000; ++i) {
+        diceCount[tileStack.throwDice() - 1] ++;
+    }
+
+    double sum = std::accumulate(diceCount.begin(), diceCount.end(), 0);
+
+    EXPECT_NEAR(1.0 / 6.0, diceCount[0] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[1] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[2] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[3] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[4] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[5] / sum, 0.01);
+}
+
+TEST(TestTileStack, TileStackRandomDrawTile) {
+
+}
