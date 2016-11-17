@@ -22,12 +22,12 @@
 
 #include "Tile.h"
 
-enum TileSetType {
-    COMPETITIVE_MAHJONG_TILES_COUNT = 144,
-    JAPANESE_MAHJONG_TILES_COUNT = 136
-};
-
 namespace mahjong {
+
+enum TileSetType {
+    COMPETITIVE_MAHJONG = 144,
+    JAPANESE_MAHJONG = 136
+};
 
 class TileStack {
  public:
@@ -48,6 +48,20 @@ class TileStack {
      * @return Dice point.
      */
     int throwDice();
+
+    /**
+     * Draw a tile.
+     *
+     * @return One random tile from remaining tile stack.
+     */
+    Tile drawTile();
+
+    /**
+     * Return remain tile stack is empty.
+     *
+     * @return Empty or not
+     */
+    bool isEmpty();
 
  private:
     TileSetType mTileSetType;
