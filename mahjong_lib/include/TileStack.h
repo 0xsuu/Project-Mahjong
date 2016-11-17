@@ -65,7 +65,7 @@ class TileStack {
 
  private:
     TileSetType mTileSetType;
-    int mPlayingTileCount;
+    int mNonPlayingTileCount;
     bool mEnableDoraTiles;
 
     std::random_device mRandomDevice;

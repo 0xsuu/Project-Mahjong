@@ -75,5 +75,9 @@ TEST(TestTileStack, TileStackDrawAllTiles) {
     }
     ASSERT_TRUE(tileStack.isEmpty());
 
-    std::for_each(tileSet.begin(), tileSet.end(), [](int &c) { EXPECT_EQ(c, 4); });
+    int count = 0;
+    std::for_each(tileSet.begin(), tileSet.end(), [&count](int &c) {
+        EXPECT_EQ(c, 4) << "Wrong ID: " << count;
+        count++;
+    });
 }

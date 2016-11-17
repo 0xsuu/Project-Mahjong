@@ -26,7 +26,7 @@ using mahjong::Tile;
 TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount) {
     mTileSetType = tileSetType;
     mEnableDoraTiles = doraTile;
-    mPlayingTileCount = static_cast<int>(tileSetType) - notPlayingCount;
+    mNonPlayingTileCount = notPlayingCount;
 
     vector<Tile> candidateTiles;
     switch (tileSetType) {
@@ -51,7 +51,7 @@ TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount
 
     for (int i = 0; i < static_cast<int>(tileSetType); ++i) {
         while(candidateTiles.size() > 0) {
-            std::uniform_int_distribution<unsigned long> candidateDistribution(0, candidateTiles.size());
+            std::uniform_int_distribution<unsigned long> candidateDistribution(0, candidateTiles.size() - 1);
             unsigned long removeIndex = candidateDistribution(mRandomDevice);
             mRemainTiles.push_back(candidateTiles[removeIndex]);
             candidateTiles.erase(candidateTiles.begin() + removeIndex);
@@ -71,5 +71,5 @@ Tile TileStack::drawTile() {
 }
 
 bool TileStack::isEmpty() {
-    return mRemainTiles.size() == 0;
+    return mRemainTiles.size() == mNonPlayingTileCount;
 }
