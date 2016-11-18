@@ -115,8 +115,13 @@ class Hand {
      */
     bool testWin();
 
+    std::vector<Tile> canChi(Tile tile);
+    bool canPong(Tile tile);
+    bool canKang(Tile tile);
+    bool canRichii(Tile tile);
+
     /**
-     * Accessers.
+     * Accessors.
      */
     Tile getTile(int n) { return mHand[n]; }
     std::vector<Tile> getHand() { return mHand; }

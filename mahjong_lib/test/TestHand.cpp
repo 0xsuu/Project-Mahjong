@@ -267,3 +267,63 @@ TEST(TestHand, TestWinningJudgement_Failure) {
     EXPECT_FALSE(h.testWin());
 }
 
+TEST(TestHand, TestCanChi) {
+    Hand h({Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Dot, 1),
+            Tile(Handed, Dot, 2),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Dot, 4),
+            Tile(Handed, Dot, 5),
+            Tile(Handed, Special, 1),
+            Tile(Handed, Special, 2),
+            Tile(Handed, Special, 3)});
+    EXPECT_EQ(h.canChi(Tile(Handed, Dot, 1)).size(), 2);
+    EXPECT_EQ(h.canChi(Tile(Handed, Dot, 2)).size(), 4);
+    EXPECT_EQ(h.canChi(Tile(Handed, Dot, 3)).size(), 6);
+    EXPECT_EQ(h.canChi(Tile(Handed, Dot, 4)).size(), 4);
+    EXPECT_EQ(h.canChi(Tile(Handed, Dot, 5)).size(), 2);
+    EXPECT_EQ(h.canChi(Tile(Handed, Dot, 6)).size(), 2);
+    EXPECT_EQ(h.canChi(Tile(Handed, Dot, 7)).size(), 0);
+    EXPECT_EQ(h.canChi(Tile(Handed, Character, 1)).size(), 2);
+    EXPECT_EQ(h.canChi(Tile(Handed, Character, 2)).size(), 2);
+    EXPECT_EQ(h.canChi(Tile(Handed, Character, 3)).size(), 2);
+    EXPECT_EQ(h.canChi(Tile(Handed, Character, 4)).size(), 2);
+    EXPECT_EQ(h.canChi(Tile(Handed, Special, 2)).size(), 0);
+}
+
+TEST(TestHand, TestCanPong) {
+    Hand h({Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3)});
+    EXPECT_TRUE(h.canPong(Tile(Handed, Character, 1)));
+    EXPECT_TRUE(h.canPong(Tile(Handed, Character, 2)));
+    EXPECT_TRUE(h.canPong(Tile(Handed, Character, 3)));
+    EXPECT_FALSE(h.canPong(Tile(Handed, Character, 4)));
+    EXPECT_FALSE(h.canPong(Tile(Handed, Character, 5)));
+}
+
+TEST(TestHand, TestCanKang) {
+    Hand h({Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 3)});
+    EXPECT_TRUE(h.canKang(Tile(Handed, Character, 1)));
+    EXPECT_FALSE(h.canKang(Tile(Handed, Character, 2)));
+    EXPECT_FALSE(h.canKang(Tile(Handed, Character, 3)));
+    EXPECT_FALSE(h.canKang(Tile(Handed, Character, 4)));
+    EXPECT_FALSE(h.canKang(Tile(Handed, Character, 5)));
+}

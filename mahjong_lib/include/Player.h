@@ -50,7 +50,7 @@ class Player {
     virtual Tile onYourTurn(int actionState); // AS: CKang, Win
     virtual void onCanWin();
 
-    // Accessers.
+    // Accessors.
     int getID() { return mID; }
     std::string getPlayerName() { return mPlayerName; }
     SeatPosition getSeatPosition() { return mSeatPosition; }

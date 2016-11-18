@@ -141,3 +141,38 @@ bool Hand::testWin() {
     }
     return false;
 }
+
+vector<Tile> Hand::canChi(Tile tile) {
+    if (tile.getType() == Special) {
+        return {};
+    }
+
+    auto itNext = std::find(mHand.begin(), mHand.end(), tile + 1);
+    auto itNextNext = std::find(mHand.begin(), mHand.end(), tile + 2);
+    auto itPrev = std::find(mHand.begin(), mHand.end(), tile - 1);
+    auto itPrevPrev = std::find(mHand.begin(), mHand.end(), tile - 2);
+
+    vector<Tile> retVec;
+    if (itNext != mHand.end() && itNextNext != mHand.end()) {
+        retVec.push_back(*itNext);
+        retVec.push_back(*itNextNext);
+    }
+    if (itNext != mHand.end() && itPrev != mHand.end()) {
+        retVec.push_back(*itNext);
+        retVec.push_back(*itPrev);
+    }
+    if (itPrev != mHand.end() && itPrevPrev != mHand.end()) {
+        retVec.push_back(*itPrev);
+        retVec.push_back(*itPrevPrev);
+    }
+
+    return retVec;
+}
+
+bool Hand::canPong(Tile tile) {
+    return std::count(mHand.begin(), mHand.end(), tile) >= 2;
+}
+
+bool Hand::canKang(Tile tile) {
+    return std::count(mHand.begin(), mHand.end(), tile) >= 3;
+}
