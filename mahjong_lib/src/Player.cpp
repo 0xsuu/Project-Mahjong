@@ -14,16 +14,16 @@
 //  limitations under the License.
 //
 
-#include "Player.h"
+#include <Board.h>
 
 using std::string;
 
 using mahjong::Hand;
-using mahjong::SeatPosition;
+using mahjong::Wind;
 using mahjong::Player;
 
 void Player::setupPlayer(int ID,
-                         mahjong::SeatPosition seatPosition,
+                         mahjong::Wind seatPosition,
                          mahjong::Hand initialHand) {
     mID = ID;
     mSeatPosition = seatPosition;
@@ -32,7 +32,7 @@ void Player::setupPlayer(int ID,
 
 void Player::shiftSeatPosition() {
     mSeatPosition == North ? mSeatPosition = East :
-       mSeatPosition = static_cast<SeatPosition>(static_cast<int>(mSeatPosition) + 1);
+       mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);
 }
 
 void Player::makeDiscardTile(mahjong::Tile tile) {

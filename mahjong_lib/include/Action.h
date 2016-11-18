@@ -14,29 +14,36 @@
 //  limitations under the License.
 //
 
-#ifndef MAHJONG_LIB_GAME_H
-#define MAHJONG_LIB_GAME_H
+#ifndef MAHJONG_LIB_ACTION_H
+#define MAHJONG_LIB_ACTION_H
 
-#include <string>
-#include <vector>
+#include "Tile.h"
 
 namespace mahjong {
-
-class Game {
- public:
-    Game(std::vector<Player> players, int roundCount) :
-            mPlayers(players), mRoundCount(roundCount) {}
-
-    void startGame();
-
-    // Listener interfaces.
-    void onRoundStart();
-    void onRoundFinished(bool drained, Player winner);
- private:
-    std::vector<Player> mPlayers;
-    int mRoundCount;
+enum ActionState {
+    Pass,
+    Win,
+    Chi,
+    Pong,
+    Kang,
+    ConcealedKang,
+    Richii
 };
 
+class Action {
+ public:
+    Action() {
+        mActionState = Pass;
+    }
+    Action(ActionState actionState, Tile tile) : mActionState(actionState), mTile(tile) {}
+
+    ActionState getActionState() { return mActionState; }
+    Tile getTile() { return mTile; }
+
+ private:
+    ActionState mActionState;
+    Tile mTile;
+};
 } // namespace mahjong.
 
-#endif // MAHJONG_LIB_GAME_H
+#endif // MAHJONG_LIB_ACTION_H

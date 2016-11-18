@@ -22,14 +22,34 @@
 
 #include "Hand.h"
 #include "Player.h"
+#include "TileStack.h"
 
 namespace mahjong {
+enum Wind {
+    East = 0,
+    South = 1,
+    West = 2,
+    North = 3
+};
 
 class Board {
  public:
-    Board(std::vector<Player> players, bool enableDora, int doraStackSize);
+    Board(std::vector<Player> players, bool enableDora, int doraStackSize) :
+            mPlayers(players), mEnableDora(enableDora), mDoraStackSize(doraStackSize) {}
 
-    void setup();
+    /**
+     * Step 1: Setup TileStack.
+     * Step 2: Assign random IDs, seat positions and initial hands.
+     * Step 3: Sort players by wind.
+     *
+     * @param tileSetType
+     * @param roundWind
+     */
+    void setup(TileSetType tileSetType, Wind roundWind);
+
+    std::vector<Action> proceedToNextPlayer();
+
+    void printBoard(int PlayerID);
 
  private:
     int mPlayerCount;
@@ -37,7 +57,11 @@ class Board {
     bool mEnableDora;
     int mDoraStackSize;
 
-    // Round Wind.
+    Wind mRoundWind;
+
+    TileStack mTileStack;
+
+    int mCurrentPlayerIndex = 0;
 };
 
 } // namespace mahjong.
