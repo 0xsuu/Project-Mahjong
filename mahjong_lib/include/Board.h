@@ -20,15 +20,17 @@
 #include <string>
 #include <vector>
 
+#include "Game.h"
 #include "Hand.h"
 #include "Player.h"
+#include "TileGroup.h"
 #include "TileStack.h"
 
 namespace mahjong {
 class Board {
  public:
-    Board(std::vector<Player> players, bool enableDora, int doraStackSize) :
-            mPlayers(players), mEnableDora(enableDora), mDoraStackSize(doraStackSize) {}
+    Board(Game game, std::vector<Player> players, bool enableDora, int doraStackSize) :
+            mGame(game), mPlayers(players), mEnableDora(enableDora), mDoraStackSize(doraStackSize) {}
 
     /**
      * Step 1: Setup TileStack.
@@ -39,12 +41,14 @@ class Board {
      * @param roundWind
      */
     void setup(TileSetType tileSetType, Wind roundWind);
+    void reset();
 
     std::vector<Action> proceedToNextPlayer();
 
     void printBoard(int PlayerID);
 
  private:
+    Game mGame;
     int mPlayerCount;
     std::vector<Player> mPlayers;
     bool mEnableDora;
@@ -54,7 +58,7 @@ class Board {
     //TileStack mTileStack;
     int mCurrentPlayerIndex = 0;
 
-    std::vector<Hand> discardedTiles;
+    std::vector<TileGroup> discardedTiles;
 };
 
 } // namespace mahjong.

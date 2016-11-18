@@ -30,7 +30,7 @@ TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount
 
     vector<Tile> candidateTiles;
     switch (tileSetType) {
-        case JAPANESE_MAHJONG:
+        case JAPANESE_MAHJONG_TILE_SET:
             for (int i = 1; i <= 9; ++i) {
                 for (int j = 0; j < 4; ++j) {
                     candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Character, i));
@@ -42,7 +42,7 @@ TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount
                 }
             }
             break;
-        case COMPETITIVE_MAHJONG:
+        case COMPETITIVE_MAHJONG_TILE_SET:
             // Not implemented.
             break;
         default:

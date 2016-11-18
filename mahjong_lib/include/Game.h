@@ -30,8 +30,10 @@ class Game {
     void startGame();
 
     // Listener interfaces.
-    void onRoundStart();
-    void onRoundFinished(bool drained, Player winner);
+    virtual void onRoundStart();
+    virtual void onTileDrawToPlayer(Player player, Tile tile);
+    virtual void onPlayerDiscardTile(Player player, Tile tile);
+    virtual void onRoundFinished(bool drained, Player winner);
  private:
     std::vector<Player> mPlayers;
     int mRoundCount;

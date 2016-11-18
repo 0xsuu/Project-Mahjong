@@ -25,8 +25,8 @@
 namespace mahjong {
 
 enum TileSetType {
-    COMPETITIVE_MAHJONG = 144,
-    JAPANESE_MAHJONG = 136
+    COMPETITIVE_MAHJONG_TILE_SET = 144,
+    JAPANESE_MAHJONG_TILE_SET = 136
 };
 
 class TileStack {
