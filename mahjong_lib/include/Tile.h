@@ -110,40 +110,40 @@ class Tile {
      *
      * @return Flag
      */
-    TileFlag getFlag();
+    TileFlag getFlag() const;
     /**
      * Get this tile's type.
      *
      * @return Type
      */
-    TileType getType();
+    TileType getType() const;
     /**
      * Get this tile's number.
      *
      * @return Number
      */
-    int getNumber();
+    int getNumber() const;
 
     /**
      * Get if this tile is a dora tile.
      *
      * @return Is Dora Tile
      */
-    bool isDora();
+    bool isDora() const;
 
     /**
      * Get entire data.
      *
      * @return mTileData
      */
-    uint8_t getData() { return mTileData; }
+    uint8_t getData() const { return mTileData; }
 
     /**
      * Get the string for display.
      *
      * @return A string ready for print in terminal.
      */
-    std::string getPrintable();
+    std::string getPrintable() const;
 
     /**
      * Set this tile to meld.
@@ -159,6 +159,7 @@ class Tile {
     bool operator<(Tile t) const;
     bool operator<=(Tile t) const;
     Tile operator+(int n) const;
+    Tile operator-(int n) const;
 
  private:
     uint8_t mTileData = 0; //!< The byte and the only stores the actual data of the tile.
@@ -168,16 +169,16 @@ class Tile {
      *
      * @return Type in 2 bits.
      */
-    inline uint8_t getTypeID();
+    inline uint8_t getTypeID() const;
     /**
      * Get this tile's number ID.
      *
      * @return Number
      */
-    inline int getNumberID();
+    inline int getNumberID() const;
 
-    inline int numberIDToNumber(int id);
-    inline int numberToNumberID(TileType type, int id, bool dora);
+    inline int numberIDToNumber(int id) const;
+    inline int numberToNumberID(TileType type, int id, bool dora) const;
 };
 
 } // namespace mahjong

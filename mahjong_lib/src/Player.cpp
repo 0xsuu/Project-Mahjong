@@ -14,32 +14,31 @@
 //  limitations under the License.
 //
 
-#ifndef MAHJONG_LIB_BOARD_H
-#define MAHJONG_LIB_BOARD_H
-
-#include <string>
-#include <vector>
-
-#include "Hand.h"
 #include "Player.h"
 
-namespace mahjong {
+using std::string;
 
-class Board {
- public:
-    Board(std::vector<Player> players, bool enableDora, int doraStackSize);
+using mahjong::Hand;
+using mahjong::SeatPosition;
+using mahjong::Player;
 
-    void setup();
+void Player::setupPlayer(int ID,
+                         mahjong::SeatPosition seatPosition,
+                         mahjong::Hand initialHand) {
+    mID = ID;
+    mSeatPosition = seatPosition;
+    mHand = initialHand;
+}
 
- private:
-    int mPlayerCount;
-    std::vector<Player> mPlayers;
-    bool mEnableDora;
-    int mDoraStackSize;
+void Player::shiftSeatPosition() {
+    mSeatPosition == North ? mSeatPosition = East :
+       mSeatPosition = static_cast<SeatPosition>(static_cast<int>(mSeatPosition) + 1);
+}
 
-    // Round Wind.
-};
+void Player::makeDiscardTile(mahjong::Tile tile) {
+    mHand.discardTile(tile);
+}
 
-} // namespace mahjong.
-
-#endif // MAHJONG_LIB_BOARD_H
+void Player::makeDiscardTile(int index) {
+    mHand.discardTile(index);
+}

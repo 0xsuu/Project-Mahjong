@@ -14,4 +14,70 @@
 //  limitations under the License.
 //
 
+#include <numeric>
+#include <vector>
+
 #include <gtest/gtest.h>
+
+#include <TileStack.h>
+
+using std::vector;
+
+using mahjong::TileStack;
+
+TEST(TestTileStack, TileStackCreation) {
+    TileStack tileStack(mahjong::JAPANESE_MAHJONG, false, 0);
+    TileStack tileStack2(mahjong::COMPETITIVE_MAHJONG, false, 0);
+    (void) tileStack;
+    (void) tileStack2;
+}
+
+TEST(TestTileStack, TileStackDice) {
+    TileStack tileStack(mahjong::JAPANESE_MAHJONG, false, 0);
+    vector<int> diceCount = {0, 0, 0, 0, 0, 0};
+    for (int i = 0; i < 100000; ++i) {
+        diceCount[tileStack.throwDice() - 1] ++;
+    }
+
+    double sum = std::accumulate(diceCount.begin(), diceCount.end(), 0);
+
+    EXPECT_NEAR(1.0 / 6.0, diceCount[0] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[1] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[2] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[3] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[4] / sum, 0.01);
+    EXPECT_NEAR(1.0 / 6.0, diceCount[5] / sum, 0.01);
+}
+
+TEST(TestTileStack, TileStackDrawAllTiles) {
+    TileStack tileStack(mahjong::JAPANESE_MAHJONG, false, 0);
+    vector<int> tileSet(9 * 3 + 7, 0);
+    for (int i = 0; i < static_cast<int>(mahjong::JAPANESE_MAHJONG); ++i) {
+        mahjong::Tile tile = tileStack.drawTile();
+        int offset;
+        switch (tile.getType()) {
+            case mahjong::Character:
+                offset = 0;
+                break;
+            case mahjong::Dot:
+                offset = 1;
+                break;
+            case mahjong::Bamboo:
+                offset = 2;
+                break;
+            case mahjong::Special:
+                offset = 3;
+                break;
+            default:
+                FAIL();
+        }
+        tileSet[offset * 9 + tile.getNumber() - TILE_NUMBER_OFFSET]++;
+    }
+    ASSERT_TRUE(tileStack.isEmpty());
+
+    int count = 0;
+    std::for_each(tileSet.begin(), tileSet.end(), [&count](int &c) {
+        EXPECT_EQ(c, 4) << "Wrong ID: " << count;
+        count++;
+    });
+}

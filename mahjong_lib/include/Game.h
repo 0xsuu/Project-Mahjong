@@ -14,3 +14,21 @@
 //  limitations under the License.
 //
 
+#ifndef MAHJONG_LIB_GAME_H
+#define MAHJONG_LIB_GAME_H
+
+#include <string>
+#include <vector>
+
+namespace mahjong {
+
+class Game {
+ public:
+
+ private:
+
+};
+
+} // namespace mahjong.
+
+#endif // MAHJONG_LIB_GAME_H

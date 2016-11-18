@@ -27,7 +27,7 @@ using mahjong::TileType;
 
 Tile::Tile(const TileFlag flag, const TileType type, const int number, bool dora) {
     // Make sure the number is legal.
-    assert(number <= 10 && number >= 1);
+    // assert(number <= 9 && number >= 1);
     if (dora) {
         assert(number == 5);
         assert(type != Special);
@@ -40,20 +40,20 @@ Tile::Tile(const uint8_t data) {
     mTileData = data;
 }
 
-TileFlag Tile::getFlag() {
+TileFlag Tile::getFlag() const {
     return static_cast<TileFlag>(mTileData & TILE_FLAG_FILTER);
 }
-TileType Tile::getType() {
+TileType Tile::getType() const {
     return static_cast<TileType>(mTileData & TILE_TYPE_FILTER);
 }
-int Tile::getNumber() {
+int Tile::getNumber() const {
     return numberIDToNumber(getNumberID());
 }
-bool Tile::isDora() {
+bool Tile::isDora() const {
     return getNumberID() == TILE_DORA_NUMBER_ID;
 }
 
-string Tile::getPrintable() {
+string Tile::getPrintable() const {
     return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumberID() - TILE_NUMBER_OFFSET] :
             MAHJONG_NUMBER[getNumberID() - TILE_NUMBER_OFFSET] + MAHJONG_TYPE[getTypeID()];
 }
@@ -80,23 +80,26 @@ bool Tile::operator<=(Tile t) const {
     return mTileData <= t.getData();
 }
 Tile Tile::operator+(int n) const {
-    return Tile(static_cast<uint8_t>(mTileData + n));
+    return Tile(getFlag(), getType(), numberToNumberID(getType(), getNumber() + n, false));
+}
+Tile Tile::operator-(int n) const {
+    return Tile(getFlag(), getType(), numberToNumberID(getType(), getNumber() - n, false));
 }
 
 // Private functions.
 
-inline uint8_t Tile::getTypeID() {
-    return static_cast<uint8_t >((mTileData & TILE_TYPE_FILTER) >> 4);
+inline uint8_t Tile::getTypeID() const {
+    return static_cast<uint8_t>((mTileData & TILE_TYPE_FILTER) >> 4);
 }
-inline int Tile::getNumberID() {
+inline int Tile::getNumberID() const {
     return mTileData & TILE_NUMBER_FILTER;
 }
 
-inline int Tile::numberIDToNumber(int id) {
+inline int Tile::numberIDToNumber(int id) const {
     return (getType() != Special && id > 5) ? id - 1 : id;
 }
 
-inline int Tile::numberToNumberID(TileType type, int number, bool dora = false) {
+inline int Tile::numberToNumberID(TileType type, int number, bool dora = false) const {
     if (type == Special) {
         return number;
     }
