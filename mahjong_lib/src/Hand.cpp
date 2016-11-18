@@ -24,30 +24,27 @@ using std::vector;
 using mahjong::Tile;
 using mahjong::Hand;
 
-Hand::Hand(vector<Tile> hand) {
-    mHand = hand;
-}
 
 void Hand::sort() {
-    std::sort(mHand.begin(), mHand.end());
+    std::sort(mTilesData.begin(), mTilesData.end());
 }
 
 void Hand::pickTile(Tile t) {
-    for (auto it = mHand.begin(); it < mHand.end(); it++) {
+    for (auto it = mTilesData.begin(); it < mTilesData.end(); it++) {
         if (t <= *it) {
-            mHand.insert(it, t);
+            mTilesData.insert(it, t);
             break;
         }
     }
 }
 
 void Hand::discardTile(int index) {
-    mHand.erase(mHand.begin() + index);
+    mTilesData.erase(mTilesData.begin() + index);
 }
 
 void Hand::discardTile(Tile tile) {
-    auto indexIt = std::find(mHand.begin(), mHand.end(), tile);
-    mHand.erase(indexIt);
+    auto indexIt = std::find(mTilesData.begin(), mTilesData.end(), tile);
+    mTilesData.erase(indexIt);
 }
 
 inline void winningHandSimple(bool &found, vector <Tile> *hand) {
@@ -105,7 +102,7 @@ inline void winningHandSimple(bool &found, vector <Tile> *hand) {
 }
 
 bool Hand::testWin() {
-    vector<Tile> hand(mHand);
+    vector<Tile> hand(mTilesData);
 
     // Removing all melded & concealed tiles.
     auto it = hand.begin();
@@ -147,21 +144,21 @@ vector<Tile> Hand::canChi(Tile tile) {
         return {};
     }
 
-    auto itNext = std::find(mHand.begin(), mHand.end(), tile + 1);
-    auto itNextNext = std::find(mHand.begin(), mHand.end(), tile + 2);
-    auto itPrev = std::find(mHand.begin(), mHand.end(), tile - 1);
-    auto itPrevPrev = std::find(mHand.begin(), mHand.end(), tile - 2);
+    auto itNext = std::find(mTilesData.begin(), mTilesData.end(), tile + 1);
+    auto itNextNext = std::find(mTilesData.begin(), mTilesData.end(), tile + 2);
+    auto itPrev = std::find(mTilesData.begin(), mTilesData.end(), tile - 1);
+    auto itPrevPrev = std::find(mTilesData.begin(), mTilesData.end(), tile - 2);
 
     vector<Tile> retVec;
-    if (itNext != mHand.end() && itNextNext != mHand.end()) {
+    if (itNext != mTilesData.end() && itNextNext != mTilesData.end()) {
         retVec.push_back(*itNext);
         retVec.push_back(*itNextNext);
     }
-    if (itNext != mHand.end() && itPrev != mHand.end()) {
+    if (itNext != mTilesData.end() && itPrev != mTilesData.end()) {
         retVec.push_back(*itNext);
         retVec.push_back(*itPrev);
     }
-    if (itPrev != mHand.end() && itPrevPrev != mHand.end()) {
+    if (itPrev != mTilesData.end() && itPrevPrev != mTilesData.end()) {
         retVec.push_back(*itPrev);
         retVec.push_back(*itPrevPrev);
     }
@@ -170,9 +167,9 @@ vector<Tile> Hand::canChi(Tile tile) {
 }
 
 bool Hand::canPong(Tile tile) {
-    return std::count(mHand.begin(), mHand.end(), tile) >= 2;
+    return std::count(mTilesData.begin(), mTilesData.end(), tile) >= 2;
 }
 
 bool Hand::canKang(Tile tile) {
-    return std::count(mHand.begin(), mHand.end(), tile) >= 3;
+    return std::count(mTilesData.begin(), mTilesData.end(), tile) >= 3;
 }

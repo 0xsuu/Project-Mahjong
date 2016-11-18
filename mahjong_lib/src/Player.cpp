@@ -23,7 +23,7 @@ using mahjong::Wind;
 using mahjong::Player;
 
 void Player::setupPlayer(int ID,
-                         mahjong::Wind seatPosition,
+                         Wind seatPosition,
                          mahjong::Hand initialHand) {
     mID = ID;
     mSeatPosition = seatPosition;

@@ -25,13 +25,6 @@
 #include "TileStack.h"
 
 namespace mahjong {
-enum Wind {
-    East = 0,
-    South = 1,
-    West = 2,
-    North = 3
-};
-
 class Board {
  public:
     Board(std::vector<Player> players, bool enableDora, int doraStackSize) :
@@ -58,10 +51,10 @@ class Board {
     int mDoraStackSize;
 
     Wind mRoundWind;
-
-    TileStack mTileStack;
-
+    //TileStack mTileStack;
     int mCurrentPlayerIndex = 0;
+
+    std::vector<Hand> discardedTiles;
 };
 
 } // namespace mahjong.

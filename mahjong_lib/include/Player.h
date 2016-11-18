@@ -25,11 +25,18 @@
 #include "Tile.h"
 
 namespace mahjong {
+enum Wind {
+    East = 0,
+    South = 1,
+    West = 2,
+    North = 3
+};
+
 class Player {
  public:
     Player(std::string playerName) : mPlayerName(playerName) {}
 
-    void setupPlayer(int ID, SeatPosition seatPosition, Hand initialHand);
+    void setupPlayer(int ID, Wind seatPosition, Hand initialHand);
 
     void shiftSeatPosition();
 
@@ -45,7 +52,7 @@ class Player {
     // Accessors.
     int getID() { return mID; }
     std::string getPlayerName() { return mPlayerName; }
-    SeatPosition getSeatPosition() { return mSeatPosition; }
+    Wind getSeatPosition() { return mSeatPosition; }
     Hand getHand() { return mHand; }
 
  protected:
@@ -55,7 +62,7 @@ class Player {
  private:
     int mID;
     std::string mPlayerName;
-    SeatPosition mSeatPosition;
+    Wind mSeatPosition;
     Hand mHand;
 };
 } // namespace mahjong.
