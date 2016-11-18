@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-#include <stdexcept>
+#include <algorithm>
 
 #include "TileStack.h"
 
@@ -28,16 +28,15 @@ TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount
     mEnableDoraTiles = doraTile;
     mNonPlayingTileCount = notPlayingCount;
 
-    vector<Tile> candidateTiles;
     switch (tileSetType) {
         case JAPANESE_MAHJONG_TILE_SET:
             for (int i = 1; i <= 9; ++i) {
                 for (int j = 0; j < 4; ++j) {
-                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Character, i));
-                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Dot, i));
-                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Bamboo, i));
+                    mRemainTiles.push_back(Tile(mahjong::Handed, mahjong::Character, i));
+                    mRemainTiles.push_back(Tile(mahjong::Handed, mahjong::Dot, i));
+                    mRemainTiles.push_back(Tile(mahjong::Handed, mahjong::Bamboo, i));
                     if (i <= 7) {
-                        candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Special, i));
+                        mRemainTiles.push_back(Tile(mahjong::Handed, mahjong::Special, i));
                     }
                 }
             }
@@ -49,14 +48,7 @@ TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount
             throw std::invalid_argument("Tile Set Type not recognised.");
     }
 
-    for (int i = 0; i < static_cast<int>(tileSetType); ++i) {
-        while(candidateTiles.size() > 0) {
-            std::uniform_int_distribution<unsigned long> candidateDistribution(0, candidateTiles.size() - 1);
-            unsigned long removeIndex = candidateDistribution(mRandomDevice);
-            mRemainTiles.push_back(candidateTiles[removeIndex]);
-            candidateTiles.erase(candidateTiles.begin() + removeIndex);
-        }
-    }
+    std::random_shuffle(mRemainTiles.begin(), mRemainTiles.end());
 }
 
 int TileStack::throwDice() {

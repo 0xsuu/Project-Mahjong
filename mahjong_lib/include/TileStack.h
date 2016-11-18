@@ -31,6 +31,7 @@ enum TileSetType {
 
 class TileStack {
  public:
+    TileStack() {}
     /**
      * Constructor for the Tile Stack, mainly aimed for the abstraction
      * of the randomicity of the game.

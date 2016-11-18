@@ -14,3 +14,30 @@
 //  limitations under the License.
 //
 
+#include <algorithm>
+
+#include "Board.h"
+
+using std::vector;
+
+using mahjong::Action;
+using mahjong::Board;
+
+void Board::setup(TileSetType tileSetType, Wind roundWind) {
+    std::random_device mRandomDevice;
+    std::uniform_int_distribution<unsigned int> IDDistribution(10000, 30000);
+    std::for_each(mPlayers.begin(), mPlayers.end(), [&](Player p))
+    //std::random_shuffle();
+}
+
+void Board::reset() {
+
+}
+
+vector<Action> Board::proceedToNextPlayer() {
+
+}
+
+void Board::printBoard(int PlayerID) {
+
+}

@@ -55,7 +55,7 @@ class Board {
     int mDoraStackSize;
 
     Wind mRoundWind;
-    //TileStack mTileStack;
+    TileStack mTileStack;
     int mCurrentPlayerIndex = 0;
 
     std::vector<TileGroup> discardedTiles;
