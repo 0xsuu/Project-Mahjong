@@ -59,7 +59,7 @@ class Board {
  protected:
     Game *mGame;
     int mPlayerCount;
-    std::vector<Player *> mPlayers;
+    std::vector<Player *> *mPlayers;
     bool mEnableDora;
     int mDoraStackSize;
 

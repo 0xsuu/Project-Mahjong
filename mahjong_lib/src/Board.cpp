@@ -27,18 +27,20 @@ using mahjong::Board;
 
 Board::Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool enableDora, int doraStackSize) :
         mGame(game), mEnableDora(enableDora), mDoraStackSize(doraStackSize) {
+    mPlayers = new vector<Player *>();
     if (p1 != nullptr) {
-        mPlayers.push_back(p1);
+        mPlayers->push_back(p1);
     }
     if (p2 != nullptr) {
-        mPlayers.push_back(p2);
+        mPlayers->push_back(p2);
     }
     if (p3 != nullptr) {
-        mPlayers.push_back(p3);
+        mPlayers->push_back(p3);
     }
     if (p4 != nullptr) {
-        mPlayers.push_back(p4);
+        mPlayers->push_back(p4);
     }
+    mPlayerCount = mPlayers->size();
 }
 
 void Board::setup(TileSetType tileSetType, Wind roundWind) {
@@ -51,17 +53,17 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mGame->onRoundStart();
 
     // Shuffle the players first, i.e. seat positions randomised.
-    std::random_shuffle(mPlayers.begin(), mPlayers.end());
+    std::random_shuffle(mPlayers->begin(), mPlayers->end());
 
     // Generate an unique ID for each player.
     std::random_device randomDevice;
     std::uniform_int_distribution<unsigned int> IDDistribution(10000, 30000);
 
     // Assign initial hands and other setups.
-    vector<Hand> initialHands(mPlayers.size(), Hand());
+    vector<Hand> initialHands(mPlayers->size(), Hand());
     for (int i = 0; i < 13; ++i) {
         int indexPlayer = 0;
-        std::for_each(mPlayers.begin(), mPlayers.end(), [&](Player *p) {
+        std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
             Tile t = mTileStack.drawTile();
             mGame->onTileDrawToPlayer(p, t);
             initialHands[indexPlayer].addTile(t);
@@ -69,14 +71,14 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
         });
     }
     int indexPlayer = 0;
-    std::for_each(mPlayers.begin(), mPlayers.end(), [&](Player *p) {
+    std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         Hand sortedHand = initialHands[indexPlayer];
         sortedHand.sort();
         p->setupPlayer(IDDistribution(randomDevice), Winds[indexPlayer], sortedHand);
         indexPlayer++;
     });
 
-    mCurrentPlayerIndex = mPlayers.begin();
+    mCurrentPlayerIndex = mPlayers->begin();
 }
 
 void Board::reset() {
@@ -89,7 +91,7 @@ void Board::shiftRoundWind() {
 }
 
 vector<Action> Board::proceedToNextPlayer() {
-    std::for_each(mPlayers.begin(), mPlayers.end(), [&](Player *p) {
+    std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
         Tile t = mTileStack.drawTile();
         mGame->onTileDrawToPlayer(p, t);
@@ -110,8 +112,8 @@ vector<Action> Board::proceedToNextPlayer() {
         }
     });
     mCurrentPlayerIndex++;
-    if (mCurrentPlayerIndex == mPlayers.end()) {
-        mCurrentPlayerIndex = mPlayers.begin();
+    if (mCurrentPlayerIndex == mPlayers->end()) {
+        mCurrentPlayerIndex = mPlayers->begin();
     }
 }
 

@@ -42,7 +42,10 @@ class Game {
     virtual void onRoundFinished(bool drained, Player *winner);
 
  protected:
-    std::vector<Player *> mPlayers;
+    Player* mPlayer1;
+    Player* mPlayer2;
+    Player* mPlayer3;
+    Player* mPlayer4;
     int mRoundCount;
 };
 

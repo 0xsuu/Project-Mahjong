@@ -21,20 +21,7 @@
 using mahjong::Game;
 
 Game::Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount)  :
-        mRoundCount(roundCount) {
-    if (p1 != nullptr) {
-        mPlayers.push_back(p1);
-    }
-    if (p2 != nullptr) {
-        mPlayers.push_back(p2);
-    }
-    if (p3 != nullptr) {
-        mPlayers.push_back(p3);
-    }
-    if (p4 != nullptr) {
-        mPlayers.push_back(p4);
-    }
-}
+        mPlayer1(p1), mPlayer2(p2), mPlayer3(p3), mPlayer4(p4), mRoundCount(roundCount) {}
 
 void Game::onRoundStart() {
     std::cerr << "Virtual function, do not call.\n";
