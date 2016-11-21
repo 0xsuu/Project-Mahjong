@@ -43,7 +43,7 @@ class TileGroup {
     Tile operator[](int index) { return getTile(index); }
     std::vector<Tile> getHand() { return mTilesData; }
 
- //protected:
+ protected:
     std::vector<Tile> mTilesData;
 };
 }
