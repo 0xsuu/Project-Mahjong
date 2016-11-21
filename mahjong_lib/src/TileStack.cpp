@@ -23,9 +23,13 @@ using std::vector;
 using mahjong::TileStack;
 using mahjong::Tile;
 
-TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount) {
+TileStack::TileStack(TileSetType tileSetType, bool enableDora, int notPlayingCount) {
+    setup(tileSetType, enableDora, notPlayingCount);
+}
+
+void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCount) {
     mTileSetType = tileSetType;
-    mEnableDoraTiles = doraTile;
+    mEnableDora = enableDora;
     mNonPlayingTileCount = notPlayingCount;
 
     switch (tileSetType) {
@@ -49,6 +53,10 @@ TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount
     }
 
     std::random_shuffle(mRemainTiles.begin(), mRemainTiles.end());
+}
+
+void TileStack::reset() {
+    setup(mTileSetType, mEnableDora, mNonPlayingTileCount);
 }
 
 int TileStack::throwDice() {

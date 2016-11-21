@@ -40,9 +40,10 @@ class TileGroup {
      * Accessors.
      */
     Tile getTile(int n) { return mTilesData[n]; }
+    Tile operator[](int index) { return getTile(index); }
     std::vector<Tile> getHand() { return mTilesData; }
 
- protected:
+ //protected:
     std::vector<Tile> mTilesData;
 };
 }

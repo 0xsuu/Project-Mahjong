@@ -29,18 +29,20 @@ namespace mahjong {
  */
 class Game {
  public:
-    Game(std::vector<Player> players, int roundCount) :
-            mPlayers(players), mRoundCount(roundCount) {}
+    Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount);
+    ~Game() {}
 
     void startGame();
 
     // Callback interfaces.
     virtual void onRoundStart();
-    virtual void onTileDrawToPlayer(Player player, Tile tile);
-    virtual void onPlayerDiscardTile(Player player, Tile tile);
-    virtual void onRoundFinished(bool drained, Player winner);
- private:
-    std::vector<Player> mPlayers;
+    virtual void onPlayerPass(Player *player);
+    virtual void onTileDrawToPlayer(Player *player, Tile tile);
+    virtual void onPlayerDiscardTile(Player *player, Tile tile);
+    virtual void onRoundFinished(bool drained, Player *winner);
+
+ protected:
+    std::vector<Player *> mPlayers;
     int mRoundCount;
 };
 

@@ -122,6 +122,10 @@ TEST(TestHand, PickTile) {
               Tile(Handed, Bamboo, 1)});
 
     EXPECT_EQ(h.getHand(), h2.getHand());
+
+    Hand h3;
+    h3.pickTile(Tile(Handed, Special, 1));
+    EXPECT_EQ(h3.getTile(0), Tile(Handed, Special, 1));
 }
 
 TEST(TestHand, DiscardTile) {

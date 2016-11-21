@@ -30,10 +30,14 @@ void Hand::sort() {
 }
 
 void Hand::pickTile(Tile t) {
-    for (auto it = mTilesData.begin(); it < mTilesData.end(); it++) {
-        if (t <= *it) {
-            mTilesData.insert(it, t);
-            break;
+    if (mTilesData.empty()) {
+        mTilesData.push_back(t);
+    } else {
+        for (auto it = mTilesData.begin(); it < mTilesData.end(); it++) {
+            if (t <= *it) {
+                mTilesData.insert(it, t);
+                break;
+            }
         }
     }
 }

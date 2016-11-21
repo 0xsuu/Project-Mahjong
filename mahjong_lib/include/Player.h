@@ -37,19 +37,22 @@ const Wind Winds[] = {East, South, West, North};
 class Player {
  public:
     Player(std::string playerName) : mPlayerName(playerName) {}
+    ~Player() {}
 
     void setupPlayer(int ID, Wind seatPosition, Hand initialHand);
 
     void shiftSeatPosition();
 
-    // Listeners interface.
+    // Callback interface.
     /**
      * This is called when each player plays.
      *
      * @param tile: The tile they discarded or the tile you received.
      * @return An ActionState indicate what action you gonna make.
      */
-    virtual ActionState onTurn(bool isMyTurn, Tile tile);
+    virtual Action onTurn(bool isMyTurn, Tile tile);
+
+    virtual void onOtherPlayerMakeAction(Player *player, Action action);
 
     // Accessors.
     int getID() { return mID; }
@@ -58,8 +61,8 @@ class Player {
     Hand getHand() { return mHand; }
 
  protected:
-    void makeDiscardTile(Tile tile);
-    void makeDiscardTile(int index);
+//    void makeDiscardTile(Tile tile);
+//    void makeDiscardTile(int index);
 
  private:
     int mID;

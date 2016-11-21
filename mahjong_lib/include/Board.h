@@ -32,8 +32,7 @@ namespace mahjong {
  */
 class Board {
  public:
-    Board(Game game, std::vector<Player> players, bool enableDora, int doraStackSize) :
-            mGame(game), mPlayers(players), mEnableDora(enableDora), mDoraStackSize(doraStackSize) {}
+    Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool enableDora, int doraStackSize);
 
     /**
      * Step 1: Setup TileStack.
@@ -49,20 +48,25 @@ class Board {
     void setup(TileSetType tileSetType, Wind roundWind);
     void reset();
 
+    void shiftRoundWind();
+
     std::vector<Action> proceedToNextPlayer();
 
     void printBoard(int PlayerID);
 
- private:
-    Game mGame;
+    void saveBoard();
+
+ protected:
+    Game *mGame;
     int mPlayerCount;
-    std::vector<Player> mPlayers;
+    std::vector<Player *> mPlayers;
     bool mEnableDora;
     int mDoraStackSize;
 
+    TileSetType mTileSetType;
     Wind mRoundWind;
     TileStack mTileStack;
-    int mCurrentPlayerIndex = 0;
+    std::vector<Player *>::iterator mCurrentPlayerIndex;
 
     std::vector<TileGroup> discardedTiles;
 };

@@ -22,6 +22,7 @@
 namespace mahjong {
 enum ActionState {
     Pass,
+    Discard,
     Win,
     Chi,
     Pong,

@@ -43,6 +43,9 @@ class TileStack {
      */
     TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount);
 
+    void setup(TileSetType tileSetType, bool doraTile, int notPlayingCount);
+    void reset();
+
     /**
      * Throw a dice.
      *
@@ -67,7 +70,7 @@ class TileStack {
  private:
     TileSetType mTileSetType;
     int mNonPlayingTileCount;
-    bool mEnableDoraTiles;
+    bool mEnableDora;
 
     std::random_device mRandomDevice;
     std::vector<Tile> mRemainTiles;
