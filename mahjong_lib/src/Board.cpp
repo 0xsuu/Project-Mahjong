@@ -15,6 +15,7 @@
 //
 
 #include <algorithm>
+#include <cassert>
 
 #include "Board.h"
 
@@ -24,10 +25,35 @@ using mahjong::Action;
 using mahjong::Board;
 
 void Board::setup(TileSetType tileSetType, Wind roundWind) {
-    std::random_device mRandomDevice;
+    // Does not supporting more than 4 players.
+    assert(mPlayers.size() <= 4);
+
+    // Callback.
+    mGame.onRoundStart();
+
+    // Shuffle the players first, i.e. seat positions randomised.
+    std::random_shuffle(mPlayers.begin(), mPlayers.end());
+
+    // Generate an unique ID for each player.
+    std::random_device randomDevice;
     std::uniform_int_distribution<unsigned int> IDDistribution(10000, 30000);
-    std::for_each(mPlayers.begin(), mPlayers.end(), [&](Player p))
-    //std::random_shuffle();
+
+    // Assign initial hands and other setups.
+    vector<Hand> initialHands(mPlayers.size(), Hand());
+    for (int i = 0; i < 14; ++i) {
+        int indexPlayer = 0;
+        std::for_each(mPlayers.begin(), mPlayers.end(), [&indexPlayer](Player &p) {
+            Tile t = mTileStack.drawTile();
+            mGame.onTileDrawToPlayer(p, t);
+            initialHands[indexPlayer].pickTile(t);
+            indexPlayer++;
+        });
+    }
+    int indexPlayer = 0;
+    std::for_each(mPlayers.begin(), mPlayers.end(), [&](Player &p) {
+        p.setupPlayer(IDDistribution(randomDevice), Winds[indexPlayer], initialHands[indexPlayer]);
+        indexPlayer++;
+    });
 }
 
 void Board::reset() {

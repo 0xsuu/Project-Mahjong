@@ -24,6 +24,9 @@
 
 namespace mahjong {
 
+/**
+ * An interface for implementing UI.
+ */
 class Game {
  public:
     Game(std::vector<Player> players, int roundCount) :
@@ -31,7 +34,7 @@ class Game {
 
     void startGame();
 
-    // Listener interfaces.
+    // Callback interfaces.
     virtual void onRoundStart();
     virtual void onTileDrawToPlayer(Player player, Tile tile);
     virtual void onPlayerDiscardTile(Player player, Tile tile);

@@ -32,6 +32,8 @@ enum Wind {
     North = 3
 };
 
+const Wind Winds[] = {East, South, West, North};
+
 class Player {
  public:
     Player(std::string playerName) : mPlayerName(playerName) {}

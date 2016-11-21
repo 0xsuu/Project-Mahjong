@@ -27,6 +27,9 @@
 #include "TileStack.h"
 
 namespace mahjong {
+/**
+ * This class controls the rules of the game.
+ */
 class Board {
  public:
     Board(Game game, std::vector<Player> players, bool enableDora, int doraStackSize) :
@@ -36,6 +39,9 @@ class Board {
      * Step 1: Setup TileStack.
      * Step 2: Assign random IDs, seat positions and initial hands.
      * Step 3: Sort players by wind.
+     *
+     * This should only be called once in a complete game.
+     * If you need to reset after a round, just call reset().
      *
      * @param tileSetType
      * @param roundWind
