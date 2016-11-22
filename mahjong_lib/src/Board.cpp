@@ -16,7 +16,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <map>
 
 #include "Board.h"
@@ -133,8 +132,4 @@ void Board::proceedToNextPlayer() {
     if (mCurrentPlayerIndex == mPlayers->end()) {
         mCurrentPlayerIndex = mPlayers->begin();
     }
-}
-
-void Board::printBoard(int PlayerID) {
-
 }

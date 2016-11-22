@@ -17,6 +17,8 @@
 #ifndef MAHJONG_LIB_TILEGROUP_H
 #define MAHJONG_LIB_TILEGROUP_H
 
+#include <algorithm>
+
 namespace mahjong {
 class TileGroup {
  public:
@@ -36,6 +38,14 @@ class TileGroup {
         mTilesData.push_back(t);
     }
 
+    std::string getPrintable() {
+        std::string printableString = "";
+        std::for_each(mTilesData.begin(), mTilesData.end(), [&printableString](Tile &t) {
+            printableString += t.getPrintable();
+            printableString += ' ';
+        });
+        return printableString;
+    }
     /**
      * Accessors.
      */
