@@ -4,13 +4,11 @@ set -e
 
 BASEDIR=$(dirname "$0")
 
-# Go to project directory.
-cd "$BASEDIR"/../
+cd "$BASEDIR"/
+PROJECT_MAHJONG="${PWD##*/}"
 
-if [ ! -d ./Project-Mahjong ]; then
-    echo "Project name must be Project-Mahjong!"
-    exit -1
-fi
+# Go to project directory.
+cd ../
 
 # Create build folder.
 mkdir -p ./build_mahjong
@@ -20,14 +18,14 @@ cd ./build_mahjong
 if [ "$1" == "xcode" ]; then
 	mkdir -p xcode
     cd xcode
-    cmake -G Xcode ../../Project-Mahjong/mahjong_lib/
+    cmake -G Xcode ../../"$PROJECT_MAHJONG"/mahjong_lib/
     open Mahjong-lib.xcodeproj
     exit 0
 fi
 
 # Run test.
 if [ "$1" == "test" ]; then
-    cmake ../Project-Mahjong/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
+    cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
     make libma_test
     ../libma_gtest/libma_test
     exit 0
@@ -39,6 +37,6 @@ if [ "$1" == "help" ]; then
     exit 0
 fi
 
-cmake ../Project-Mahjong/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
+cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
 make mahjong
 
