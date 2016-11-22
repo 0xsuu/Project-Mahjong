@@ -37,7 +37,7 @@ const Wind Winds[] = {East, South, West, North};
 class Player {
  public:
     Player(std::string playerName) : mPlayerName(playerName) {}
-    ~Player() {}
+    virtual ~Player() {}
 
     void setupPlayer(int ID, Wind seatPosition, Hand initialHand);
 

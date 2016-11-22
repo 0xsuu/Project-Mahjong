@@ -84,11 +84,11 @@ TEST(TestTileStack, TileStackDrawAllTiles) {
 
 TEST(TestTileStack, TileStackDrawRandomicity) {
     int count = 0;
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 12000; i++) {
         TileStack tileStack(mahjong::JAPANESE_MAHJONG_TILE_SET, false, 0);
         if (tileStack.drawTile() == mahjong::Tile(mahjong::Handed, mahjong::Character, 1)) {
             count++;
         }
     }
-    EXPECT_NEAR(4.0 / static_cast<double>(mahjong::JAPANESE_MAHJONG_TILE_SET), count / 10000.0, 0.001);
+    EXPECT_NEAR(4.0 / static_cast<double>(mahjong::JAPANESE_MAHJONG_TILE_SET), count / 12000.0, 0.005);
 }

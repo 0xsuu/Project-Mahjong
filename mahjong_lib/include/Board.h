@@ -33,6 +33,9 @@ namespace mahjong {
 class Board {
  public:
     Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool enableDora, int doraStackSize);
+    ~Board() {
+        delete mPlayers;
+    }
 
     /**
      * Step 1: Setup TileStack.
@@ -50,7 +53,7 @@ class Board {
 
     void shiftRoundWind();
 
-    std::vector<Action> proceedToNextPlayer();
+    void proceedToNextPlayer();
 
     void printBoard(int PlayerID);
 

@@ -19,7 +19,7 @@
 
 #include <random>
 #include <vector>
-
+#include <iostream>
 #include "Tile.h"
 
 namespace mahjong {
@@ -31,7 +31,7 @@ enum TileSetType {
 
 class TileStack {
  public:
-    TileStack() {}
+    TileStack();
     /**
      * Constructor for the Tile Stack, mainly aimed for the abstraction
      * of the randomicity of the game.
@@ -42,6 +42,9 @@ class TileStack {
      * @return
      */
     TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount);
+    ~TileStack() {        
+        delete mRemainTiles;
+    }
 
     void setup(TileSetType tileSetType, bool doraTile, int notPlayingCount);
     void reset();
@@ -73,7 +76,7 @@ class TileStack {
     bool mEnableDora;
 
     std::random_device mRandomDevice;
-    std::vector<Tile> mRemainTiles;
+    std::vector<Tile> *mRemainTiles;
 };
 
 }

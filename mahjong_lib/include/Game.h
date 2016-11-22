@@ -30,7 +30,7 @@ namespace mahjong {
 class Game {
  public:
     Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount);
-    ~Game() {}
+    virtual ~Game() {}
 
     void startGame();
 
@@ -42,10 +42,10 @@ class Game {
     virtual void onRoundFinished(bool drained, Player *winner);
 
  protected:
-    Player* mPlayer1;
-    Player* mPlayer2;
-    Player* mPlayer3;
-    Player* mPlayer4;
+    Player *mPlayer1;
+    Player *mPlayer2;
+    Player *mPlayer3;
+    Player *mPlayer4;
     int mRoundCount;
 };
 

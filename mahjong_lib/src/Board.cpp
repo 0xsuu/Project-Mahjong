@@ -27,7 +27,7 @@ using mahjong::Board;
 
 Board::Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool enableDora, int doraStackSize) :
         mGame(game), mEnableDora(enableDora), mDoraStackSize(doraStackSize) {
-    mPlayers = new vector<Player *>();
+    mPlayers = new vector<Player *>({});
     if (p1 != nullptr) {
         mPlayers->push_back(p1);
     }
@@ -90,7 +90,7 @@ void Board::shiftRoundWind() {
             mRoundWind = static_cast<Wind>(static_cast<int>(mRoundWind) + 1);
 }
 
-vector<Action> Board::proceedToNextPlayer() {
+void Board::proceedToNextPlayer() {
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
         Tile t = mTileStack.drawTile();

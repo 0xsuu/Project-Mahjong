@@ -23,7 +23,10 @@ using std::vector;
 using mahjong::TileStack;
 using mahjong::Tile;
 
-TileStack::TileStack(TileSetType tileSetType, bool enableDora, int notPlayingCount) {
+TileStack::TileStack() {
+    mRemainTiles = new vector<Tile>();
+}
+TileStack::TileStack(TileSetType tileSetType, bool enableDora, int notPlayingCount) : TileStack() {
     setup(tileSetType, enableDora, notPlayingCount);
 }
 
@@ -36,11 +39,11 @@ void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCo
         case JAPANESE_MAHJONG_TILE_SET:
             for (int i = 1; i <= 9; ++i) {
                 for (int j = 0; j < 4; ++j) {
-                    mRemainTiles.push_back(Tile(mahjong::Handed, mahjong::Character, i));
-                    mRemainTiles.push_back(Tile(mahjong::Handed, mahjong::Dot, i));
-                    mRemainTiles.push_back(Tile(mahjong::Handed, mahjong::Bamboo, i));
+                    mRemainTiles->push_back(Tile(mahjong::Handed, mahjong::Character, i));
+                    mRemainTiles->push_back(Tile(mahjong::Handed, mahjong::Dot, i));
+                    mRemainTiles->push_back(Tile(mahjong::Handed, mahjong::Bamboo, i));
                     if (i <= 7) {
-                        mRemainTiles.push_back(Tile(mahjong::Handed, mahjong::Special, i));
+                        mRemainTiles->push_back(Tile(mahjong::Handed, mahjong::Special, i));
                     }
                 }
             }
@@ -52,7 +55,7 @@ void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCo
             throw std::invalid_argument("Tile Set Type not recognised.");
     }
 
-    std::random_shuffle(mRemainTiles.begin(), mRemainTiles.end());
+    std::random_shuffle(mRemainTiles->begin(), mRemainTiles->end());
 }
 
 void TileStack::reset() {
@@ -65,11 +68,11 @@ int TileStack::throwDice() {
 }
 
 Tile TileStack::drawTile() {
-    Tile retTile = mRemainTiles.back();
-    mRemainTiles.pop_back();
+    Tile retTile = mRemainTiles->back();
+    mRemainTiles->pop_back();
     return retTile;
 }
 
 bool TileStack::isEmpty() {
-    return mRemainTiles.size() == mNonPlayingTileCount;
+    return mRemainTiles->size() == mNonPlayingTileCount;
 }
