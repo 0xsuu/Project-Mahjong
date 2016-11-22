@@ -50,9 +50,9 @@ class Player {
      * @param tile: The tile they discarded or the tile you received.
      * @return An ActionState indicate what action you gonna make.
      */
-    virtual Action onTurn(bool isMyTurn, Tile tile);
+    virtual Action onTurn(bool isMyTurn, Tile tile) = 0;
 
-    virtual void onOtherPlayerMakeAction(Player *player, Action action);
+    virtual void onOtherPlayerMakeAction(Player *player, Action action) = 0;
 
     // Accessors.
     int getID() { return mID; }

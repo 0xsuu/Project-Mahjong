@@ -29,20 +29,21 @@ namespace mahjong {
  */
 class Game {
  public:
-    Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount);
+    Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount) :
+            mPlayer1(p1), mPlayer2(p2), mPlayer3(p3), mPlayer4(p4), mRoundCount(roundCount) {}
     virtual ~Game() {}
 
     void startGame();
 
     // Callback interfaces.
-    virtual void onRoundStart();
-    virtual void onTileDrawToPlayer(Player *player, Tile tile);
-    virtual void onPlayerDiscardTile(Player *player, Tile tile);
-    virtual void onPlayerPass(Player *player);
-    virtual void onRoundFinished(bool drained, Player *winner);
+    virtual void onRoundStart() = 0;
+    virtual void onTileDrawToPlayer(Player *player, Tile tile) = 0;
+    virtual void onPlayerDiscardTile(Player *player, Tile tile) = 0;
+    virtual void onPlayerPass(Player *player) = 0;
+    virtual void onRoundFinished(bool drained, Player *winner) = 0;
 
     // Rule interfaces.
-    virtual int calculateScore(Hand mHand);
+    virtual int calculateScore(Hand mHand) = 0;
 
  protected:
     Player *mPlayer1;
@@ -50,6 +51,7 @@ class Game {
     Player *mPlayer3;
     Player *mPlayer4;
     int mRoundCount;
+    int mCurrentRound;
 };
 
 } // namespace mahjong.
