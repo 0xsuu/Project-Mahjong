@@ -20,50 +20,50 @@
 #include <string>
 #include <vector>
 
+#include "Action.h"
 #include "Hand.h"
 #include "Tile.h"
 
-#define ACTION_STATE_WIN   0b00001;
-#define ACTION_STATE_CHI   0b00010;
-#define ACTION_STATE_PONG  0b00100;
-#define ACTION_STATE_KANG  0b01000;
-#define ACTION_STATE_CKANG 0b10000;
-
 namespace mahjong {
-enum SeatPosition {
+enum Wind {
     East = 0,
     South = 1,
     West = 2,
     North = 3
 };
 
+const Wind Winds[] = {East, South, West, North};
+
 class Player {
  public:
     Player(std::string playerName) : mPlayerName(playerName) {}
+    virtual ~Player() {}
 
-    void setupPlayer(int ID, SeatPosition seatPosition, Hand initialHand);
+    void setupPlayer(int ID, Wind seatPosition, Hand initialHand);
 
     void shiftSeatPosition();
 
-    // Listener interface.
-    virtual void onNextPlayerDiscard(int actionState, Tile tile); // AS: Chi, Pong, Kang, Win
-    virtual Tile onYourTurn(int actionState); // AS: CKang, Win
-    virtual void onCanWin();
+    // Callback interface.
+    /**
+     * This is called when each player plays.
+     *
+     * @param tile: The tile they discarded or the tile you received.
+     * @return An ActionState indicate what action you gonna make.
+     */
+    virtual Action onTurn(bool isMyTurn, Tile tile);
+
+    virtual void onOtherPlayerMakeAction(Player *player, Action action);
 
     // Accessors.
     int getID() { return mID; }
     std::string getPlayerName() { return mPlayerName; }
-    SeatPosition getSeatPosition() { return mSeatPosition; }
+    Wind getSeatPosition() { return mSeatPosition; }
     Hand getHand() { return mHand; }
-
- protected:
-    void makeDiscardTile(Tile tile);
-    void makeDiscardTile(int index);
 
  private:
     int mID;
     std::string mPlayerName;
-    SeatPosition mSeatPosition;
+    Wind mSeatPosition;
     Hand mHand;
 };
 } // namespace mahjong.

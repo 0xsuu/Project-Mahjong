@@ -14,7 +14,9 @@
 //  limitations under the License.
 //
 
+#include <algorithm>
 #include <stdexcept>
+#include <cassert>
 
 #include "TileStack.h"
 
@@ -23,40 +25,43 @@ using std::vector;
 using mahjong::TileStack;
 using mahjong::Tile;
 
-TileStack::TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount) {
+TileStack::TileStack() {
+    mRemainTiles = new vector<Tile>();
+}
+TileStack::TileStack(TileSetType tileSetType, bool enableDora, int notPlayingCount) : TileStack() {
+    setup(tileSetType, enableDora, notPlayingCount);
+}
+
+void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCount) {
     mTileSetType = tileSetType;
-    mEnableDoraTiles = doraTile;
+    mEnableDora = enableDora;
     mNonPlayingTileCount = notPlayingCount;
 
-    vector<Tile> candidateTiles;
     switch (tileSetType) {
-        case JAPANESE_MAHJONG:
+        case JAPANESE_MAHJONG_TILE_SET:
             for (int i = 1; i <= 9; ++i) {
                 for (int j = 0; j < 4; ++j) {
-                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Character, i));
-                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Dot, i));
-                    candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Bamboo, i));
+                    mRemainTiles->push_back(Tile(mahjong::Handed, mahjong::Character, i));
+                    mRemainTiles->push_back(Tile(mahjong::Handed, mahjong::Dot, i));
+                    mRemainTiles->push_back(Tile(mahjong::Handed, mahjong::Bamboo, i));
                     if (i <= 7) {
-                        candidateTiles.push_back(Tile(mahjong::Handed, mahjong::Special, i));
+                        mRemainTiles->push_back(Tile(mahjong::Handed, mahjong::Special, i));
                     }
                 }
             }
             break;
-        case COMPETITIVE_MAHJONG:
+        case COMPETITIVE_MAHJONG_TILE_SET:
             // Not implemented.
             break;
         default:
             throw std::invalid_argument("Tile Set Type not recognised.");
     }
 
-    for (int i = 0; i < static_cast<int>(tileSetType); ++i) {
-        while(candidateTiles.size() > 0) {
-            std::uniform_int_distribution<unsigned long> candidateDistribution(0, candidateTiles.size() - 1);
-            unsigned long removeIndex = candidateDistribution(mRandomDevice);
-            mRemainTiles.push_back(candidateTiles[removeIndex]);
-            candidateTiles.erase(candidateTiles.begin() + removeIndex);
-        }
-    }
+    std::random_shuffle(mRemainTiles->begin(), mRemainTiles->end());
+}
+
+void TileStack::reset() {
+    setup(mTileSetType, mEnableDora, mNonPlayingTileCount);
 }
 
 int TileStack::throwDice() {
@@ -65,11 +70,17 @@ int TileStack::throwDice() {
 }
 
 Tile TileStack::drawTile() {
-    Tile retTile = mRemainTiles.back();
-    mRemainTiles.pop_back();
+    assert(!isEmpty());
+
+    Tile retTile = mRemainTiles->back();
+    mRemainTiles->pop_back();
     return retTile;
 }
 
 bool TileStack::isEmpty() {
-    return mRemainTiles.size() == mNonPlayingTileCount;
+    return mRemainTiles->size() == mNonPlayingTileCount;
+}
+
+int TileStack::getRemainTilesCount() {
+    return static_cast<int>(mRemainTiles->size());
 }

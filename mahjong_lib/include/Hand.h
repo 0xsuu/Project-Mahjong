@@ -20,10 +20,11 @@
 #include <vector>
 
 #include "Tile.h"
+#include "TileGroup.h"
 
 namespace mahjong {
 
-class Hand {
+class Hand : public TileGroup {
  public:
     /**
      * Constructor for an empty hand.
@@ -32,7 +33,7 @@ class Hand {
     /**
      * Constructor for initialise with a vector of Tiles.
      */
-    Hand(std::vector<Tile> hand);
+    Hand(std::vector<Tile> hand) : TileGroup(hand) {}
 
     //
     // Game Actions.
@@ -91,17 +92,6 @@ class Hand {
 
     // Data Processing.
     /**
-     * Add tile.
-     *
-     * Sorting is not guarenteed.
-     *
-     * @param t The picked tile.
-     */
-    void addTile(Tile t) {
-        mHand.push_back(t);
-    }
-
-    /**
      * Sort this hand.
      */
     void sort();
@@ -119,15 +109,6 @@ class Hand {
     bool canPong(Tile tile);
     bool canKang(Tile tile);
     bool canRichii(Tile tile);
-
-    /**
-     * Accessors.
-     */
-    Tile getTile(int n) { return mHand[n]; }
-    std::vector<Tile> getHand() { return mHand; }
-
- private:
-    std::vector<Tile> mHand; //!> Stores the tiles data of this hand.
 };
 
 } // namespace mahjong.

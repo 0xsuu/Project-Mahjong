@@ -14,16 +14,18 @@
 //  limitations under the License.
 //
 
-#include "Player.h"
+#include <Board.h>
+
+#include <iostream>
 
 using std::string;
 
 using mahjong::Hand;
-using mahjong::SeatPosition;
+using mahjong::Wind;
 using mahjong::Player;
 
 void Player::setupPlayer(int ID,
-                         mahjong::SeatPosition seatPosition,
+                         Wind seatPosition,
                          mahjong::Hand initialHand) {
     mID = ID;
     mSeatPosition = seatPosition;
@@ -32,13 +34,14 @@ void Player::setupPlayer(int ID,
 
 void Player::shiftSeatPosition() {
     mSeatPosition == North ? mSeatPosition = East :
-       mSeatPosition = static_cast<SeatPosition>(static_cast<int>(mSeatPosition) + 1);
+       mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);
 }
 
-void Player::makeDiscardTile(mahjong::Tile tile) {
-    mHand.discardTile(tile);
+mahjong::Action Player::onTurn(bool isMyTurn, Tile tile) {
+    std::cerr << "Virtual function, do not call.";
+    return Action();
 }
 
-void Player::makeDiscardTile(int index) {
-    mHand.discardTile(index);
+void Player::onOtherPlayerMakeAction(Player *player, mahjong::Action action) {
+    std::cerr << "Virtual function, do not call.";
 }

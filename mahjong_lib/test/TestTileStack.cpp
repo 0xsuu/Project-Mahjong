@@ -26,14 +26,14 @@ using std::vector;
 using mahjong::TileStack;
 
 TEST(TestTileStack, TileStackCreation) {
-    TileStack tileStack(mahjong::JAPANESE_MAHJONG, false, 0);
-    TileStack tileStack2(mahjong::COMPETITIVE_MAHJONG, false, 0);
+    TileStack tileStack(mahjong::JAPANESE_MAHJONG_TILE_SET, false, 0);
+    TileStack tileStack2(mahjong::COMPETITIVE_MAHJONG_TILE_SET, false, 0);
     (void) tileStack;
     (void) tileStack2;
 }
 
 TEST(TestTileStack, TileStackDice) {
-    TileStack tileStack(mahjong::JAPANESE_MAHJONG, false, 0);
+    TileStack tileStack(mahjong::JAPANESE_MAHJONG_TILE_SET, false, 0);
     vector<int> diceCount = {0, 0, 0, 0, 0, 0};
     for (int i = 0; i < 100000; ++i) {
         diceCount[tileStack.throwDice() - 1] ++;
@@ -50,9 +50,9 @@ TEST(TestTileStack, TileStackDice) {
 }
 
 TEST(TestTileStack, TileStackDrawAllTiles) {
-    TileStack tileStack(mahjong::JAPANESE_MAHJONG, false, 0);
+    TileStack tileStack(mahjong::JAPANESE_MAHJONG_TILE_SET, false, 0);
     vector<int> tileSet(9 * 3 + 7, 0);
-    for (int i = 0; i < static_cast<int>(mahjong::JAPANESE_MAHJONG); ++i) {
+    for (int i = 0; i < static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET); ++i) {
         mahjong::Tile tile = tileStack.drawTile();
         int offset;
         switch (tile.getType()) {
@@ -80,4 +80,15 @@ TEST(TestTileStack, TileStackDrawAllTiles) {
         EXPECT_EQ(c, 4) << "Wrong ID: " << count;
         count++;
     });
+}
+
+TEST(TestTileStack, TileStackDrawRandomicity) {
+    int count = 0;
+    for (int i = 0; i < 12000; i++) {
+        TileStack tileStack(mahjong::JAPANESE_MAHJONG_TILE_SET, false, 0);
+        if (tileStack.drawTile() == mahjong::Tile(mahjong::Handed, mahjong::Character, 1)) {
+            count++;
+        }
+    }
+    EXPECT_NEAR(4.0 / static_cast<double>(mahjong::JAPANESE_MAHJONG_TILE_SET), count / 12000.0, 0.005);
 }

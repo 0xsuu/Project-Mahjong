@@ -25,12 +25,13 @@
 namespace mahjong {
 
 enum TileSetType {
-    COMPETITIVE_MAHJONG = 144,
-    JAPANESE_MAHJONG = 136
+    COMPETITIVE_MAHJONG_TILE_SET = 144,
+    JAPANESE_MAHJONG_TILE_SET = 136
 };
 
 class TileStack {
  public:
+    TileStack();
     /**
      * Constructor for the Tile Stack, mainly aimed for the abstraction
      * of the randomicity of the game.
@@ -41,6 +42,12 @@ class TileStack {
      * @return
      */
     TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount);
+    ~TileStack() {
+        delete mRemainTiles;
+    }
+
+    void setup(TileSetType tileSetType, bool doraTile, int notPlayingCount);
+    void reset();
 
     /**
      * Throw a dice.
@@ -63,13 +70,15 @@ class TileStack {
      */
     bool isEmpty();
 
+    int getRemainTilesCount();
+
  private:
     TileSetType mTileSetType;
     int mNonPlayingTileCount;
-    bool mEnableDoraTiles;
+    bool mEnableDora;
 
     std::random_device mRandomDevice;
-    std::vector<Tile> mRemainTiles;
+    std::vector<Tile> *mRemainTiles;
 };
 
 }

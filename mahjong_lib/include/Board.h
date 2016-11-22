@@ -20,24 +20,62 @@
 #include <string>
 #include <vector>
 
+#include "Game.h"
 #include "Hand.h"
 #include "Player.h"
+#include "TileGroup.h"
+#include "TileStack.h"
 
 namespace mahjong {
-
+/**
+ * This class controls the rules of the game.
+ */
 class Board {
  public:
-    Board(std::vector<Player> players, bool enableDora, int doraStackSize);
+    Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool enableDora, int doraStackSize);
+    ~Board() {
+        delete mPlayers;
+    }
 
-    void setup();
+    /**
+     * Step 1: Setup TileStack.
+     * Step 2: Assign random IDs, seat positions and initial hands.
+     * Step 3: Sort players by wind.
+     *
+     * This should only be called once in a complete game.
+     * If you need to reset after a round, just call reset().
+     *
+     * @param tileSetType
+     * @param roundWind
+     */
+    void setup(TileSetType tileSetType, Wind roundWind);
+    void reset();
 
- private:
-    int mPlayerCount;
-    std::vector<Player> mPlayers;
+    void shiftRoundWind();
+
+    void proceedToNextPlayer();
+
+    void printBoard(int PlayerID);
+
+    void saveBoard();
+
+ protected:
+    Game *mGame;
+    unsigned long mPlayerCount;
+    std::vector<Player *> *mPlayers;
     bool mEnableDora;
     int mDoraStackSize;
 
-    // Round Wind.
+    TileSetType mTileSetType;
+    Wind mRoundWind;
+    TileStack mTileStack;
+    std::vector<Player *>::iterator mCurrentPlayerIndex;
+
+    std::vector<TileGroup> discardedTiles;
+
+    // Information for showing.
+    bool mRoundEnded = true;
+    int mRemainTilesCount = 0;
 };
 
 } // namespace mahjong.

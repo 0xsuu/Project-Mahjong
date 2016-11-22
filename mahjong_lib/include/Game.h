@@ -20,13 +20,36 @@
 #include <string>
 #include <vector>
 
+#include "Player.h"
+
 namespace mahjong {
 
+/**
+ * An interface for implementing UI.
+ */
 class Game {
  public:
+    Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount);
+    virtual ~Game() {}
 
- private:
+    void startGame();
 
+    // Callback interfaces.
+    virtual void onRoundStart();
+    virtual void onTileDrawToPlayer(Player *player, Tile tile);
+    virtual void onPlayerDiscardTile(Player *player, Tile tile);
+    virtual void onPlayerPass(Player *player);
+    virtual void onRoundFinished(bool drained, Player *winner);
+
+    // Rule interfaces.
+    virtual int calculateScore(Hand mHand);
+
+ protected:
+    Player *mPlayer1;
+    Player *mPlayer2;
+    Player *mPlayer3;
+    Player *mPlayer4;
+    int mRoundCount;
 };
 
 } // namespace mahjong.
