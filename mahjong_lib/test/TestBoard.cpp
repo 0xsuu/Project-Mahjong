@@ -73,6 +73,10 @@ class TestPlayer : public Player {
             return retAction;
         }
     }
+
+    void onOtherPlayerMakeAction(Player *player, mahjong::Action action) override {
+
+    }
 };
 
 TEST(TestBoard, General2PlayerBoardTest) {
