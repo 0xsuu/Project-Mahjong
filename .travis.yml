@@ -27,8 +27,10 @@ script:
   - sudo make install
   - cd ..
   - ./build_lib.sh test
+  - ./build_games.sh simple
   - export CXX="clang++-3.7"
   - ./build_lib.sh test
+  - ./build_games.sh simple
 
 sudo: required
 
