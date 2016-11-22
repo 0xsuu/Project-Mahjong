@@ -15,6 +15,7 @@
 //
 
 #include <algorithm>
+#include <stdexcept>
 
 #include "TileStack.h"
 
