@@ -16,7 +16,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <map>
 
 #include "Board.h"
 
@@ -105,6 +104,7 @@ void Board::proceedToNextPlayer() {
     Tile t = mTileStack.drawTile();
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
+        mDiscardedTiles[p].addTile(t);
         mGame->onTileDrawToPlayer(p, t);
         Action a = p->onTurn(isPlayerTurn, t);
         allActions[a] = p;
