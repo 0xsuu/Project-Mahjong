@@ -19,7 +19,7 @@
 
 #include <random>
 #include <vector>
-#include <iostream>
+
 #include "Tile.h"
 
 namespace mahjong {
@@ -42,7 +42,7 @@ class TileStack {
      * @return
      */
     TileStack(TileSetType tileSetType, bool doraTile, int notPlayingCount);
-    ~TileStack() {        
+    ~TileStack() {
         delete mRemainTiles;
     }
 
