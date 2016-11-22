@@ -27,7 +27,7 @@ fi
 
 # Run test.
 if [ "$1" == "test" ]; then
-    cmake ../Project-Mahjong/mahjong_lib/
+    cmake ../Project-Mahjong/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
     make libma_test
     ../libma_gtest/libma_test
     exit 0
@@ -39,6 +39,6 @@ if [ "$1" == "help" ]; then
     exit 0
 fi
 
-cmake ../Project-Mahjong/mahjong_lib/
+cmake ../Project-Mahjong/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
 make mahjong
 
