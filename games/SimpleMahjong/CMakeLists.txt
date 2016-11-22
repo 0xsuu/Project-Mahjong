@@ -49,4 +49,5 @@ include_directories(${CMAKE_INCLUDE_DIR}/ ${MAHJONG_LIB_INCLUDE_PATH}/)
 # Build targets
 #
 
-add_executable(SimpleMahjong ${SOURCE_FILES} "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
+add_executable(SimpleMahjong ${SOURCE_FILES})
+target_link_libraries(SimpleMahjong "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")

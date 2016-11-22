@@ -16,7 +16,34 @@
 
 #include "SimpleGame.h"
 
+class TestPlayer : public mahjong::Player {
+ public:
+    TestPlayer(std::string playerName) : mahjong::Player(playerName) {}
+    ~TestPlayer() {}
+
+    mahjong::Action onTurn(bool isMyTurn, mahjong::Tile tile) override {
+        if (!isMyTurn) {
+            return mahjong::Action();
+        } else {
+            mahjong::Tile firstTile = getHand().getTile(0);
+            mahjong::Action retAction(mahjong::Discard, firstTile);
+            return retAction;
+        }
+    }
+
+    void onOtherPlayerMakeAction(mahjong::Player *player, mahjong::Action action) override {
+
+    }
+};
+
+using mahjong::SimpleGame;
+
 int main() {
+    TestPlayer *p1 = new TestPlayer("A");
+    TestPlayer *p2 = new TestPlayer("B");
+    SimpleGame *game = new SimpleGame(p1, p2, nullptr, nullptr, 1);
+
+    game->startGame();
 
     return 0;
 }

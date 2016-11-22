@@ -19,7 +19,7 @@
 
 #include <string>
 
-#include <Board.h> // Pending moving into Game.h
+#include <Board.h>
 #include <Game.h>
 
 namespace mahjong {
@@ -29,6 +29,8 @@ class SimpleGame : public Game {
     ~SimpleGame() {
         delete mBoard;
     }
+
+    void startGame() override;
 
     // Callback interfaces.
     void onRoundStart() override;

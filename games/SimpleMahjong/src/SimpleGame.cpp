@@ -26,12 +26,17 @@ using mahjong::SimpleGame;
 SimpleGame::SimpleGame(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount) :
         Game(p1, p2, p3, p4, roundCount) {
     mBoard = new Board(this, p1, p2, p3, p4, false, 0);
+}
+
+void SimpleGame::startGame() {
+    mBoard->setup(mahjong::JAPANESE_MAHJONG_TILE_SET, mahjong::East);
     mCurrentRound = 1;
 }
 
 // Callback implementations.
 void SimpleGame::onRoundStart() {
-    cout << "Round "<< mCurrentRound <<" start.";
+    cout << "Round "<< mCurrentRound <<" start.\n";
+    printBoard();
 }
 
 void SimpleGame::onTileDrawToPlayer(Player *player, Tile tile) {
@@ -56,5 +61,10 @@ int SimpleGame::calculateScore(Hand mHand) {
 }
 
 void SimpleGame::printBoard() {
-    
+    auto players = mBoard->getPlayers();
+    for (auto it = players->begin(); it < players->end(); it++) {
+        cout << MAHJONG_SPECIAL[(*it)->getSeatPosition()] << ": "
+             << (*it)->getID() << ' ' << (*it)->getPlayerName() << '\n'
+             << (*it)->getHand().getPrintable() << '\n';
+    }
 }

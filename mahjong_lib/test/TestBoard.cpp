@@ -38,6 +38,10 @@ class TestGame : public Game {
             Game(p1, p2, p3, p4, roundCounts) {}
     ~TestGame() {}
 
+    void startGame() override {
+
+    }
+
     void onRoundStart() override {
         std::cout << "onRoundStart:\n";
     }

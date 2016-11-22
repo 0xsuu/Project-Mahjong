@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 
-#include "Board.h"
 #include "Player.h"
+#include "PrintFormat.h"
 
 namespace mahjong {
 
@@ -34,7 +34,7 @@ class Game {
             mPlayer1(p1), mPlayer2(p2), mPlayer3(p3), mPlayer4(p4), mRoundCount(roundCount) {}
     virtual ~Game() {}
 
-    void startGame();
+    virtual void startGame() = 0;
 
     // Callback interfaces.
     virtual void onRoundStart() = 0;
