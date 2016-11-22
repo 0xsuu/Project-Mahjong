@@ -53,6 +53,10 @@ class TestGame : public Game {
     void onRoundFinished(bool drained, Player *winner) override {
         std::cout << "onRoundFinished:\n";
     }
+
+    int calculateScore(Hand mHand) override {
+        return 0;
+    }
 };
 
 class TestPlayer : public Player {
@@ -68,6 +72,10 @@ class TestPlayer : public Player {
             mahjong::Action retAction(mahjong::Discard, firstTile);
             return retAction;
         }
+    }
+
+    void onOtherPlayerMakeAction(Player *player, mahjong::Action action) override {
+
     }
 };
 

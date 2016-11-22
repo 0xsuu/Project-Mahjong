@@ -36,12 +36,3 @@ void Player::shiftSeatPosition() {
     mSeatPosition == North ? mSeatPosition = East :
        mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);
 }
-
-mahjong::Action Player::onTurn(bool isMyTurn, Tile tile) {
-    std::cerr << "Virtual function, do not call.";
-    return Action();
-}
-
-void Player::onOtherPlayerMakeAction(Player *player, mahjong::Action action) {
-    std::cerr << "Virtual function, do not call.";
-}
