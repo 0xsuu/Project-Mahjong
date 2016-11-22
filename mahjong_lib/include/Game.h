@@ -29,7 +29,8 @@ namespace mahjong {
  */
 class Game {
  public:
-    Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount);
+    Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount) :
+            mPlayer1(p1), mPlayer2(p2), mPlayer3(p3), mPlayer4(p4), mRoundCount(roundCount) {}
     virtual ~Game() {}
 
     void startGame();
