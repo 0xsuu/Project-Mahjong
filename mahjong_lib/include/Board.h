@@ -61,7 +61,7 @@ class Board {
 
  protected:
     Game *mGame;
-    int mPlayerCount;
+    unsigned long mPlayerCount;
     std::vector<Player *> *mPlayers;
     bool mEnableDora;
     int mDoraStackSize;
@@ -72,6 +72,10 @@ class Board {
     std::vector<Player *>::iterator mCurrentPlayerIndex;
 
     std::vector<TileGroup> discardedTiles;
+
+    // Information for showing.
+    bool mRoundEnded = true;
+    int mRemainTilesCount = 0;
 };
 
 } // namespace mahjong.

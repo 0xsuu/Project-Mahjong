@@ -70,6 +70,8 @@ class TileStack {
      */
     bool isEmpty();
 
+    int getRemainTilesCount();
+
  private:
     TileSetType mTileSetType;
     int mNonPlayingTileCount;

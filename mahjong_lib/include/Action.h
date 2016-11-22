@@ -20,15 +20,19 @@
 #include "Tile.h"
 
 namespace mahjong {
+/**
+ * All the possible actions a player can perform.
+ * The value means priority only.
+ */
 enum ActionState {
-    Pass,
-    Discard,
-    Win,
-    Chi,
-    Pong,
-    Kang,
-    ConcealedKang,
-    Richii
+    Pass = 0,
+    Discard = 10,
+    Richii = 100,
+    Chi = 101,
+    Pong = 102,
+    Kang = 150,
+    ConcealedKang = 200,
+    Win = 1000
 };
 
 class Action {
@@ -38,8 +42,12 @@ class Action {
     }
     Action(ActionState actionState, Tile tile) : mActionState(actionState), mTile(tile) {}
 
-    ActionState getActionState() { return mActionState; }
+    ActionState getActionState() const { return mActionState; }
     Tile getTile() { return mTile; }
+
+    bool operator<(const Action &a) const {
+        return static_cast<int>(mActionState) < static_cast<int>(a.getActionState());
+    }
 
  private:
     ActionState mActionState;

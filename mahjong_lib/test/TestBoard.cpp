@@ -83,6 +83,7 @@ TEST(TestBoard, General2PlayerBoardTest) {
     for (int j = 0; j < static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 2 * 13; ++j) {
         b->proceedToNextPlayer();
     }
+    b->proceedToNextPlayer();
     // <<< Capture ends.
     std::string output = testing::internal::GetCapturedStdout();
     std::string legitOutput = "onRoundStart:\n";
@@ -99,6 +100,7 @@ TEST(TestBoard, General2PlayerBoardTest) {
                 "onTileDrawToPlayer:\n"
                 "onPlayerDiscardTile:\n";
     }
+    legitOutput += "onRoundFinished:\n";
     delete p1;
     delete p2;
     delete g;

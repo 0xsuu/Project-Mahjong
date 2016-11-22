@@ -36,10 +36,13 @@ class Game {
 
     // Callback interfaces.
     virtual void onRoundStart();
-    virtual void onPlayerPass(Player *player);
     virtual void onTileDrawToPlayer(Player *player, Tile tile);
     virtual void onPlayerDiscardTile(Player *player, Tile tile);
+    virtual void onPlayerPass(Player *player);
     virtual void onRoundFinished(bool drained, Player *winner);
+
+    // Rule interfaces.
+    virtual int calculateScore(Hand mHand);
 
  protected:
     Player *mPlayer1;

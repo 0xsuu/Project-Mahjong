@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <cassert>
 
 #include "TileStack.h"
 
@@ -69,6 +70,8 @@ int TileStack::throwDice() {
 }
 
 Tile TileStack::drawTile() {
+    assert(!isEmpty());
+
     Tile retTile = mRemainTiles->back();
     mRemainTiles->pop_back();
     return retTile;
@@ -76,4 +79,8 @@ Tile TileStack::drawTile() {
 
 bool TileStack::isEmpty() {
     return mRemainTiles->size() == mNonPlayingTileCount;
+}
+
+int TileStack::getRemainTilesCount() {
+    return static_cast<int>(mRemainTiles->size());
 }

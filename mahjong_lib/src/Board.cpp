@@ -17,9 +17,11 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <map>
 
 #include "Board.h"
 
+using std::map;
 using std::vector;
 
 using mahjong::Action;
@@ -79,6 +81,8 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     });
 
     mCurrentPlayerIndex = mPlayers->begin();
+
+    mRoundEnded = false;
 }
 
 void Board::reset() {
@@ -91,11 +95,20 @@ void Board::shiftRoundWind() {
 }
 
 void Board::proceedToNextPlayer() {
+    // Check drained.
+    if (mTileStack.isEmpty()) {
+        mRoundEnded = true;
+        mGame->onRoundFinished(true, nullptr);
+        return;
+    }
+
+    map<Action, Player *> allActions;
+    Tile t = mTileStack.drawTile();
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
-        Tile t = mTileStack.drawTile();
         mGame->onTileDrawToPlayer(p, t);
         Action a = p->onTurn(isPlayerTurn, t);
+        allActions[a] = p;
         switch (a.getActionState()) {
             case Pass:
                 mGame->onPlayerPass(p);
@@ -105,12 +118,17 @@ void Board::proceedToNextPlayer() {
                 mGame->onPlayerDiscardTile(p, a.getTile());
                 break;
             case Win:
+                mRoundEnded = true;
                 mGame->onRoundFinished(false, p);
                 break;
             default:
                 throw std::invalid_argument("ActionState not recognised.");
         }
+
+        mRemainTilesCount = mTileStack.getRemainTilesCount();
     });
+
+    // Next player's turn.
     mCurrentPlayerIndex++;
     if (mCurrentPlayerIndex == mPlayers->end()) {
         mCurrentPlayerIndex = mPlayers->begin();

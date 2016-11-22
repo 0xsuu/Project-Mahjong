@@ -26,15 +26,20 @@ Game::Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount)  :
 void Game::onRoundStart() {
     std::cerr << "Virtual function, do not call.\n";
 }
-void Game::onPlayerPass(Player *player) {
-    std::cerr << "Virtual function, do not call.\n";
-}
 void Game::onTileDrawToPlayer(Player *player, Tile tile) {
     std::cerr << "Virtual function, do not call.\n";
 }
 void Game::onPlayerDiscardTile(Player *player, Tile tile) {
     std::cerr << "Virtual function, do not call.\n";
 }
+void Game::onPlayerPass(Player *player) {
+    std::cerr << "Virtual function, do not call.\n";
+}
 void Game::onRoundFinished(bool drained, Player *winner) {
     std::cerr << "Virtual function, do not call.\n";
+}
+
+int Game::calculateScore(Hand mHand) {
+    std::cerr << "Virtual function, do not call.\n";
+    return -1;
 }
