@@ -18,6 +18,7 @@
 #define MAHJONG_LIB_BOARD_H
 
 #include <string>
+#include <map>
 #include <vector>
 
 #include "Game.h"
@@ -55,8 +56,6 @@ class Board {
 
     void proceedToNextPlayer();
 
-    void printBoard(int PlayerID);
-
     void saveBoard();
 
  protected:
@@ -71,7 +70,7 @@ class Board {
     TileStack mTileStack;
     std::vector<Player *>::iterator mCurrentPlayerIndex;
 
-    std::vector<TileGroup> discardedTiles;
+    std::map<Player *, TileGroup> mDiscardedTiles;
 
     // Information for showing.
     bool mRoundEnded = true;
