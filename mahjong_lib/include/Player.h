@@ -60,10 +60,6 @@ class Player {
     Wind getSeatPosition() { return mSeatPosition; }
     Hand getHand() { return mHand; }
 
- protected:
-//    void makeDiscardTile(Tile tile);
-//    void makeDiscardTile(int index);
-
  private:
     int mID;
     std::string mPlayerName;

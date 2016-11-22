@@ -37,16 +37,9 @@ void Player::shiftSeatPosition() {
        mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);
 }
 
-//void Player::makeDiscardTile(mahjong::Tile tile) {
-//    mHand.discardTile(tile);
-//}
-//
-//void Player::makeDiscardTile(int index) {
-//    mHand.discardTile(index);
-//}
-
 mahjong::Action Player::onTurn(bool isMyTurn, Tile tile) {
     std::cerr << "Virtual function, do not call.";
+    return Action();
 }
 
 void Player::onOtherPlayerMakeAction(Player *player, mahjong::Action action) {
