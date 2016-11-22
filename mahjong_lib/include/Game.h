@@ -51,6 +51,7 @@ class Game {
     Player *mPlayer3;
     Player *mPlayer4;
     int mRoundCount;
+    int mCurrentRound;
 };
 
 } // namespace mahjong.
