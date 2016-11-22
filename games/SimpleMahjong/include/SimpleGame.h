@@ -19,25 +19,31 @@
 
 #include <string>
 
+#include <Board.h> // Pending moving into Game.h
 #include <Game.h>
-#include <Player.h>
 
 namespace mahjong {
 class SimpleGame : public Game {
  public:
-    SimpleGame(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount) :
-            Game(p1, p2, p3, p4, roundCount) {}
-    ~SimpleGame() {}
+    SimpleGame(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount);
+    ~SimpleGame() {
+        delete mBoard;
+    }
 
     // Callback interfaces.
-    void onRoundStart();
-    void onTileDrawToPlayer(Player *player, Tile tile);
-    void onPlayerDiscardTile(Player *player, Tile tile);
-    void onPlayerPass(Player *player);
-    void onRoundFinished(bool drained, Player *winner);
+    void onRoundStart() override;
+    void onTileDrawToPlayer(Player *player, Tile tile) override;
+    void onPlayerDiscardTile(Player *player, Tile tile) override;
+    void onPlayerPass(Player *player) override;
+    void onRoundFinished(bool drained, Player *winner) override;
 
     // Rule interfaces.
-    int calculateScore(Hand mHand);
+    int calculateScore(Hand mHand) override;
+
+ private:
+    Board *mBoard;
+
+    void printBoard();
 };
 } // namespace mahjong.
 

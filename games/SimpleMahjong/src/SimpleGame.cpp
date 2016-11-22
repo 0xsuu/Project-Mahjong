@@ -20,11 +20,18 @@
 
 using std::cout;
 
+using mahjong::Board;
 using mahjong::SimpleGame;
+
+SimpleGame::SimpleGame(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount) :
+        Game(p1, p2, p3, p4, roundCount) {
+    mBoard = new Board(this, p1, p2, p3, p4, false, 0);
+    mCurrentRound = 1;
+}
 
 // Callback implementations.
 void SimpleGame::onRoundStart() {
-    cout << "Round "<< 1 <<" start.";
+    cout << "Round "<< mCurrentRound <<" start.";
 }
 
 void SimpleGame::onTileDrawToPlayer(Player *player, Tile tile) {
@@ -45,5 +52,9 @@ void SimpleGame::onRoundFinished(bool drained, Player *winner) {
 
 // Rule implementation.
 int SimpleGame::calculateScore(Hand mHand) {
+    return mHand.testWin();
+}
 
+void SimpleGame::printBoard() {
+    
 }
