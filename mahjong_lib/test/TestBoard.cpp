@@ -42,6 +42,8 @@ class TestGame : public Game {
 
     }
 
+    void onRoundSetup() override {}
+
     void onRoundStart() override {
         std::cout << "onRoundStart:\n";
     }
@@ -98,10 +100,11 @@ TEST(TestBoard, General2PlayerBoardTest) {
     b->proceedToNextPlayer();
     // <<< Capture ends.
     std::string output = testing::internal::GetCapturedStdout();
-    std::string legitOutput = "onRoundStart:\n";
+    std::string legitOutput = "";
     for (int i = 0; i < 2 * 13; i++) {
         legitOutput += "onTileDrawToPlayer:\n";
     }
+    legitOutput += "onRoundStart:\n";
     for (int i = 0; i < (static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 2 * 13) / 2; i++) {
         legitOutput += "onTileDrawToPlayer:\n"
                 "onPlayerDiscardTile:\n"

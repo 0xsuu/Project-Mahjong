@@ -37,6 +37,7 @@ class Game {
     virtual void startGame() = 0;
 
     // Callback interfaces.
+    virtual void onRoundSetup() = 0;
     virtual void onRoundStart() = 0;
     virtual void onTileDrawToPlayer(Player *player, Tile tile) = 0;
     virtual void onPlayerDiscardTile(Player *player, Tile tile) = 0;
@@ -53,6 +54,7 @@ class Game {
     Player *mPlayer4;
     int mRoundCount;
     int mCurrentRound;
+    bool mRoundFinished;
 };
 
 } // namespace mahjong.

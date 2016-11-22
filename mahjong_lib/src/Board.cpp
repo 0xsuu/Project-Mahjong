@@ -49,8 +49,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mRoundWind = roundWind;
     mTileStack.setup(tileSetType, mEnableDora, mDoraStackSize);
 
-    // Callback.
-    mGame->onRoundStart();
+    mGame->onRoundSetup();
 
     // Shuffle the players first, i.e. seat positions randomised.
     std::random_shuffle(mPlayers->begin(), mPlayers->end());
@@ -81,6 +80,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mCurrentPlayerIndex = mPlayers->begin();
 
     mRoundEnded = false;
+    mGame->onRoundStart();
 }
 
 void Board::reset() {

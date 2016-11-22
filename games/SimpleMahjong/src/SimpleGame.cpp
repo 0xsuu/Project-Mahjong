@@ -29,14 +29,21 @@ SimpleGame::SimpleGame(Player *p1, Player *p2, Player *p3, Player *p4, int round
 }
 
 void SimpleGame::startGame() {
-    mBoard->setup(mahjong::JAPANESE_MAHJONG_TILE_SET, mahjong::East);
     mCurrentRound = 1;
+    mRoundFinished = false;
+    mBoard->setup(mahjong::JAPANESE_MAHJONG_TILE_SET, mahjong::East);
 }
 
 // Callback implementations.
 void SimpleGame::onRoundStart() {
     cout << "Round "<< mCurrentRound <<" start.\n";
+    system("clear");
     printBoard();
+    while (!mRoundFinished) {
+        mBoard->proceedToNextPlayer();
+        printBoard();
+        cout << '\n';
+    }
 }
 
 void SimpleGame::onTileDrawToPlayer(Player *player, Tile tile) {
@@ -52,7 +59,7 @@ void SimpleGame::onPlayerPass(Player *player) {
 }
 
 void SimpleGame::onRoundFinished(bool drained, Player *winner) {
-
+    mRoundFinished = true;
 }
 
 // Rule implementation.
@@ -64,7 +71,7 @@ void SimpleGame::printBoard() {
     auto players = mBoard->getPlayers();
     for (auto it = players->begin(); it < players->end(); it++) {
         cout << MAHJONG_SPECIAL[(*it)->getSeatPosition()] << ": "
-             << (*it)->getID() << ' ' << (*it)->getPlayerName() << '\n'
+             << (*it)->getPlayerName() << " ID" << (*it)->getID() << '\n'
              << (*it)->getHand().getPrintable() << '\n';
     }
 }

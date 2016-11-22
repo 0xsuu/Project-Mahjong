@@ -33,6 +33,7 @@ class SimpleGame : public Game {
     void startGame() override;
 
     // Callback interfaces.
+    void onRoundSetup() override { /* Not used */ }
     void onRoundStart() override;
     void onTileDrawToPlayer(Player *player, Tile tile) override;
     void onPlayerDiscardTile(Player *player, Tile tile) override;
