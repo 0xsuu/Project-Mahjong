@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "Board.h"
 #include "Player.h"
 
 namespace mahjong {

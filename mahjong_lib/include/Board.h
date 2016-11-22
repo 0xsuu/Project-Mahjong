@@ -32,6 +32,7 @@ namespace mahjong {
  * This class controls the rules of the game.
  */
 class Board {
+    friend class Game;
  public:
     Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool enableDora, int doraStackSize);
     ~Board() {
