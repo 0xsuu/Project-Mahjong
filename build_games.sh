@@ -22,7 +22,11 @@ cd build_games
 if [ "$1" == "simple" ]; then
     echo "Building SimpleMahjong..."
     cmake ../"$PROJECT_MAHJONG"/games/SimpleMahjong/
+    make
     ../SimpleMahjong/SimpleMahjong
     exit 0
 fi
+
+echo "Please specify a game to build!"
+exit -1
 

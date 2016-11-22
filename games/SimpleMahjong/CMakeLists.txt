@@ -33,22 +33,20 @@ set(PROJECT_MAHJONG "${PROJECT_ROOT_DIRECTORY}/../../")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_MAHJONG}/../SimpleMahjong")
 set(CMAKE_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/src")
-set(CMAKE_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/include ${PROJECT_MAHJONG}/mahjong_lib/include")
+set(CMAKE_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/include")
+set(MAHJONG_LIB_INCLUDE_PATH "${PROJECT_MAHJONG}/mahjong_lib/include")
 
 include_directories(${CMAKE_INCLUDE_DIR}/)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_SOURCE_DIR}/*.cpp)
-file(GLOB_RECURSE HEADER_FILES ${CMAKE_INCLUDE_DIR}/*.h)
+file(GLOB_RECURSE HEADER_FILES ${CMAKE_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
 
 source_group("Headers" FILES ${HEADER_FILES})
 
-# Add gtest headers and libs
-include_directories(${CMAKE_INCLUDE_DIR}/ /usr/local/include)
-link_directories(/usr/local/lib/)
+include_directories(${CMAKE_INCLUDE_DIR}/ ${MAHJONG_LIB_INCLUDE_PATH}/)
 
 #
 # Build targets
 #
 
 add_executable(SimpleMahjong ${SOURCE_FILES} "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
-
