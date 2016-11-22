@@ -71,10 +71,16 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
         });
     }
     int indexPlayer = 0;
+    vector<unsigned int> allocatedIDs;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         Hand sortedHand = initialHands[indexPlayer];
         sortedHand.sort();
-        p->setupPlayer(IDDistribution(randomDevice), Winds[indexPlayer], sortedHand);
+        unsigned int randomID = IDDistribution(randomDevice);
+        // Make sure all the IDs are unique.
+        while (std::find(allocatedIDs.begin(), allocatedIDs.end(), randomID) != allocatedIDs.end()) {
+            randomID = IDDistribution(randomDevice);
+        }
+        p->setupPlayer(randomID, Winds[indexPlayer], sortedHand);
         indexPlayer++;
     });
 
