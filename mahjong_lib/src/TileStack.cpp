@@ -15,8 +15,8 @@
 //
 
 #include <algorithm>
-#include <stdexcept>
 #include <cassert>
+#include <stdexcept>
 
 #include "TileStack.h"
 
@@ -57,8 +57,8 @@ void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCo
             throw std::invalid_argument("Tile Set Type not recognised.");
     }
 
-    srand(unsigned(time(NULL)));
-    std::random_shuffle(mRemainTiles->begin(), mRemainTiles->end());
+    std::mt19937 rd(mRandomDevice());
+    shuffle(mRemainTiles->begin(), mRemainTiles->end(), rd);
 }
 
 void TileStack::reset() {
