@@ -18,9 +18,7 @@
 
 #include <iomanip>
 #include <iostream>
-#include <string>
 
-#include <TileGroup.h>
 #include <PrintFormat.h>
 
 using std::cin;
@@ -63,5 +61,4 @@ void UserInputPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 void UserInputPlayer::printPlayer() {
     cout << MAHJONG_SPECIAL[getSeatPosition()] << ": "
          << getPlayerName() << " ID" << getID() << '\n';
-         //<< std::setw(4) << getHand().getPrintable();
 }
