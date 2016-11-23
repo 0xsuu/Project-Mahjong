@@ -9,6 +9,8 @@ PROJECT_MAHJONG="${PWD##*/}"
 
 # For auto-complete.
 if [ ! -f /etc/bash_completion.d/build_mahjong.sh ] || [ "$1" == "--update-code-completion" ]; then
+    # Require root.
+    mkdir -p /etc/bash_completion.d
     echo "build_mahjong() {
     local cur prev opts
     COMPREPLY=()
