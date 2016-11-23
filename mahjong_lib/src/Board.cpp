@@ -53,6 +53,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mGame->onRoundSetup();
 
     // Shuffle the players first, i.e. seat positions randomised.
+    srand(unsigned(time(NULL)));
     std::random_shuffle(mPlayers->begin(), mPlayers->end());
 
     // Generate an unique ID for each player.
