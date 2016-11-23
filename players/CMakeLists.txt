@@ -1,7 +1,7 @@
 
 cmake_minimum_required (VERSION 2.8)
 
-project (Mahjong-games)
+project (Mahjong-players)
 
 #
 # Checking environment
@@ -31,26 +31,25 @@ endif()
 set(PROJECT_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 set(PROJECT_MAHJONG "${PROJECT_ROOT_DIRECTORY}/../")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_MAHJONG}/../Mahjong-games")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_MAHJONG}/../Mahjong-players")
 set(MAHJONG_LIB_INCLUDE_PATH "${PROJECT_MAHJONG}/mahjong_lib/include")
-set(USER_INPUT_PLAYER_INCLUDE_PATH "${PROJECT_MAHJONG}/players/UserInputPlayer/include")
 
-include_directories(${MAHJONG_LIB_INCLUDE_PATH}/ ${USER_INPUT_PLAYER_INCLUDE_PATH}/)
+include_directories(${MAHJONG_LIB_INCLUDE_PATH}/)
 
 #
 # Build targets
 #
 
-set(CMAKE_SM_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/SimpleMahjong/src")
-set(CMAKE_SM_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/SimpleMahjong/include")
+set(CMAKE_UIP_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/UserInputPlayer/src")
+set(CMAKE_UIP_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/UserInputPlayer/include")
 
-include_directories(${CMAKE_SM_INCLUDE_DIR}/)
+include_directories(${CMAKE_UIP_INCLUDE_DIR}/)
 
-file(GLOB_RECURSE SM_SOURCE_FILES ${CMAKE_SM_SOURCE_DIR}/*.cpp)
-file(GLOB_RECURSE SM_HEADER_FILES ${CMAKE_SM_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
+file(GLOB_RECURSE UIP_SOURCE_FILES ${CMAKE_UIP_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE UIP_HEADER_FILES ${CMAKE_UIP_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
 
-source_group("SimpleMahjongHeaders" FILES ${SM_HEADER_FILES})
+source_group("UserInputPlayerHeaders" FILES ${UIP_HEADER_FILES})
 
-add_executable(SimpleMahjong ${SM_SOURCE_FILES})
-target_link_libraries(SimpleMahjong "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
+add_library(UserInputPlayer ${UIP_SOURCE_FILES})
+target_link_libraries(UserInputPlayer "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
 

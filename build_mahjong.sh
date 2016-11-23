@@ -79,12 +79,44 @@ if [ "$1" == "--game" ]; then
         echo "Building SimpleMahjong..."
         cmake ../"$PROJECT_MAHJONG"/games/
         make SimpleMahjong
-        ../SimpleMahjong/SimpleMahjong
+        ../Mahjong-games/SimpleMahjong
         exit 0
     fi
 
     echo "Please specify a game to build!"
     exit -1
+fi
+
+if [ "$1" == "--player" ]; then
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --lib
+
+    if [ ! -f ./build_mahjong/libmahjong.a ]; then
+        echo "Mahjong lib not found!"
+        exit -1
+    fi
+
+    mkdir -p build_players
+    cd build_players
+
+    # Generate Xcode project
+    if [ "$2" == "xcode" ]; then
+        mkdir -p xcode
+        cd xcode
+        cmake -G Xcode ../../"$PROJECT_MAHJONG"/players/
+        open Mahjong-players.xcodeproj
+        exit 0
+    fi
+
+    if [ "$2" == "user" ]; then
+        echo "Building UserInputPlayer..."
+        cmake ../"$PROJECT_MAHJONG"/players/
+        make UserInputPlayer
+        exit 0
+    fi
+
+    echo "Please specify a game to build!"
+    exit -1
+
 fi
 
 # Show help.
