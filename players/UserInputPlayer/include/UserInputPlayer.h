@@ -14,33 +14,24 @@
 //  limitations under the License.
 //
 
-#include <Board.h>
+#ifndef MAHJONG_PLAYER_USER_INPUT_PLAYER_H
+#define MAHJONG_PLAYER_USER_INPUT_PLAYER_H
 
-#include <iostream>
+#include <Player.h>
 
-using std::string;
+#include <string>
 
-using mahjong::Hand;
-using mahjong::Wind;
-using mahjong::Player;
+namespace mahjong {
+class UserInputPlayer : public Player {
+ public:
+    UserInputPlayer(std::string playerName) : Player(playerName) {}
 
-void Player::setupPlayer(int ID,
-                         Wind seatPosition,
-                         mahjong::Hand initialHand) {
-    mID = ID;
-    mSeatPosition = seatPosition;
-    mHand = initialHand;
-}
+    Action onTurn(bool isMyTurn, Tile tile) override;
+    void onOtherPlayerMakeAction(Player *player, Action action) override;
 
-void Player::shiftSeatPosition() {
-    mSeatPosition == North ? mSeatPosition = East :
-       mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);
-}
+ private:
+    void printPlayer();
+};
+} // namespace mahjong.
 
-void Player::discardTile(Tile t) {
-    mHand.discardTile(t);
-}
-
-void Player::pickTile(Tile t) {
-    mHand.pickTile(t);
-}
+#endif // MAHJONG_PLAYER_USER_INPUT_PLAYER_H

@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "Board.h"
 
@@ -49,11 +50,12 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mRoundWind = roundWind;
     mTileStack.setup(tileSetType, mEnableDora, mDoraStackSize);
 
-    // Callback.
-    mGame->onRoundStart();
+    mGame->onRoundSetup();
 
     // Shuffle the players first, i.e. seat positions randomised.
-    std::random_shuffle(mPlayers->begin(), mPlayers->end());
+    std::random_device random_device;
+    std::mt19937 rd(random_device());
+    shuffle(mPlayers->begin(), mPlayers->end(), rd);
 
     // Generate an unique ID for each player.
     std::random_device randomDevice;
@@ -65,7 +67,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
         int indexPlayer = 0;
         std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
             Tile t = mTileStack.drawTile();
-            mGame->onTileDrawToPlayer(p, t);
+            mGame->onAfterPlayerPickTile(p, t);
             initialHands[indexPlayer].addTile(t);
             indexPlayer++;
         });
@@ -87,6 +89,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mCurrentPlayerIndex = mPlayers->begin();
 
     mRoundEnded = false;
+    mGame->onRoundStart();
 }
 
 void Board::reset() {
@@ -106,12 +109,15 @@ void Board::proceedToNextPlayer() {
         return;
     }
 
-    map<Action, Player *> allActions;
+    // Get a tile from tile stack.
     Tile t = mTileStack.drawTile();
+    mGame->onBeforePlayerPickTile(*mCurrentPlayerIndex, t);
+    (*mCurrentPlayerIndex)->pickTile(t);
+    mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
+    map<Action, Player *> allActions;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
         mDiscardedTiles[p].addTile(t);
-        mGame->onTileDrawToPlayer(p, t);
         Action a = p->onTurn(isPlayerTurn, t);
         allActions[a] = p;
         switch (a.getActionState()) {
@@ -119,7 +125,7 @@ void Board::proceedToNextPlayer() {
                 mGame->onPlayerPass(p);
                 break;
             case Discard:
-                p->getHand().discardTile(a.getTile());
+                p->discardTile(a.getTile());
                 mGame->onPlayerDiscardTile(p, a.getTile());
                 break;
             case Win:

@@ -18,6 +18,7 @@
 #define MAHJONG_LIB_TILEGROUP_H
 
 #include <algorithm>
+#include <stdexcept>
 
 namespace mahjong {
 class TileGroup {
@@ -38,11 +39,20 @@ class TileGroup {
         mTilesData.push_back(t);
     }
 
+    void removeTile(Tile t) {
+        auto it = std::find(mTilesData.begin(), mTilesData.end(), t);
+        if (it != mTilesData.end()) {
+            mTilesData.erase(it);
+        } else {
+            throw std::runtime_error("Cannot remove tile: not found.");
+        }
+    }
+
     std::string getPrintable() {
         std::string printableString = "";
         std::for_each(mTilesData.begin(), mTilesData.end(), [&printableString](Tile &t) {
             printableString += t.getPrintable();
-            printableString += ' ';
+            printableString += "  ";
         });
         return printableString;
     }
@@ -51,7 +61,7 @@ class TileGroup {
      */
     Tile getTile(int n) { return mTilesData[n]; }
     Tile operator[](int index) { return getTile(index); }
-    std::vector<Tile> getHand() { return mTilesData; }
+    std::vector<Tile> getData() { return mTilesData; }
 
  protected:
     std::vector<Tile> mTilesData;

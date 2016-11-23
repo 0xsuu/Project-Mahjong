@@ -1,7 +1,7 @@
 
 cmake_minimum_required (VERSION 2.8)
 
-project (Mahjong-lib)
+project (Mahjong-players)
 
 #
 # Checking environment
@@ -29,37 +29,27 @@ endif()
 #
 
 set(PROJECT_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+set(PROJECT_MAHJONG "${PROJECT_ROOT_DIRECTORY}/../")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_ROOT_DIRECTORY}/../../libma_gtest")
-set(CMAKE_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/src")
-set(CMAKE_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/include")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_MAHJONG}/../Mahjong-players")
+set(MAHJONG_LIB_INCLUDE_PATH "${PROJECT_MAHJONG}/mahjong_lib/include")
 
-include_directories(${CMAKE_INCLUDE_DIR}/)
-
-file(GLOB_RECURSE SOURCE_FILES ${CMAKE_SOURCE_DIR}/*.cpp)
-file(GLOB_RECURSE HEADER_FILES ${CMAKE_INCLUDE_DIR}/*.h)
-
-source_group("Headers" FILES ${HEADER_FILES})
-
-# Add gtest headers and libs
-include_directories(${CMAKE_INCLUDE_DIR}/ /usr/local/include)
-link_directories(/usr/local/lib/)
+include_directories(${MAHJONG_LIB_INCLUDE_PATH}/)
 
 #
 # Build targets
 #
 
-add_library(mahjong ${SOURCE_FILES})
+set(CMAKE_UIP_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/UserInputPlayer/src")
+set(CMAKE_UIP_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/UserInputPlayer/include")
 
-#
-# Build gtest (Require installation gtest)
-#
+include_directories(${CMAKE_UIP_INCLUDE_DIR}/)
 
-# pthread
-find_package(Threads)
+file(GLOB_RECURSE UIP_SOURCE_FILES ${CMAKE_UIP_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE UIP_HEADER_FILES ${CMAKE_UIP_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
 
-message("Building Unit Test.")
-file(GLOB_RECURSE GTEST_FILES ${PROJECT_ROOT_DIRECTORY}/test/*.cpp)
-add_executable(libma_test ${GTEST_FILES})
-add_dependencies(libma_test mahjong)
-target_link_libraries(libma_test gtest "${PROJECT_ROOT_DIRECTORY}/../../build_mahjong/libmahjong.a" "${CMAKE_THREAD_LIBS_INIT}")
+source_group("UserInputPlayerHeaders" FILES ${UIP_HEADER_FILES})
+
+add_library(UserInputPlayer ${UIP_SOURCE_FILES})
+target_link_libraries(UserInputPlayer "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
+

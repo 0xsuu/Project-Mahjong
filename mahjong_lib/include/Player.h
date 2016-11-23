@@ -42,6 +42,8 @@ class Player {
     void setupPlayer(int ID, Wind seatPosition, Hand initialHand);
 
     void shiftSeatPosition();
+    void discardTile(Tile t);
+    void pickTile(Tile t);
 
     // Callback interface.
     /**
