@@ -14,18 +14,24 @@
 //  limitations under the License.
 //
 
-#include "SimpleGame.h"
-#include <UserInputPlayer.h>
+#ifndef MAHJONG_PLAYER_USER_INPUT_PLAYER_H
+#define MAHJONG_PLAYER_USER_INPUT_PLAYER_H
 
-using mahjong::SimpleGame;
-using mahjong::UserInputPlayer;
+#include <Player.h>
 
-int main() {
-    UserInputPlayer *p1 = new UserInputPlayer("A");
-    UserInputPlayer *p2 = new UserInputPlayer("B");
-    SimpleGame *game = new SimpleGame(p1, p2, nullptr, nullptr, 1);
+#include <string>
 
-    game->startGame();
+namespace mahjong {
+class UserInputPlayer : public Player {
+ public:
+    UserInputPlayer(std::string playerName) : Player(playerName) {}
 
-    return 0;
-}
+    Action onTurn(bool isMyTurn, Tile tile) override;
+    void onOtherPlayerMakeAction(Player *player, Action action) override;
+
+ private:
+    void printPlayer();
+};
+} // namespace mahjong.
+
+#endif // MAHJONG_PLAYER_USER_INPUT_PLAYER_H

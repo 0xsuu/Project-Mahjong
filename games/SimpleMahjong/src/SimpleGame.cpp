@@ -36,20 +36,18 @@ void SimpleGame::startGame() {
 
 // Callback implementations.
 void SimpleGame::onRoundStart() {
-    cout << "Round "<< mCurrentRound <<" start.\n";
     system("clear");
-    printBoard();
+    cout << "Round "<< mCurrentRound <<" start.\n";
+    //printBoard();
     while (!mRoundFinished) {
         mBoard->proceedToNextPlayer();
-        printBoard();
-        cout << '\n';
     }
 }
 
 void SimpleGame::onBeforePlayerPickTile(Player *player, Tile tile) {
-    system("clear");
-    printPlayer(player);
-    cout << " | " << tile.getPrintable() << '\n';
+//    system("clear");
+//    printPlayer(player);
+//    cout << "| " << tile.getPrintable() << '\n';
 }
 
 void SimpleGame::onAfterPlayerPickTile(Player *player, Tile tile) {

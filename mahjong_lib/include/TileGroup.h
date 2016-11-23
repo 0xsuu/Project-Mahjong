@@ -18,6 +18,7 @@
 #define MAHJONG_LIB_TILEGROUP_H
 
 #include <algorithm>
+#include <stdexcept>
 
 namespace mahjong {
 class TileGroup {
@@ -36,6 +37,15 @@ class TileGroup {
      */
     void addTile(Tile t) {
         mTilesData.push_back(t);
+    }
+
+    void removeTile(Tile t) {
+        auto it = std::find(mTilesData.begin(), mTilesData.end(), t);
+        if (it != mTilesData.end()) {
+            mTilesData.erase(it);
+        } else {
+            throw std::runtime_error("Cannot remove tile: not found.");
+        }
     }
 
     std::string getPrintable() {
