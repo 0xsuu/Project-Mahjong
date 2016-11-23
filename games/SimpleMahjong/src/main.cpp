@@ -25,6 +25,9 @@ class TestPlayer : public mahjong::Player {
         if (!isMyTurn) {
             return mahjong::Action();
         } else {
+            if (getHand().testWin()) {
+                return mahjong::Action(mahjong::Win, mahjong::Tile());
+            }
             mahjong::Tile firstTile = getHand().getTile(0);
             mahjong::Action retAction(mahjong::Discard, firstTile);
             return retAction;

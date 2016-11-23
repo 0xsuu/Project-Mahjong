@@ -35,7 +35,8 @@ class SimpleGame : public Game {
     // Callback interfaces.
     void onRoundSetup() override { /* Not used */ }
     void onRoundStart() override;
-    void onTileDrawToPlayer(Player *player, Tile tile) override;
+    void onBeforePlayerPickTile(Player *player, Tile tile) override;
+    void onAfterPlayerPickTile(Player *player, Tile tile) override;
     void onPlayerDiscardTile(Player *player, Tile tile) override;
     void onPlayerPass(Player *player) override;
     void onRoundFinished(bool drained, Player *winner) override;
@@ -46,6 +47,7 @@ class SimpleGame : public Game {
  private:
     Board *mBoard;
 
+    void printPlayer(Player *p);
     void printBoard();
 };
 } // namespace mahjong.

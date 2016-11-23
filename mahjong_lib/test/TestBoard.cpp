@@ -47,14 +47,15 @@ class TestGame : public Game {
     void onRoundStart() override {
         std::cout << "onRoundStart:\n";
     }
-    void onPlayerPass(Player *player) override {
-        std::cout << "onPlayerPass:\n";
-    }
-    void onTileDrawToPlayer(Player *player, Tile tile) override {
-        std::cout << "onTileDrawToPlayer:\n";
+    void onBeforePlayerPickTile(Player *player, Tile tile) override {}
+    void onAfterPlayerPickTile(Player *player, Tile tile) override {
+        std::cout << "onAfterPlayerPickTile:\n";
     }
     void onPlayerDiscardTile(Player *player, Tile tile) override {
         std::cout << "onPlayerDiscardTile:\n";
+    }
+    void onPlayerPass(Player *player) override {
+        std::cout << "onPlayerPass:\n";
     }
     void onRoundFinished(bool drained, Player *winner) override {
         std::cout << "onRoundFinished:\n";
@@ -102,20 +103,20 @@ TEST(TestBoard, General2PlayerBoardTest) {
     std::string output = testing::internal::GetCapturedStdout();
     std::string legitOutput = "";
     for (int i = 0; i < 2 * 13; i++) {
-        legitOutput += "onTileDrawToPlayer:\n";
+        legitOutput += "onAfterPlayerPickTile:\n";
     }
     legitOutput += "onRoundStart:\n";
     for (int i = 0; i < (static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 2 * 13) / 2; i++) {
-        legitOutput += "onTileDrawToPlayer:\n"
+        legitOutput += "onAfterPlayerPickTile:\n"
                 "onPlayerDiscardTile:\n"
-                "onTileDrawToPlayer:\n"
                 "onPlayerPass:\n"
-                "onTileDrawToPlayer:\n"
+                "onAfterPlayerPickTile:\n"
                 "onPlayerPass:\n"
-                "onTileDrawToPlayer:\n"
                 "onPlayerDiscardTile:\n";
     }
     legitOutput += "onRoundFinished:\n";
+    EXPECT_EQ(p1->getHand().getData().size(), 13);
+    EXPECT_EQ(p2->getHand().getData().size(), 13);
     delete p1;
     delete p2;
     delete g;

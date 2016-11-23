@@ -36,3 +36,11 @@ void Player::shiftSeatPosition() {
     mSeatPosition == North ? mSeatPosition = East :
        mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);
 }
+
+void Player::discardTile(Tile t) {
+    mHand.discardTile(t);
+}
+
+void Player::pickTile(Tile t) {
+    mHand.pickTile(t);
+}

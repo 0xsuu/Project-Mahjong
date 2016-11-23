@@ -41,13 +41,18 @@ void SimpleGame::onRoundStart() {
     printBoard();
     while (!mRoundFinished) {
         mBoard->proceedToNextPlayer();
-        printBoard();
+        //printBoard();
         cout << '\n';
     }
 }
 
-void SimpleGame::onTileDrawToPlayer(Player *player, Tile tile) {
+void SimpleGame::onBeforePlayerPickTile(Player *player, Tile tile) {
+    //printPlayer(player);
+    //cout << " | " << tile.getPrintable() << '\n';
+}
 
+void SimpleGame::onAfterPlayerPickTile(Player *player, Tile tile) {
+    //std::cout << player->getPlayerName() << ' ' << tile.getPrintable() << '\n';
 }
 
 void SimpleGame::onPlayerDiscardTile(Player *player, Tile tile) {
@@ -67,11 +72,14 @@ int SimpleGame::calculateScore(Hand mHand) {
     return mHand.testWin();
 }
 
+void SimpleGame::printPlayer(Player *p) {
+    cout << MAHJONG_SPECIAL[p->getSeatPosition()] << ": "
+         << p->getPlayerName() << " ID" << p->getID() << '\n'
+         << p->getHand().getPrintable();
+}
 void SimpleGame::printBoard() {
     auto players = mBoard->getPlayers();
     for (auto it = players->begin(); it < players->end(); it++) {
-        cout << MAHJONG_SPECIAL[(*it)->getSeatPosition()] << ": "
-             << (*it)->getPlayerName() << " ID" << (*it)->getID() << '\n'
-             << (*it)->getHand().getPrintable() << '\n';
+
     }
 }

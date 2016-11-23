@@ -42,7 +42,7 @@ class TileGroup {
         std::string printableString = "";
         std::for_each(mTilesData.begin(), mTilesData.end(), [&printableString](Tile &t) {
             printableString += t.getPrintable();
-            printableString += ' ';
+            printableString += "  ";
         });
         return printableString;
     }
@@ -51,7 +51,7 @@ class TileGroup {
      */
     Tile getTile(int n) { return mTilesData[n]; }
     Tile operator[](int index) { return getTile(index); }
-    std::vector<Tile> getHand() { return mTilesData; }
+    std::vector<Tile> getData() { return mTilesData; }
 
  protected:
     std::vector<Tile> mTilesData;

@@ -40,7 +40,7 @@ TEST(TestHand, Creations) {
     h1.addTile(Tile(Handed, Dot, 2));
     h1.addTile(Tile(Handed, Bamboo, 3));
     h1.addTile(Tile(Handed, Special, 4));
-    EXPECT_EQ(h1.getHand(), h2.getHand());
+    EXPECT_EQ(h1.getData(), h2.getData());
 }
 
 TEST(TestHand, Sorting) {
@@ -79,7 +79,7 @@ TEST(TestHand, Sorting) {
               Tile(Handed, Bamboo, 1),
               Tile(Handed, Bamboo, 1)});
 
-    EXPECT_EQ(h.getHand(), h2.getHand());
+    EXPECT_EQ(h.getData(), h2.getData());
 }
 
 TEST(TestHand, PickTile) {
@@ -121,7 +121,7 @@ TEST(TestHand, PickTile) {
               Tile(Handed, Bamboo, 1),
               Tile(Handed, Bamboo, 1)});
 
-    EXPECT_EQ(h.getHand(), h2.getHand());
+    EXPECT_EQ(h.getData(), h2.getData());
 
     Hand h3;
     h3.pickTile(Tile(Handed, Special, 1));
@@ -152,7 +152,7 @@ TEST(TestHand, DiscardTile) {
               Tile(Concealed, Special, 7),
               Tile(Concealed, Special, 7)});
 
-    EXPECT_EQ(h.getHand(), h2.getHand());
+    EXPECT_EQ(h.getData(), h2.getData());
 }
 
 TEST(TestHand, TestWinningJudgement_Simple) {

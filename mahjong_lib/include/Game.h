@@ -39,7 +39,8 @@ class Game {
     // Callback interfaces.
     virtual void onRoundSetup() = 0;
     virtual void onRoundStart() = 0;
-    virtual void onTileDrawToPlayer(Player *player, Tile tile) = 0;
+    virtual void onBeforePlayerPickTile(Player *player, Tile tile) = 0;
+    virtual void onAfterPlayerPickTile(Player *player, Tile tile) = 0;
     virtual void onPlayerDiscardTile(Player *player, Tile tile) = 0;
     virtual void onPlayerPass(Player *player) = 0;
     virtual void onRoundFinished(bool drained, Player *winner) = 0;
