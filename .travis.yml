@@ -26,6 +26,7 @@ script:
   - make
   - sudo make install
   - cd ..
+  - sudo ./build_mahjong.sh
   - ./build_mahjong.sh --lib test
   - ./build_mahjong.sh --player user
   - ./build_mahjong.sh --game simple
