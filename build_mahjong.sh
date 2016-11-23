@@ -1,12 +1,11 @@
 #!/bin/bash
 
-set -e
-
 BASEDIR=$(dirname "$0")
 
 cd "$BASEDIR"/
 PROJECT_MAHJONG="${PWD##*/}"
 
+# For auto-complete.
 if [ ! -f /etc/bash_completion.d/build_mahjong.sh ] || [ "$1" == "--update-code-completion" ]; then
     echo "build_mahjong() {
     local cur prev opts
@@ -79,7 +78,9 @@ if [ "$1" == "--game" ]; then
         echo "Building SimpleMahjong..."
         cmake ../"$PROJECT_MAHJONG"/games/
         make SimpleMahjong
-        ../Mahjong-games/SimpleMahjong
+        if [ ! "$3" == "norun" ]; then
+            ../Mahjong-games/SimpleMahjong
+        fi
         exit 0
     fi
 
