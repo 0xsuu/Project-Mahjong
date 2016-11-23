@@ -38,16 +38,13 @@ void SimpleGame::startGame() {
 void SimpleGame::onRoundStart() {
     system("clear");
     cout << "Round "<< mCurrentRound <<" start.\n";
-    //printBoard();
     while (!mRoundFinished) {
         mBoard->proceedToNextPlayer();
     }
 }
 
 void SimpleGame::onBeforePlayerPickTile(Player *player, Tile tile) {
-//    system("clear");
-//    printPlayer(player);
-//    cout << "| " << tile.getPrintable() << '\n';
+
 }
 
 void SimpleGame::onAfterPlayerPickTile(Player *player, Tile tile) {
