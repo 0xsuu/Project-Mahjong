@@ -10,10 +10,10 @@ PROJECT_MAHJONG="${PWD##*/}"
 # Go to project directory.
 cd ../
 
+./"$PROJECT_MAHJONG"/build_lib.sh
+
 if [ ! -f ./build_mahjong/libmahjong.a ]; then
-    ./"$PROJECT_MAHJONG"/build_lib.sh
-else
-    echo "Mahjong lib found!"
+    echo "Mahjong lib not found!"
 fi
 
 mkdir -p build_games
