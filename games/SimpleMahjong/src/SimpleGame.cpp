@@ -41,18 +41,19 @@ void SimpleGame::onRoundStart() {
     printBoard();
     while (!mRoundFinished) {
         mBoard->proceedToNextPlayer();
-        //printBoard();
+        printBoard();
         cout << '\n';
     }
 }
 
 void SimpleGame::onBeforePlayerPickTile(Player *player, Tile tile) {
-    //printPlayer(player);
-    //cout << " | " << tile.getPrintable() << '\n';
+    system("clear");
+    printPlayer(player);
+    cout << " | " << tile.getPrintable() << '\n';
 }
 
 void SimpleGame::onAfterPlayerPickTile(Player *player, Tile tile) {
-    //std::cout << player->getPlayerName() << ' ' << tile.getPrintable() << '\n';
+
 }
 
 void SimpleGame::onPlayerDiscardTile(Player *player, Tile tile) {
@@ -80,6 +81,7 @@ void SimpleGame::printPlayer(Player *p) {
 void SimpleGame::printBoard() {
     auto players = mBoard->getPlayers();
     for (auto it = players->begin(); it < players->end(); it++) {
-
+        printPlayer(*it);
+        cout << '\n';
     }
 }
