@@ -1,7 +1,7 @@
 
 cmake_minimum_required (VERSION 2.8)
 
-project (SimpleMahjong)
+project (Mahjong-games)
 
 #
 # Checking environment
@@ -29,25 +29,27 @@ endif()
 #
 
 set(PROJECT_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-set(PROJECT_MAHJONG "${PROJECT_ROOT_DIRECTORY}/../../")
+set(PROJECT_MAHJONG "${PROJECT_ROOT_DIRECTORY}/../")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_MAHJONG}/../SimpleMahjong")
-set(CMAKE_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/src")
-set(CMAKE_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/include")
 set(MAHJONG_LIB_INCLUDE_PATH "${PROJECT_MAHJONG}/mahjong_lib/include")
 
-include_directories(${CMAKE_INCLUDE_DIR}/)
-
-file(GLOB_RECURSE SOURCE_FILES ${CMAKE_SOURCE_DIR}/*.cpp)
-file(GLOB_RECURSE HEADER_FILES ${CMAKE_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
-
-source_group("Headers" FILES ${HEADER_FILES})
-
-include_directories(${CMAKE_INCLUDE_DIR}/ ${MAHJONG_LIB_INCLUDE_PATH}/)
+include_directories(${MAHJONG_LIB_INCLUDE_PATH}/)
 
 #
 # Build targets
 #
 
-add_executable(SimpleMahjong ${SOURCE_FILES})
+set(CMAKE_SM_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/SimpleMahjong/src")
+set(CMAKE_SM_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/SimpleMahjong/include")
+
+include_directories(${CMAKE_SM_INCLUDE_DIR}/)
+
+file(GLOB_RECURSE SM_SOURCE_FILES ${CMAKE_SM_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE SM_HEADER_FILES ${CMAKE_SM_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
+
+source_group("SimpleMahjongHeaders" FILES ${SM_HEADER_FILES})
+
+add_executable(SimpleMahjong ${SM_SOURCE_FILES})
 target_link_libraries(SimpleMahjong "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
+
