@@ -17,6 +17,8 @@
 #ifndef MAHJONG_PLAYER_ALWAYS_LOSE_PLAYER_H
 #define MAHJONG_PLAYER_ALWAYS_LOSE_PLAYER_H
 
+#include <Player.h>
+
 /**
  * @brief This player always discard the tile he picks, so always lose,
  * even if he can win on the first round, he would choose not to, ridiculus aye?

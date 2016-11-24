@@ -17,6 +17,8 @@
 #ifndef MAHJONG_PLAYER_RANDOM_PLAYER_H
 #define MAHJONG_PLAYER_RANDOM_PLAYER_H
 
+#include <Player.h>
+
 /**
  * @brief This player discard random tiles.
  */
