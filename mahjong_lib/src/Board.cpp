@@ -129,8 +129,12 @@ void Board::proceedToNextPlayer() {
                 mGame->onPlayerDiscardTile(p, a.getTile());
                 break;
             case Win:
-                mRoundEnded = true;
-                mGame->onRoundFinished(false, p);
+                if (p->getHand().testWin()) {
+                    mRoundEnded = true;
+                    mGame->onRoundFinished(false, p);
+                } else {
+                    throw std::invalid_argument("False win.");
+                }
                 break;
             default:
                 throw std::invalid_argument("ActionState not recognised.");

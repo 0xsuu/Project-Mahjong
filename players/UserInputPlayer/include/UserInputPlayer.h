@@ -31,6 +31,12 @@ class UserInputPlayer : public Player {
 
  private:
     void printPlayer();
+    void printPlayerHand(TileGroup g, Tile t);
+    void printSelectArrow();
+
+    int mSelectIndex = 0;
+    int mSelectionCount = 0;
+    std::vector<mahjong::ActionState> mActionSelections;
 };
 } // namespace mahjong.
 

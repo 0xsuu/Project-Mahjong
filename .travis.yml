@@ -26,13 +26,13 @@ script:
   - make
   - sudo make install
   - cd ..
-  - sudo ./build_mahjong.sh
+  - sudo ./build_mahjong.sh --update-code-completion
   - ./build_mahjong.sh --lib test
-  - ./build_mahjong.sh --player user
+  - ./build_mahjong.sh --player all
   - ./build_mahjong.sh --game simple norun
   - export CXX="clang++-3.7"
   - ./build_mahjong.sh --lib test
-  - ./build_mahjong.sh --player user
+  - ./build_mahjong.sh --player all
   - ./build_mahjong.sh --game simple norun
 
 sudo: required

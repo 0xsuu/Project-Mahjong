@@ -14,20 +14,22 @@
 //  limitations under the License.
 //
 
-#include "SimpleGame.h"
-#include <UserInputPlayer.h>
-#include <AlwaysDiscardFirstPlayer.h>
+#ifndef MAHJONG_PLAYER_RANDOM_PLAYER_H
+#define MAHJONG_PLAYER_RANDOM_PLAYER_H
 
-using mahjong::SimpleGame;
-using mahjong::UserInputPlayer;
-using mahjong::AlwaysDiscardFirstPlayer;
+#include <Player.h>
 
-int main() {
-    UserInputPlayer *p1 = new UserInputPlayer("Human");
-    AlwaysDiscardFirstPlayer *p2 = new AlwaysDiscardFirstPlayer("BOT ADFT");
-    SimpleGame *game = new SimpleGame(p1, p2, nullptr, nullptr, 1);
+/**
+ * @brief This player discard random tiles.
+ */
+namespace mahjong {
+class RandomPlayer : public Player {
+ public:
+    RandomPlayer(std::string playerName) : Player(playerName) {}
 
-    game->startGame();
-
-    return 0;
+    Action onTurn(bool isMyTurn, Tile tile) override;
+    void onOtherPlayerMakeAction(Player *player, Action action) override;
+};
 }
+
+#endif // MAHJONG_PLAYER_RANDOM_PLAYER_H

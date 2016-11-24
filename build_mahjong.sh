@@ -8,7 +8,9 @@ cd "$BASEDIR"/
 PROJECT_MAHJONG="${PWD##*/}"
 
 # For auto-complete.
-if [ ! -f /etc/bash_completion.d/build_mahjong.sh ] || [ "$1" == "--update-code-completion" ]; then
+if [ "$1" == "--update-code-completion" ]; then
+    # Require root.
+    mkdir -p /etc/bash_completion.d
     echo "build_mahjong() {
     local cur prev opts
     COMPREPLY=()
@@ -58,6 +60,7 @@ fi
 
 if [ "$1" == "--game" ]; then
     ./"$PROJECT_MAHJONG"/build_mahjong.sh --lib
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --player all
 
     if [ ! -f ./build_mahjong/libmahjong.a ]; then
         echo "Mahjong lib not found!"
@@ -110,10 +113,24 @@ if [ "$1" == "--player" ]; then
         exit 0
     fi
 
+    if [ "$2" == "all" ]; then
+        echo "Building all players..."
+        cmake ../"$PROJECT_MAHJONG"/players/
+        make
+        exit 0
+    fi
+
     if [ "$2" == "user" ]; then
         echo "Building UserInputPlayer..."
         cmake ../"$PROJECT_MAHJONG"/players/
         make UserInputPlayer
+        exit 0
+    fi
+
+    if [ "$2" = "dumb" ]; then
+        echo "Building DumpPlayers..."
+        cmake ..//"$PROJECT_MAHJONG"/players/
+        make DumbPlayers
         exit 0
     fi
 

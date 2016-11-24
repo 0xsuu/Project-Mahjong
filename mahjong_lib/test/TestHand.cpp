@@ -129,13 +129,13 @@ TEST(TestHand, PickTile) {
 }
 
 TEST(TestHand, DiscardTile) {
-    Hand h({Tile(Concealed, Special, 7),
-            Tile(Concealed, Special, 7),
-            Tile(Concealed, Special, 7),
-            Tile(Concealed, Special, 7),
-            Tile(Melded, Special, 4),
-            Tile(Melded, Special, 4),
-            Tile(Melded, Special, 4),
+    Hand h({Tile(Handed, Special, 4),
+            Tile(Handed, Special, 4),
+            Tile(Handed, Special, 4),
+            Tile(Handed, Special, 4),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7),
             Tile(Handed, Dot, 7),
             Tile(Handed, Dot, 8),
             Tile(Handed, Dot, 9)});
@@ -147,10 +147,10 @@ TEST(TestHand, DiscardTile) {
     h.discardTile(Tile(Handed, Dot, 9));
 
 
-    Hand h2 ({Tile(Concealed, Special, 7),
-              Tile(Concealed, Special, 7),
-              Tile(Concealed, Special, 7),
-              Tile(Concealed, Special, 7)});
+    Hand h2 ({Tile(Handed, Special, 4),
+              Tile(Handed, Special, 4),
+              Tile(Handed, Special, 4),
+              Tile(Handed, Special, 4)});
 
     EXPECT_EQ(h.getData(), h2.getData());
 }

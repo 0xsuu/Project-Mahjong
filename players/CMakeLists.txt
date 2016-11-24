@@ -40,6 +40,7 @@ include_directories(${MAHJONG_LIB_INCLUDE_PATH}/)
 # Build targets
 #
 
+# User Input Player.
 set(CMAKE_UIP_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/UserInputPlayer/src")
 set(CMAKE_UIP_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/UserInputPlayer/include")
 
@@ -48,8 +49,17 @@ include_directories(${CMAKE_UIP_INCLUDE_DIR}/)
 file(GLOB_RECURSE UIP_SOURCE_FILES ${CMAKE_UIP_SOURCE_DIR}/*.cpp)
 file(GLOB_RECURSE UIP_HEADER_FILES ${CMAKE_UIP_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
 
-source_group("UserInputPlayerHeaders" FILES ${UIP_HEADER_FILES})
-
 add_library(UserInputPlayer ${UIP_SOURCE_FILES})
 target_link_libraries(UserInputPlayer "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
 
+# Dumb Players.
+set(CMAKE_DUP_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/DumbPlayers/src")
+set(CMAKE_DUP_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/DumbPlayers/include")
+
+include_directories(${CMAKE_DUP_INCLUDE_DIR}/)
+
+file(GLOB_RECURSE DUP_SOURCE_FILES ${CMAKE_DUP_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE DUP_HEADER_FILES ${CMAKE_DUP_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
+
+add_library(DumbPlayers ${DUP_SOURCE_FILES})
+target_link_libraries(DumbPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")

@@ -14,20 +14,29 @@
 //  limitations under the License.
 //
 
-#include "SimpleGame.h"
-#include <UserInputPlayer.h>
-#include <AlwaysDiscardFirstPlayer.h>
+#include "AlwaysDiscardFirstPlayer.h"
 
-using mahjong::SimpleGame;
-using mahjong::UserInputPlayer;
+using mahjong::Action;
+using mahjong::Player;
+using mahjong::Tile;
+using mahjong::TileGroup;
 using mahjong::AlwaysDiscardFirstPlayer;
 
-int main() {
-    UserInputPlayer *p1 = new UserInputPlayer("Human");
-    AlwaysDiscardFirstPlayer *p2 = new AlwaysDiscardFirstPlayer("BOT ADFT");
-    SimpleGame *game = new SimpleGame(p1, p2, nullptr, nullptr, 1);
+Action AlwaysDiscardFirstPlayer::onTurn(bool isMyTurn, Tile tile) {
+    if (isMyTurn) {
+        if (getHand().testWin()) {
+            return Action(Win, Tile());
+        }
+        auto it = getHand().getData().begin();
+        while ((*it).getFlag() != mahjong::Handed) {
+            it++;
+        }
+        return Action(Discard, *it);
+    } else {
+        return Action();
+    }
+}
 
-    game->startGame();
+void AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 
-    return 0;
 }
