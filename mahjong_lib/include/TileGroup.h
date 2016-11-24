@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <assert.h>
+#include <iostream>
 
 #include "PrintFormat.h"
 

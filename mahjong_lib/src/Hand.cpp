@@ -52,7 +52,6 @@ void Hand::discardTile(int index) {
 }
 
 void Hand::discardTile(Tile tile) {
-    // std::cout << "D: " << getPrintable() << "Finding: " << tile.getPrintable() << '\n';
     removeTile(tile);
 }
 
