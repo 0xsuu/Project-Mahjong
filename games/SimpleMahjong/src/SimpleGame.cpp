@@ -60,6 +60,11 @@ void SimpleGame::onPlayerPass(Player *player) {
 }
 
 void SimpleGame::onRoundFinished(bool drained, Player *winner) {
+    if (drained) {
+        cout << "Tile Stack Drained. Tie!\n";
+    } else {
+        cout << winner->getPlayerName() << " wins!\n";
+    }
     mRoundFinished = true;
 }
 
