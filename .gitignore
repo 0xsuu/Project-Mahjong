@@ -1,4 +1,5 @@
 .idea
 doc/html
 doc/latex
+cmake-build-debug
 
