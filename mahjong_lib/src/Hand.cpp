@@ -52,10 +52,8 @@ void Hand::discardTile(int index) {
 }
 
 void Hand::discardTile(Tile tile) {
-    auto indexIt = std::find(mTilesData.begin(), mTilesData.end(), tile);
-    assert(indexIt != mTilesData.end() && "Cannot discard this tile: not found!");
-    assert((*indexIt).getFlag() == Handed && "Cannot discard this tile: not in your hand!");
-    mTilesData.erase(indexIt);
+    // std::cout << "D: " << getPrintable() << "Finding: " << tile.getPrintable() << '\n';
+    removeTile(tile);
 }
 
 inline void winningHandSimple(bool &found, vector <Tile> *hand) {
@@ -150,7 +148,7 @@ bool Hand::testWin() {
     return false;
 }
 
-vector<Tile> Hand::canChi(Tile tile) {
+vector<Tile> Hand::canChi(Tile tile) const {
     if (tile.getType() == Special) {
         return {};
     }
@@ -177,10 +175,10 @@ vector<Tile> Hand::canChi(Tile tile) {
     return retVec;
 }
 
-bool Hand::canPong(Tile tile) {
+bool Hand::canPong(Tile tile) const {
     return std::count(mTilesData.begin(), mTilesData.end(), tile) >= 2;
 }
 
-bool Hand::canKang(Tile tile) {
+bool Hand::canKang(Tile tile) const {
     return std::count(mTilesData.begin(), mTilesData.end(), tile) >= 3;
 }

@@ -115,6 +115,7 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
             return Action(Discard, withoutTile[mSelectIndex]);
         } else if (mSelectIndex == getHand().getData().size()) {
             // The tile picked.
+            std::cout << "Discarding..." << tile.getPrintable() << '\n';
             return Action(Discard, tile);
         } else if (mSelectIndex > getHand().getData().size() + 1) {
             // Actions.
@@ -132,7 +133,7 @@ void UserInputPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 }
 
 void UserInputPlayer::printPlayer() {
-    system("clear");
+    //system("clear");
     cout << MAHJONG_SPECIAL[getSeatPosition()] << ": "
          << getPlayerName() << " ID" << getID() << '\n';
 }

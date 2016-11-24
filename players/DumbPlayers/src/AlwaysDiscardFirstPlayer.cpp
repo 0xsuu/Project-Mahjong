@@ -14,6 +14,8 @@
 //  limitations under the License.
 //
 
+#include <assert.h>
+#include <iostream>
 #include "AlwaysDiscardFirstPlayer.h"
 
 using mahjong::Action;
@@ -31,6 +33,8 @@ Action AlwaysDiscardFirstPlayer::onTurn(bool isMyTurn, Tile tile) {
         while ((*it).getFlag() != mahjong::Handed) {
             it++;
         }
+        assert(it != getHand().getData().end() && "This is impossible! You don't have one tile in hand?");
+        // std::cout << "My hand: " << getHand().getPrintable() << '\n';
         return Action(Discard, *it);
     } else {
         return Action();

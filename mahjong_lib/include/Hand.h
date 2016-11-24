@@ -105,10 +105,10 @@ class Hand : public TileGroup {
      */
     bool testWin();
 
-    std::vector<Tile> canChi(Tile tile);
-    bool canPong(Tile tile);
-    bool canKang(Tile tile);
-    bool canRichii(Tile tile);
+    std::vector<Tile> canChi(Tile tile) const;
+    bool canPong(Tile tile) const;
+    bool canKang(Tile tile) const;
+    bool canRichii(Tile tile) const;
 };
 
 } // namespace mahjong.
