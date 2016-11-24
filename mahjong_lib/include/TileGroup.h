@@ -18,7 +18,8 @@
 #define MAHJONG_LIB_TILEGROUP_H
 
 #include <algorithm>
-#include <stdexcept>
+#include <assert.h>
+#include <iostream>
 
 #include "PrintFormat.h"
 
@@ -42,12 +43,10 @@ class TileGroup {
     }
 
     void removeTile(Tile t) {
-        auto it = std::find(mTilesData.begin(), mTilesData.end(), t);
-        if (it != mTilesData.end()) {
-            mTilesData.erase(it);
-        } else {
-            throw std::runtime_error("Cannot remove tile: not found.");
-        }
+        auto indexIt = std::find(mTilesData.begin(), mTilesData.end(), t);
+        assert(indexIt != mTilesData.end() && "Cannot discard this tile: not found!");
+        assert((*indexIt).getFlag() == Handed && "Cannot discard this tile: not in your hand!");
+        mTilesData.erase(indexIt);
     }
 
     std::string getPrintable() {

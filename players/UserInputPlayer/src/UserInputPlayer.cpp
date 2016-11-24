@@ -22,7 +22,8 @@
 #include <assert.h>
 
 #ifndef WIN32
-#include <termio.h>
+
+#include <termios.h>
 #include <zconf.h>
 
 int getch() {
@@ -48,7 +49,7 @@ int getch() {
     }
     return (buf);
 }
-#endif
+#endif // WIN32
 
 using std::cin;
 using std::cout;
@@ -86,6 +87,8 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
                                 mSelectIndex == getHand().getData().size() + 1) {
                             mSelectIndex--;
                         }
+                    } else if (mSelectIndex == 0) {
+                        mSelectIndex = mSelectionCount;
                     }
                     printPlayer();
                     printPlayerHand(withoutTile, tile);
@@ -100,6 +103,8 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
                                 mSelectIndex == getHand().getData().size() + 1) {
                             mSelectIndex++;
                         }
+                    } else if (mSelectIndex == mSelectionCount) {
+                        mSelectIndex = 0;
                     }
                     printPlayer();
                     printPlayerHand(withoutTile, tile);
@@ -167,5 +172,5 @@ void UserInputPlayer::printSelectArrow() {
     for (int i = 0; i < mSelectIndex; ++i) {
         cout << TILES_SEPARATE_PATTERN;
     }
-    cout << '^' << '\n';
+    cout << "☝" << '\n';
 }
