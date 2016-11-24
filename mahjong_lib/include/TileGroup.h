@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "PrintFormat.h"
+
 namespace mahjong {
 class TileGroup {
  public:

@@ -112,10 +112,24 @@ if [ "$1" == "--player" ]; then
         exit 0
     fi
 
+    if [ "$2" == "all" ]; then
+        echo "Building all players..."
+        cmake ../"$PROJECT_MAHJONG"/players/
+        make
+        exit 0
+    fi
+
     if [ "$2" == "user" ]; then
         echo "Building UserInputPlayer..."
         cmake ../"$PROJECT_MAHJONG"/players/
         make UserInputPlayer
+        exit 0
+    fi
+
+    if [ "$2" = "dumb" ]; then
+        echo "Building DumpPlayers..."
+        cmake ..//"$PROJECT_MAHJONG"/players/
+        make DumbPlayers
         exit 0
     fi
 

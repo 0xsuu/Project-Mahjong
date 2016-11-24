@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <assert.h>
 
 using std::vector;
 
@@ -44,11 +45,15 @@ void Hand::pickTile(Tile t) {
 }
 
 void Hand::discardTile(int index) {
+    assert(index < mTilesData.size());
+    assert(mTilesData[index].getFlag() == Handed);
     mTilesData.erase(mTilesData.begin() + index);
 }
 
 void Hand::discardTile(Tile tile) {
     auto indexIt = std::find(mTilesData.begin(), mTilesData.end(), tile);
+    assert(indexIt != mTilesData.end());
+    assert((*indexIt).getFlag() == Handed);
     mTilesData.erase(indexIt);
 }
 
