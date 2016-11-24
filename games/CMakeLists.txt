@@ -38,7 +38,10 @@ set(MAHJONG_LIB_INCLUDE_PATH "${PROJECT_MAHJONG}/mahjong_lib/include")
 set(USER_INPUT_PLAYER_INCLUDE_PATH "${PROJECT_MAHJONG}/players/UserInputPlayer/include")
 set(USER_INPUT_PLAYER_LIB_PATH "${PROJECT_MAHJONG}/../build_players/libUserInputPlayer.a")
 
-include_directories(${MAHJONG_LIB_INCLUDE_PATH}/ ${USER_INPUT_PLAYER_INCLUDE_PATH}/)
+set(DUMB_PLAYERS_INCLUDE_PATH "${PROJECT_MAHJONG}/players/DumbPlayers/include")
+set(DUMB_PLAYERS_LIB_PATH "${PROJECT_MAHJONG}/../build_players/libDumbPlayers.a")
+
+include_directories(${MAHJONG_LIB_INCLUDE_PATH}/ ${USER_INPUT_PLAYER_INCLUDE_PATH}/ ${DUMB_PLAYERS_INCLUDE_PATH}/)
 
 #
 # Build targets
@@ -55,5 +58,5 @@ file(GLOB_RECURSE SM_HEADER_FILES ${CMAKE_SM_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCL
 source_group("SimpleMahjongHeaders" FILES ${SM_HEADER_FILES})
 
 add_executable(SimpleMahjong ${SM_SOURCE_FILES})
-target_link_libraries(SimpleMahjong "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" ${USER_INPUT_PLAYER_LIB_PATH})
+target_link_libraries(SimpleMahjong "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" ${USER_INPUT_PLAYER_LIB_PATH} ${DUMB_PLAYERS_LIB_PATH})
 

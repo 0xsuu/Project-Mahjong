@@ -15,3 +15,28 @@
 //
 
 #include "AlwaysDiscardFirstPlayer.h"
+
+using mahjong::Action;
+using mahjong::Player;
+using mahjong::Tile;
+using mahjong::TileGroup;
+using mahjong::AlwaysDiscardFirstPlayer;
+
+Action AlwaysDiscardFirstPlayer::onTurn(bool isMyTurn, Tile tile) {
+    if (isMyTurn) {
+        if (getHand().testWin()) {
+            return Action(Win, Tile());
+        }
+        auto it = getHand().getData().begin();
+        while ((*it).getFlag() != mahjong::Handed) {
+            it++;
+        }
+        return Action(Discard, *it);
+    } else {
+        return Action();
+    }
+}
+
+void AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
+
+}

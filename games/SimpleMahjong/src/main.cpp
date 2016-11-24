@@ -16,13 +16,15 @@
 
 #include "SimpleGame.h"
 #include <UserInputPlayer.h>
+#include <AlwaysDiscardFirstPlayer.h>
 
 using mahjong::SimpleGame;
 using mahjong::UserInputPlayer;
+using mahjong::AlwaysDiscardFirstPlayer;
 
 int main() {
-    UserInputPlayer *p1 = new UserInputPlayer("A");
-    UserInputPlayer *p2 = new UserInputPlayer("B");
+    UserInputPlayer *p1 = new UserInputPlayer("Human");
+    AlwaysDiscardFirstPlayer *p2 = new AlwaysDiscardFirstPlayer("BOT ADFT");
     SimpleGame *game = new SimpleGame(p1, p2, nullptr, nullptr, 1);
 
     game->startGame();

@@ -60,6 +60,7 @@ fi
 
 if [ "$1" == "--game" ]; then
     ./"$PROJECT_MAHJONG"/build_mahjong.sh --lib
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --player all
 
     if [ ! -f ./build_mahjong/libmahjong.a ]; then
         echo "Mahjong lib not found!"
