@@ -52,7 +52,7 @@ class TileGroup {
         std::string printableString = "";
         std::for_each(mTilesData.begin(), mTilesData.end(), [&printableString](Tile &t) {
             printableString += t.getPrintable();
-            printableString += "  ";
+            printableString += TILES_SEPARATE_PATTERN;
         });
         return printableString;
     }
