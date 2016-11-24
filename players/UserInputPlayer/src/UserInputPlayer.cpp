@@ -22,7 +22,14 @@
 #include <assert.h>
 
 #ifndef WIN32
+
+#ifdef __APPLE__
+#include <termios.h>
+#endif
+#ifdef __LINUX__
 #include <termio.h>
+#endif
+
 #include <zconf.h>
 
 int getch() {
@@ -48,7 +55,7 @@ int getch() {
     }
     return (buf);
 }
-#endif
+#endif // WIN32
 
 using std::cin;
 using std::cout;

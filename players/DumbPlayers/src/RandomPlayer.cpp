@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+#include <random>
 #include "RandomPlayer.h"
 
 using mahjong::Action;
