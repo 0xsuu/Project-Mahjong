@@ -93,6 +93,8 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
                                 mSelectIndex == getHand().getData().size() + 1) {
                             mSelectIndex--;
                         }
+                    } else if (mSelectIndex == 0) {
+                        mSelectIndex = mSelectionCount;
                     }
                     printPlayer();
                     printPlayerHand(withoutTile, tile);
@@ -107,6 +109,8 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
                                 mSelectIndex == getHand().getData().size() + 1) {
                             mSelectIndex++;
                         }
+                    } else if (mSelectIndex == mSelectionCount) {
+                        mSelectIndex = 0;
                     }
                     printPlayer();
                     printPlayerHand(withoutTile, tile);
@@ -174,5 +178,5 @@ void UserInputPlayer::printSelectArrow() {
     for (int i = 0; i < mSelectIndex; ++i) {
         cout << TILES_SEPARATE_PATTERN;
     }
-    cout << '^' << '\n';
+    cout << "☝" << '\n';
 }
