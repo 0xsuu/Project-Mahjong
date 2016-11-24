@@ -23,13 +23,7 @@
 
 #ifndef WIN32
 
-#ifdef __APPLE__
 #include <termios.h>
-#endif
-#ifdef __LINUX__
-#include <termio.h>
-#endif
-
 #include <zconf.h>
 
 int getch() {
