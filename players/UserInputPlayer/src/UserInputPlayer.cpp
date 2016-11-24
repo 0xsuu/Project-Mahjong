@@ -19,11 +19,41 @@
 #include <iomanip>
 #include <iostream>
 
-#include <PrintFormat.h>
+#include <assert.h>
+
+#ifndef WIN32
+#include <termio.h>
+#include <zconf.h>
+
+int getch() {
+    char buf = 0;
+    struct termios old = {0};
+    if (tcgetattr(0, &old) < 0) {
+        perror("tcsetattr()");
+    }
+    old.c_lflag &= ~ICANON;
+    old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN] = 1;
+    old.c_cc[VTIME] = 0;
+    if (tcsetattr(0, TCSANOW, &old) < 0) {
+        perror("tcsetattr ICANON");
+    }
+    if (read(0, &buf, 1) < 0) {
+        perror ("read()");
+    }
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    if (tcsetattr(0, TCSADRAIN, &old) < 0) {
+        perror ("tcsetattr ~ICANON");
+    }
+    return (buf);
+}
+#endif
 
 using std::cin;
 using std::cout;
 using std::string;
+using std::vector;
 
 using mahjong::Action;
 using mahjong::Player;
@@ -36,19 +66,62 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
         printPlayer();
         TileGroup withoutTile(getHand().getData());
         withoutTile.removeTile(tile);
-        string selectOutputLine = withoutTile.getPrintable() + "| " + tile.getPrintable();
-        cout << selectOutputLine << '\n';
 
-        int act;
-        cin >> act;
+        mSelectionCount = static_cast<int>(getHand().getData().size());
 
-        if (act == 100) {
-            return Action(Win, Tile());
+        mSelectIndex = mSelectionCount;
+        printPlayerHand(withoutTile, tile);
+        printSelectArrow();
+
+        int currentInput = 0;
+        while (currentInput != '\n') {
+            currentInput = getch();
+            switch (currentInput) {
+                case 68:
+                case 'a':
+                    // Left.
+                    if (mSelectIndex > 0) {
+                        mSelectIndex--;
+                        if (mSelectIndex == getHand().getData().size() - 1 ||
+                                mSelectIndex == getHand().getData().size() + 1) {
+                            mSelectIndex--;
+                        }
+                    }
+                    printPlayer();
+                    printPlayerHand(withoutTile, tile);
+                    printSelectArrow();
+                    break;
+                case 67:
+                case 'd':
+                    // Right.
+                    if (mSelectIndex < mSelectionCount) {
+                        mSelectIndex++;
+                        if (mSelectIndex == getHand().getData().size() - 1 ||
+                                mSelectIndex == getHand().getData().size() + 1) {
+                            mSelectIndex++;
+                        }
+                    }
+                    printPlayer();
+                    printPlayerHand(withoutTile, tile);
+                    printSelectArrow();
+                    break;
+                default:
+                    break;
+            }
         }
 
-        system("clear");
-
-        return Action(Discard, act == withoutTile.getData().size() ? tile : withoutTile[act]);
+        if (mSelectIndex < getHand().getData().size() - 1) {
+            // Find in withoutTile.
+            return Action(Discard, withoutTile[mSelectIndex]);
+        } else if (mSelectIndex == getHand().getData().size()) {
+            // The tile picked.
+            return Action(Discard, tile);
+        } else if (mSelectIndex > getHand().getData().size() + 1) {
+            // Actions.
+            return Action(mActionSelections[mSelectIndex - getHand().getData().size() - 2], Tile());
+        } else {
+            throw std::runtime_error("Invalid selection!");
+        }
     } else {
         return Action();
     }
@@ -59,6 +132,40 @@ void UserInputPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 }
 
 void UserInputPlayer::printPlayer() {
+    system("clear");
     cout << MAHJONG_SPECIAL[getSeatPosition()] << ": "
          << getPlayerName() << " ID" << getID() << '\n';
+}
+
+void UserInputPlayer::printPlayerHand(TileGroup g, Tile t) {
+    string outputLine = g.getPrintable() + "|" + TILES_SEPARATE_PATTERN
+                        + t.getPrintable() + TILES_SEPARATE_PATTERN;
+    mActionSelections.clear();
+
+    bool canWin = getHand().testWin();
+
+    if (canWin) {
+        mActionSelections.push_back(Win);
+        mSelectionCount = static_cast<int>(getHand().getData().size()) + 1;
+        outputLine = outputLine + "->";
+    }
+
+    if (!canWin) {
+        mSelectionCount = static_cast<int>(getHand().getData().size());
+    }
+
+    if (canWin) {
+        mSelectionCount++;
+        outputLine = outputLine + TILES_SEPARATE_PATTERN + "Win!";
+    }
+
+    cout << outputLine << '\n';
+}
+
+void UserInputPlayer::printSelectArrow() {
+    assert(mSelectIndex != getHand().getData().size() - 1);
+    for (int i = 0; i < mSelectIndex; ++i) {
+        cout << TILES_SEPARATE_PATTERN;
+    }
+    cout << '^' << '\n';
 }

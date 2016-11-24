@@ -28,7 +28,7 @@
 
 #include <string>
 
-#define TILES_SEPARATE_PATTERN "  "
+#define TILES_SEPARATE_PATTERN "\t"
 
 const std::string MAHJONG_TYPE[] = {"萬", "筒", "條"};
 const std::string MAHJONG_NUMBER[] = {"一", "二", "三", "四", "五", ".五", "六", "七", "八", "九"};

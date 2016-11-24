@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <iostream>
+
 #include <assert.h>
 
 using std::vector;
@@ -52,8 +53,8 @@ void Hand::discardTile(int index) {
 
 void Hand::discardTile(Tile tile) {
     auto indexIt = std::find(mTilesData.begin(), mTilesData.end(), tile);
-    assert(indexIt != mTilesData.end());
-    assert((*indexIt).getFlag() == Handed);
+    assert(indexIt != mTilesData.end() && "Cannot discard this tile: not found!");
+    assert((*indexIt).getFlag() == Handed && "Cannot discard this tile: not in your hand!");
     mTilesData.erase(indexIt);
 }
 
