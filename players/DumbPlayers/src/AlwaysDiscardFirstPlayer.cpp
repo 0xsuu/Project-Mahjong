@@ -33,7 +33,13 @@ Action AlwaysDiscardFirstPlayer::onTurn(bool isMyTurn, Tile tile) {
         }
         return Action(Discard, *it);
     } else {
-        return Action();
+        Hand copyHand(getHand().getData());
+        copyHand.pickTile(tile);
+        if (copyHand.testWin()) {
+            return Action(Win, tile);
+        } else {
+            return Action();
+        }
     }
 }
 

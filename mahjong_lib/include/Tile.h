@@ -103,7 +103,7 @@ class Tile {
     /**
      * Constructor that makes a null tile.
      */
-    Tile() {}
+    Tile() { mTileData = 0; }
 
     /**
      * Get this tile's flag.

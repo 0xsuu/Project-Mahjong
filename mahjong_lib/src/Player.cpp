@@ -26,10 +26,12 @@ using mahjong::Player;
 
 void Player::setupPlayer(int ID,
                          Wind seatPosition,
-                         mahjong::Hand initialHand) {
+                         mahjong::Hand initialHand,
+                         mahjong::Board *board) {
     mID = ID;
     mSeatPosition = seatPosition;
     mHand = initialHand;
+    mBoard = board;
 }
 
 void Player::shiftSeatPosition() {

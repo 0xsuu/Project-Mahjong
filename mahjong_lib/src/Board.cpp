@@ -82,7 +82,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
         while (std::find(allocatedIDs.begin(), allocatedIDs.end(), randomID) != allocatedIDs.end()) {
             randomID = IDDistribution(randomDevice);
         }
-        p->setupPlayer(randomID, Winds[indexPlayer], sortedHand);
+        p->setupPlayer(randomID, Winds[indexPlayer], sortedHand, this);
         indexPlayer++;
     });
 
@@ -120,6 +120,7 @@ void Board::proceedToNextPlayer() {
         mDiscardedTiles[p].addTile(t);
         Action a = p->onTurn(isPlayerTurn, t);
         allActions[a] = p;
+        Hand copyHand(p->getHand().getData());
         switch (a.getActionState()) {
             case Pass:
                 mGame->onPlayerPass(p);
@@ -129,7 +130,13 @@ void Board::proceedToNextPlayer() {
                 mGame->onPlayerDiscardTile(p, a.getTile());
                 break;
             case Win:
-                if (p->getHand().testWin()) {
+                if (isPlayerTurn) {
+                    assert(t == Tile());
+                } else {
+                    assert(t != Tile());
+                    copyHand.pickTile(t);
+                }
+                if (copyHand.testWin()) {
                     mRoundEnded = true;
                     mGame->onRoundFinished(false, p);
                 } else {
