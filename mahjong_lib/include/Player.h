@@ -61,6 +61,7 @@ class Player {
     std::string getPlayerName() { return mPlayerName; }
     Wind getSeatPosition() { return mSeatPosition; }
     Hand getHand() { return mHand; }
+    std::string getPrintable();
 
  private:
     int mID;

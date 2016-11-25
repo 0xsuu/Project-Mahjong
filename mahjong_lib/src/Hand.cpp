@@ -17,7 +17,6 @@
 #include <Hand.h>
 
 #include <algorithm>
-#include <iostream>
 
 #include <assert.h>
 
@@ -79,31 +78,16 @@ inline void winningHandSimple(bool &found, vector <Tile> *hand) {
             winningHandSimple(found, h);
         }
         // Straight.
-        auto itNext = it;
-        bool foundNext = true;
-        while (*it + 1 != *itNext) {
-            itNext++;
-            if (itNext >= hand->end()) {
-                foundNext = false;
-                break;
+        auto itNext = std::find(it, hand->end(), *it + 1);
+        if (itNext < hand->end() - 1) {
+            auto itNextNext = std::find(itNext, hand->end(), *itNext + 1);
+            if (itNextNext < hand->end()) {
+                vector<Tile> *h = new vector<Tile>(*hand);
+                h->erase(h->begin() + std::distance(hand->begin(), itNextNext));
+                h->erase(h->begin() + std::distance(hand->begin(), itNext));
+                h->erase(h->begin() + std::distance(hand->begin(), it));
+                winningHandSimple(found, h);
             }
-        }
-        auto itNextNext = itNext;
-        if (foundNext) {
-            while (*itNext + 1 != *itNextNext) {
-                itNextNext++;
-                if (itNextNext >= hand->end()) {
-                    foundNext = false;
-                    break;
-                }
-            }
-        }
-        if (foundNext) {
-            vector<Tile> *h = new vector<Tile>(*hand);
-            h->erase(h->begin() + std::distance(hand->begin(), itNextNext));
-            h->erase(h->begin() + std::distance(hand->begin(), itNext));
-            h->erase(h->begin() + std::distance(hand->begin(), it));
-            winningHandSimple(found, h);
         }
     }
     delete hand;
