@@ -17,7 +17,6 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <map>
 
 #include "Board.h"
 
@@ -51,11 +50,12 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mRoundWind = roundWind;
     mTileStack.setup(tileSetType, mEnableDora, mDoraStackSize);
 
-    // Callback.
-    mGame->onRoundStart();
+    mGame->onRoundSetup();
 
     // Shuffle the players first, i.e. seat positions randomised.
-    std::random_shuffle(mPlayers->begin(), mPlayers->end());
+    std::random_device random_device;
+    std::mt19937 rd(random_device());
+    shuffle(mPlayers->begin(), mPlayers->end(), rd);
 
     // Generate an unique ID for each player.
     std::random_device randomDevice;
@@ -67,22 +67,29 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
         int indexPlayer = 0;
         std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
             Tile t = mTileStack.drawTile();
-            mGame->onTileDrawToPlayer(p, t);
+            mGame->onAfterPlayerPickTile(p, t);
             initialHands[indexPlayer].addTile(t);
             indexPlayer++;
         });
     }
     int indexPlayer = 0;
+    vector<unsigned int> allocatedIDs;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         Hand sortedHand = initialHands[indexPlayer];
         sortedHand.sort();
-        p->setupPlayer(IDDistribution(randomDevice), Winds[indexPlayer], sortedHand);
+        unsigned int randomID = IDDistribution(randomDevice);
+        // Make sure all the IDs are unique.
+        while (std::find(allocatedIDs.begin(), allocatedIDs.end(), randomID) != allocatedIDs.end()) {
+            randomID = IDDistribution(randomDevice);
+        }
+        p->setupPlayer(randomID, Winds[indexPlayer], sortedHand);
         indexPlayer++;
     });
 
     mCurrentPlayerIndex = mPlayers->begin();
 
     mRoundEnded = false;
+    mGame->onRoundStart();
 }
 
 void Board::reset() {
@@ -102,11 +109,15 @@ void Board::proceedToNextPlayer() {
         return;
     }
 
-    map<Action, Player *> allActions;
+    // Get a tile from tile stack.
     Tile t = mTileStack.drawTile();
+    mGame->onBeforePlayerPickTile(*mCurrentPlayerIndex, t);
+    (*mCurrentPlayerIndex)->pickTile(t);
+    mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
+    map<Action, Player *> allActions;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
-        mGame->onTileDrawToPlayer(p, t);
+        mDiscardedTiles[p].addTile(t);
         Action a = p->onTurn(isPlayerTurn, t);
         allActions[a] = p;
         switch (a.getActionState()) {
@@ -114,12 +125,16 @@ void Board::proceedToNextPlayer() {
                 mGame->onPlayerPass(p);
                 break;
             case Discard:
-                p->getHand().discardTile(a.getTile());
+                p->discardTile(a.getTile());
                 mGame->onPlayerDiscardTile(p, a.getTile());
                 break;
             case Win:
-                mRoundEnded = true;
-                mGame->onRoundFinished(false, p);
+                if (p->getHand().testWin()) {
+                    mRoundEnded = true;
+                    mGame->onRoundFinished(false, p);
+                } else {
+                    throw std::invalid_argument("False win.");
+                }
                 break;
             default:
                 throw std::invalid_argument("ActionState not recognised.");
@@ -133,8 +148,4 @@ void Board::proceedToNextPlayer() {
     if (mCurrentPlayerIndex == mPlayers->end()) {
         mCurrentPlayerIndex = mPlayers->begin();
     }
-}
-
-void Board::printBoard(int PlayerID) {
-
 }

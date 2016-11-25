@@ -14,33 +14,20 @@
 //  limitations under the License.
 //
 
-#include <Board.h>
+#include "SimpleGame.h"
+#include <UserInputPlayer.h>
+#include <AlwaysDiscardFirstPlayer.h>
 
-#include <iostream>
+using mahjong::SimpleGame;
+using mahjong::UserInputPlayer;
+using mahjong::AlwaysDiscardFirstPlayer;
 
-using std::string;
+int main() {
+    UserInputPlayer *p1 = new UserInputPlayer("Human");
+    AlwaysDiscardFirstPlayer *p2 = new AlwaysDiscardFirstPlayer("BOT ADFT");
+    SimpleGame *game = new SimpleGame(p1, p2, nullptr, nullptr, 1);
 
-using mahjong::Hand;
-using mahjong::Wind;
-using mahjong::Player;
+    game->startGame();
 
-void Player::setupPlayer(int ID,
-                         Wind seatPosition,
-                         mahjong::Hand initialHand) {
-    mID = ID;
-    mSeatPosition = seatPosition;
-    mHand = initialHand;
-}
-
-void Player::shiftSeatPosition() {
-    mSeatPosition == North ? mSeatPosition = East :
-       mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);
-}
-
-void Player::discardTile(Tile t) {
-    mHand.discardTile(t);
-}
-
-void Player::pickTile(Tile t) {
-    mHand.pickTile(t);
+    return 0;
 }

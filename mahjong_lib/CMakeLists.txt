@@ -63,4 +63,3 @@ file(GLOB_RECURSE GTEST_FILES ${PROJECT_ROOT_DIRECTORY}/test/*.cpp)
 add_executable(libma_test ${GTEST_FILES})
 add_dependencies(libma_test mahjong)
 target_link_libraries(libma_test gtest "${PROJECT_ROOT_DIRECTORY}/../../build_mahjong/libmahjong.a" "${CMAKE_THREAD_LIBS_INIT}")
-

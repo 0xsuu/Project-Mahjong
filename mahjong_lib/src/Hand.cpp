@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include <assert.h>
+
 using std::vector;
 
 using mahjong::Tile;
@@ -36,19 +38,21 @@ void Hand::pickTile(Tile t) {
         for (auto it = mTilesData.begin(); it < mTilesData.end(); it++) {
             if (t <= *it) {
                 mTilesData.insert(it, t);
-                break;
+                return;
             }
         }
+        mTilesData.push_back(t);
     }
 }
 
 void Hand::discardTile(int index) {
+    assert(index < mTilesData.size());
+    assert(mTilesData[index].getFlag() == Handed);
     mTilesData.erase(mTilesData.begin() + index);
 }
 
 void Hand::discardTile(Tile tile) {
-    auto indexIt = std::find(mTilesData.begin(), mTilesData.end(), tile);
-    mTilesData.erase(indexIt);
+    removeTile(tile);
 }
 
 inline void winningHandSimple(bool &found, vector <Tile> *hand) {
@@ -143,7 +147,7 @@ bool Hand::testWin() {
     return false;
 }
 
-vector<Tile> Hand::canChi(Tile tile) {
+vector<Tile> Hand::canChi(Tile tile) const {
     if (tile.getType() == Special) {
         return {};
     }
@@ -170,10 +174,10 @@ vector<Tile> Hand::canChi(Tile tile) {
     return retVec;
 }
 
-bool Hand::canPong(Tile tile) {
+bool Hand::canPong(Tile tile) const {
     return std::count(mTilesData.begin(), mTilesData.end(), tile) >= 2;
 }
 
-bool Hand::canKang(Tile tile) {
+bool Hand::canKang(Tile tile) const {
     return std::count(mTilesData.begin(), mTilesData.end(), tile) >= 3;
 }

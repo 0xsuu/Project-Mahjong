@@ -14,33 +14,23 @@
 //  limitations under the License.
 //
 
-#include <Board.h>
+#include <Player.h>
+#include "AlwaysLosePlayer.h"
 
-#include <iostream>
-
-using std::string;
-
-using mahjong::Hand;
-using mahjong::Wind;
+using mahjong::Action;
 using mahjong::Player;
+using mahjong::Tile;
+using mahjong::TileGroup;
+using mahjong::AlwaysLosePlayer;
 
-void Player::setupPlayer(int ID,
-                         Wind seatPosition,
-                         mahjong::Hand initialHand) {
-    mID = ID;
-    mSeatPosition = seatPosition;
-    mHand = initialHand;
+Action AlwaysLosePlayer::onTurn(bool isMyTurn, Tile tile) {
+    if (isMyTurn) {
+        return Action(Discard, tile);
+    } else {
+        return Action();
+    }
 }
 
-void Player::shiftSeatPosition() {
-    mSeatPosition == North ? mSeatPosition = East :
-       mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);
-}
+void AlwaysLosePlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 
-void Player::discardTile(Tile t) {
-    mHand.discardTile(t);
-}
-
-void Player::pickTile(Tile t) {
-    mHand.pickTile(t);
 }

@@ -38,20 +38,31 @@ class TestGame : public Game {
             Game(p1, p2, p3, p4, roundCounts) {}
     ~TestGame() {}
 
+    void startGame() override {
+
+    }
+
+    void onRoundSetup() override {}
+
     void onRoundStart() override {
         std::cout << "onRoundStart:\n";
     }
-    void onPlayerPass(Player *player) override {
-        std::cout << "onPlayerPass:\n";
-    }
-    void onTileDrawToPlayer(Player *player, Tile tile) override {
-        std::cout << "onTileDrawToPlayer:\n";
+    void onBeforePlayerPickTile(Player *player, Tile tile) override {}
+    void onAfterPlayerPickTile(Player *player, Tile tile) override {
+        std::cout << "onAfterPlayerPickTile:\n";
     }
     void onPlayerDiscardTile(Player *player, Tile tile) override {
         std::cout << "onPlayerDiscardTile:\n";
     }
+    void onPlayerPass(Player *player) override {
+        std::cout << "onPlayerPass:\n";
+    }
     void onRoundFinished(bool drained, Player *winner) override {
         std::cout << "onRoundFinished:\n";
+    }
+
+    int calculateScore(Hand mHand) override {
+        return 0;
     }
 };
 
@@ -68,6 +79,10 @@ class TestPlayer : public Player {
             mahjong::Action retAction(mahjong::Discard, firstTile);
             return retAction;
         }
+    }
+
+    void onOtherPlayerMakeAction(Player *player, mahjong::Action action) override {
+
     }
 };
 
@@ -86,23 +101,82 @@ TEST(TestBoard, General2PlayerBoardTest) {
     b->proceedToNextPlayer();
     // <<< Capture ends.
     std::string output = testing::internal::GetCapturedStdout();
-    std::string legitOutput = "onRoundStart:\n";
+    std::string legitOutput = "";
     for (int i = 0; i < 2 * 13; i++) {
-        legitOutput += "onTileDrawToPlayer:\n";
+        legitOutput += "onAfterPlayerPickTile:\n";
     }
+    legitOutput += "onRoundStart:\n";
     for (int i = 0; i < (static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 2 * 13) / 2; i++) {
-        legitOutput += "onTileDrawToPlayer:\n"
+        legitOutput += "onAfterPlayerPickTile:\n"
                 "onPlayerDiscardTile:\n"
-                "onTileDrawToPlayer:\n"
                 "onPlayerPass:\n"
-                "onTileDrawToPlayer:\n"
+                "onAfterPlayerPickTile:\n"
                 "onPlayerPass:\n"
-                "onTileDrawToPlayer:\n"
                 "onPlayerDiscardTile:\n";
     }
     legitOutput += "onRoundFinished:\n";
+    EXPECT_EQ(p1->getHand().getData().size(), 13);
+    EXPECT_EQ(p2->getHand().getData().size(), 13);
     delete p1;
     delete p2;
+    delete g;
+    delete b;
+    ASSERT_EQ(output, legitOutput);
+}
+
+TEST(TestBoard, General4PlayerBoardTest) {
+    TestPlayer *p1 = new TestPlayer("A");
+    TestPlayer *p2 = new TestPlayer("B");
+    TestPlayer *p3 = new TestPlayer("C");
+    TestPlayer *p4 = new TestPlayer("D");
+    TestGame *g = new TestGame(p1, p2, p3, p4, 1);
+    Board *b = new Board(g, p1, p2, p3, p4, false, 0);
+
+    testing::internal::CaptureStdout();
+    // >>> Capture starts.
+    b->setup(mahjong::JAPANESE_MAHJONG_TILE_SET, mahjong::East);
+    for (int j = 0; j < static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 4 * 13; ++j) {
+        b->proceedToNextPlayer();
+    }
+    b->proceedToNextPlayer();
+    // <<< Capture ends.
+    std::string output = testing::internal::GetCapturedStdout();
+    std::string legitOutput = "";
+    for (int i = 0; i < 4 * 13; i++) {
+        legitOutput += "onAfterPlayerPickTile:\n";
+    }
+    legitOutput += "onRoundStart:\n";
+    for (int i = 0; i < (static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 4 * 13) / 4; i++) {
+        legitOutput += "onAfterPlayerPickTile:\n"
+                "onPlayerDiscardTile:\n"
+                "onPlayerPass:\n"
+                "onPlayerPass:\n"
+                "onPlayerPass:\n"
+                "onAfterPlayerPickTile:\n"
+                "onPlayerPass:\n"
+                "onPlayerDiscardTile:\n"
+                "onPlayerPass:\n"
+                "onPlayerPass:\n"
+                "onAfterPlayerPickTile:\n"
+                "onPlayerPass:\n"
+                "onPlayerPass:\n"
+                "onPlayerDiscardTile:\n"
+                "onPlayerPass:\n"
+                "onAfterPlayerPickTile:\n"
+                "onPlayerPass:\n"
+                "onPlayerPass:\n"
+                "onPlayerPass:\n"
+                "onPlayerDiscardTile:\n";
+    }
+    legitOutput += "onRoundFinished:\n";
+    EXPECT_EQ(p1->getHand().getData().size(), 13);
+    EXPECT_EQ(p2->getHand().getData().size(), 13);
+    EXPECT_EQ(p3->getHand().getData().size(), 13);
+    EXPECT_EQ(p4->getHand().getData().size(), 13);
+    delete p1;
+    delete p2;
+    delete p3;
+    delete p4;
     delete g;
     delete b;
     ASSERT_EQ(output, legitOutput);

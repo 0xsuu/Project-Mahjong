@@ -86,7 +86,8 @@ TEST(TestTileStack, TileStackDrawRandomicity) {
     int count = 0;
     for (int i = 0; i < 12000; i++) {
         TileStack tileStack(mahjong::JAPANESE_MAHJONG_TILE_SET, false, 0);
-        if (tileStack.drawTile() == mahjong::Tile(mahjong::Handed, mahjong::Character, 1)) {
+        mahjong::Tile t = tileStack.drawTile();
+        if (t == mahjong::Tile(mahjong::Handed, mahjong::Character, 1)) {
             count++;
         }
     }

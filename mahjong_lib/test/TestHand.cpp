@@ -40,7 +40,7 @@ TEST(TestHand, Creations) {
     h1.addTile(Tile(Handed, Dot, 2));
     h1.addTile(Tile(Handed, Bamboo, 3));
     h1.addTile(Tile(Handed, Special, 4));
-    EXPECT_EQ(h1.getHand(), h2.getHand());
+    EXPECT_EQ(h1.getData(), h2.getData());
 }
 
 TEST(TestHand, Sorting) {
@@ -79,7 +79,7 @@ TEST(TestHand, Sorting) {
               Tile(Handed, Bamboo, 1),
               Tile(Handed, Bamboo, 1)});
 
-    EXPECT_EQ(h.getHand(), h2.getHand());
+    EXPECT_EQ(h.getData(), h2.getData());
 }
 
 TEST(TestHand, PickTile) {
@@ -121,7 +121,7 @@ TEST(TestHand, PickTile) {
               Tile(Handed, Bamboo, 1),
               Tile(Handed, Bamboo, 1)});
 
-    EXPECT_EQ(h.getHand(), h2.getHand());
+    EXPECT_EQ(h.getData(), h2.getData());
 
     Hand h3;
     h3.pickTile(Tile(Handed, Special, 1));
@@ -129,13 +129,13 @@ TEST(TestHand, PickTile) {
 }
 
 TEST(TestHand, DiscardTile) {
-    Hand h({Tile(Concealed, Special, 7),
-            Tile(Concealed, Special, 7),
-            Tile(Concealed, Special, 7),
-            Tile(Concealed, Special, 7),
-            Tile(Melded, Special, 4),
-            Tile(Melded, Special, 4),
-            Tile(Melded, Special, 4),
+    Hand h({Tile(Handed, Special, 4),
+            Tile(Handed, Special, 4),
+            Tile(Handed, Special, 4),
+            Tile(Handed, Special, 4),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7),
+            Tile(Handed, Special, 7),
             Tile(Handed, Dot, 7),
             Tile(Handed, Dot, 8),
             Tile(Handed, Dot, 9)});
@@ -147,12 +147,12 @@ TEST(TestHand, DiscardTile) {
     h.discardTile(Tile(Handed, Dot, 9));
 
 
-    Hand h2 ({Tile(Concealed, Special, 7),
-              Tile(Concealed, Special, 7),
-              Tile(Concealed, Special, 7),
-              Tile(Concealed, Special, 7)});
+    Hand h2 ({Tile(Handed, Special, 4),
+              Tile(Handed, Special, 4),
+              Tile(Handed, Special, 4),
+              Tile(Handed, Special, 4)});
 
-    EXPECT_EQ(h.getHand(), h2.getHand());
+    EXPECT_EQ(h.getData(), h2.getData());
 }
 
 TEST(TestHand, TestWinningJudgement_Simple) {

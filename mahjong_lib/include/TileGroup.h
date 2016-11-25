@@ -17,6 +17,12 @@
 #ifndef MAHJONG_LIB_TILEGROUP_H
 #define MAHJONG_LIB_TILEGROUP_H
 
+#include <algorithm>
+#include <assert.h>
+#include <iostream>
+
+#include "PrintFormat.h"
+
 namespace mahjong {
 class TileGroup {
  public:
@@ -36,12 +42,27 @@ class TileGroup {
         mTilesData.push_back(t);
     }
 
+    void removeTile(Tile t) {
+        auto indexIt = std::find(mTilesData.begin(), mTilesData.end(), t);
+        assert(indexIt != mTilesData.end() && "Cannot discard this tile: not found!");
+        assert((*indexIt).getFlag() == Handed && "Cannot discard this tile: not in your hand!");
+        mTilesData.erase(indexIt);
+    }
+
+    std::string getPrintable() {
+        std::string printableString = "";
+        std::for_each(mTilesData.begin(), mTilesData.end(), [&printableString](Tile &t) {
+            printableString += t.getPrintable();
+            printableString += TILES_SEPARATE_PATTERN;
+        });
+        return printableString;
+    }
     /**
      * Accessors.
      */
     Tile getTile(int n) { return mTilesData[n]; }
     Tile operator[](int index) { return getTile(index); }
-    std::vector<Tile> getHand() { return mTilesData; }
+    std::vector<Tile> getData() { return mTilesData; }
 
  protected:
     std::vector<Tile> mTilesData;
