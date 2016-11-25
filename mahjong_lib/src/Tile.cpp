@@ -57,6 +57,10 @@ bool Tile::isDora() const {
     return mIsDora;
 }
 
+bool Tile::isNull() const {
+    return mTileData == 0;
+}
+
 string Tile::getPrintable() const {
     return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumber() - TILE_NUMBER_OFFSET] :
            ((isDora() ? MAHJONG_DORA_POINT : MAHJONG_NUMBER[getNumber() - TILE_NUMBER_OFFSET])
