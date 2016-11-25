@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "Action.h"
-#include "Board.h"
 #include "Hand.h"
 #include "Tile.h"
 
@@ -34,8 +33,6 @@ enum Wind {
 };
 
 const Wind Winds[] = {East, South, West, North};
-
-class Board;
 
 class Player {
  public:
@@ -71,7 +68,6 @@ class Player {
     std::string mPlayerName;
     Wind mSeatPosition;
     Hand mHand;
-    Board *mBoard;
 };
 } // namespace mahjong.
 
