@@ -109,13 +109,15 @@ void UserInputPlayer::printBoard(TileGroup withoutTile, Tile pickedTile) {
     std::for_each(playerAndDiscardedTiles.begin(), playerAndDiscardedTiles.end(), [](string &s) {
         cout << s << "\n\n";
     });
-//    if (pickedTile != Tile()) {
+    if (!pickedTile.isNull()) {
         printPlayer();
         printPlayerHand(withoutTile, pickedTile);
         printSelectArrow();
-//    } else {
-//        printSelectArrow();
-//    }
+    } else {
+        printSelectArrow();
+        printPlayer();
+        printPlayerHand(getHand(), Tile());
+    }
 }
 
 void UserInputPlayer::printPlayer() {
@@ -123,14 +125,15 @@ void UserInputPlayer::printPlayer() {
 }
 
 void UserInputPlayer::printPlayerHand(TileGroup g, Tile t) {
-    string outputLine = g.getPrintable() + "|" + TILES_SEPARATE_PATTERN
-                        + t.getPrintable() + TILES_SEPARATE_PATTERN;
+    string outputLine = g.getPrintable() + "|" + (!t.isNull() ?
+                                                  (TILES_SEPARATE_PATTERN +
+                                                  t.getPrintable() +
+                                                  TILES_SEPARATE_PATTERN) : "");
 
     printActions(outputLine);
 }
 
 void UserInputPlayer::printSelectArrow() {
-    assert(mSelectIndex != getHand().getData().size() - 1);
     for (int i = 0; i < mSelectIndex; ++i) {
         cout << TILES_SEPARATE_PATTERN;
     }
@@ -141,14 +144,14 @@ bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
     mActionSelections.clear();
 
     bool canWin;
-    if (addedTile == Tile()) {
+    if (addedTile.isNull()) {
         canWin = getHand().testWin();
     } else {
         Hand copyHand(getHand().getData());
         copyHand.pickTile(addedTile);
         canWin = copyHand.testWin();
     }
-//    canWin =true;
+    //canWin =true;
 
     if (canWin /*||*/) {
         mActionSelections.push_back(Win);
