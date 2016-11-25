@@ -68,47 +68,9 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
         TileGroup withoutTile(getHand().getData());
         withoutTile.removeTile(tile);
 
-        mSelectionCount = static_cast<int>(getHand().getData().size());
-
-        mSelectIndex = mSelectionCount;
-        printBoard(tile);
-
-        int currentInput = 0;
-        while (currentInput != '\n') {
-            currentInput = getch();
-            switch (currentInput) {
-                case 68:
-                case 'a':
-                    // Left.
-                    if (mSelectIndex > 0) {
-                        mSelectIndex--;
-                        if (mSelectIndex == getHand().getData().size() - 1 ||
-                                mSelectIndex == getHand().getData().size() + 1) {
-                            mSelectIndex--;
-                        }
-                    } else if (mSelectIndex == 0) {
-                        mSelectIndex = mSelectionCount;
-                    }
-                    printBoard(tile);
-                    break;
-                case 67:
-                case 'd':
-                    // Right.
-                    if (mSelectIndex < mSelectionCount) {
-                        mSelectIndex++;
-                        if (mSelectIndex == getHand().getData().size() - 1 ||
-                                mSelectIndex == getHand().getData().size() + 1) {
-                            mSelectIndex++;
-                        }
-                    } else if (mSelectIndex == mSelectionCount) {
-                        mSelectIndex = 0;
-                    }
-                    printBoard(tile);
-                    break;
-                default:
-                    break;
-            }
-        }
+        takeSelectionLineInputs(static_cast<int>(getHand().getData().size()),
+                                {getHand().getData().size() - 1, getHand().getData().size() + 1},
+                                tile);
 
         // Get selection.
         if (mSelectIndex < getHand().getData().size() - 1) {
@@ -126,47 +88,8 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
     } else {
         string outputLine = "discarded: " + tile.getPrintable() + "\n";
         if (printActions(outputLine, tile)) {
-            mSelectionCount = static_cast<int>(mActionSelections.size());
-
-            mSelectIndex = mSelectionCount;
-            printBoard(tile);
-
-            int currentInput = 0;
-            while (currentInput != '\n') {
-                currentInput = getch();
-                switch (currentInput) {
-                    case 68:
-                    case 'a':
-                        // Left.
-                        if (mSelectIndex > 0) {
-                            mSelectIndex--;
-                            if (mSelectIndex == getHand().getData().size() - 1 ||
-                                mSelectIndex == getHand().getData().size() + 1) {
-                                mSelectIndex--;
-                            }
-                        } else if (mSelectIndex == 0) {
-                            mSelectIndex = mSelectionCount;
-                        }
-                        printBoard(Tile());
-                        break;
-                    case 67:
-                    case 'd':
-                        // Right.
-                        if (mSelectIndex < mSelectionCount) {
-                            mSelectIndex++;
-                            if (mSelectIndex == getHand().getData().size() - 1 ||
-                                mSelectIndex == getHand().getData().size() + 1) {
-                                mSelectIndex++;
-                            }
-                        } else if (mSelectIndex == mSelectionCount) {
-                            mSelectIndex = 0;
-                        }
-                        printBoard(Tile());
-                        break;
-                    default:
-                        break;
-                }
-            }
+            takeSelectionLineInputs(static_cast<int>(mActionSelections.size()), {}, tile);
+            return Action(mActionSelections[mSelectIndex], tile);
         } else {
             return Action();
         }
@@ -224,6 +147,7 @@ bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
         copyHand.pickTile(addedTile);
         canWin = copyHand.testWin();
     }
+    canWin =true;
 
     if (canWin /*||*/) {
         mActionSelections.push_back(Win);
@@ -243,4 +167,50 @@ bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
     cout << prevString << '\n';
 
     return canWin /*||*/;
+}
+
+void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int> nonSelectionIndexes, Tile tile) {
+    mSelectionCount = maxSelection;
+
+    mSelectIndex = mSelectionCount;
+    printBoard(tile);
+
+    int currentInput = 0;
+    while (currentInput != '\n') {
+        currentInput = getch();
+        switch (currentInput) {
+            case 68:
+            case 'a':
+                // Left.
+                if (mSelectIndex > 0) {
+                    mSelectIndex--;
+                    if (!nonSelectionIndexes.empty() &&
+                            std::find(nonSelectionIndexes.begin(), nonSelectionIndexes.end(), mSelectIndex)
+                            != nonSelectionIndexes.end()) {
+                        mSelectIndex--;
+                    }
+                } else if (mSelectIndex == 0) {
+                    mSelectIndex = mSelectionCount;
+                }
+                printBoard(Tile());
+                break;
+            case 67:
+            case 'd':
+                // Right.
+                if (mSelectIndex < mSelectionCount) {
+                    mSelectIndex++;
+                    if (!nonSelectionIndexes.empty() &&
+                            std::find(nonSelectionIndexes.begin(), nonSelectionIndexes.end(), mSelectIndex)
+                            != nonSelectionIndexes.end()) {
+                        mSelectIndex++;
+                    }
+                } else if (mSelectIndex == mSelectionCount) {
+                    mSelectIndex = 0;
+                }
+                printBoard(Tile());
+                break;
+            default:
+                break;
+        }
+    }
 }

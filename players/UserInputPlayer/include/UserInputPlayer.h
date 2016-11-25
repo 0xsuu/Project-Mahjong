@@ -20,6 +20,7 @@
 #include <Player.h>
 
 #include <string>
+#include <vector>
 
 namespace mahjong {
 class UserInputPlayer : public Player {
@@ -36,6 +37,7 @@ class UserInputPlayer : public Player {
     void printPlayerHand(TileGroup g, Tile t);
     void printSelectArrow();
     bool printActions(std::string &prevString, Tile addedTile = Tile());
+    void takeSelectionLineInputs(int maxSelection, std::vector<int> nonSelectionIndexes, Tile tile);
 
     int mSelectIndex = 0;
     int mSelectionCount = 0;
