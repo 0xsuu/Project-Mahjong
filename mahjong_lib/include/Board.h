@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 
+#include "Constants.h"
 #include "Game.h"
 #include "Hand.h"
 #include "Player.h"
@@ -31,6 +32,8 @@
 namespace mahjong {
 /**
  * This class controls the rules of the game.
+ *
+ * This class must be initialised to a pointer, as the reference is passed to Player.
  */
 class Board {
  public:
@@ -64,6 +67,9 @@ class Board {
     std::vector<Player *> *getPlayers() {
         return mPlayers;
     }
+    std::map<Player *, TileGroup> getPlayerAndDiscardedTiles() {
+        return mDiscardedTiles;
+    };
 
  protected:
     Game *mGame;

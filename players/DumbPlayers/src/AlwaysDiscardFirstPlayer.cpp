@@ -37,7 +37,13 @@ Action AlwaysDiscardFirstPlayer::onTurn(bool isMyTurn, Tile tile) {
         assert(it != handData.end() && "This is impossible! You don't have one tile in hand?");
         return Action(Discard, *it);
     } else {
-        return Action();
+        Hand copyHand(getHand().getData());
+        copyHand.pickTile(tile);
+        if (copyHand.testWin()) {
+            return Action(Win, tile);
+        } else {
+            return Action();
+        }
     }
 }
 

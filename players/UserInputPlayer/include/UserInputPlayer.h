@@ -30,10 +30,12 @@ class UserInputPlayer : public Player {
     void onOtherPlayerMakeAction(Player *player, Action action) override;
 
  private:
-    void printBoard();
+    void printBoard(Tile pickedTile);
+    void printOpponents();
     void printPlayer();
     void printPlayerHand(TileGroup g, Tile t);
     void printSelectArrow();
+    bool printActions(std::string &prevString, Tile addedTile = Tile());
 
     int mSelectIndex = 0;
     int mSelectionCount = 0;

@@ -20,11 +20,11 @@
 #include <string>
 #include <vector>
 
+#include "Constants.h"
 #include "Player.h"
 #include "PrintFormat.h"
 
 namespace mahjong {
-
 /**
  * An interface for implementing UI.
  */

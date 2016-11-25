@@ -21,25 +21,18 @@
 #include <vector>
 
 #include "Action.h"
+#include "Board.h"
+#include "Constants.h"
 #include "Hand.h"
 #include "Tile.h"
 
 namespace mahjong {
-enum Wind {
-    East = 0,
-    South = 1,
-    West = 2,
-    North = 3
-};
-
-const Wind Winds[] = {East, South, West, North};
-
 class Player {
  public:
     Player(std::string playerName) : mPlayerName(playerName) {}
     virtual ~Player() {}
 
-    void setupPlayer(int ID, Wind seatPosition, Hand initialHand);
+    void setupPlayer(int ID, Wind seatPosition, Hand initialHand, Board *board);
 
     void shiftSeatPosition();
     void discardTile(Tile t);
@@ -61,6 +54,7 @@ class Player {
     std::string getPlayerName() { return mPlayerName; }
     Wind getSeatPosition() { return mSeatPosition; }
     Hand getHand() { return mHand; }
+    std::vector<std::string> getPlayerAndDiscardedTiles();
     std::string getPrintable();
 
  private:
@@ -68,6 +62,7 @@ class Player {
     std::string mPlayerName;
     Wind mSeatPosition;
     Hand mHand;
+    Board *mBoard;
 };
 } // namespace mahjong.
 
