@@ -49,7 +49,7 @@ namespace mahjong {
 #define TILE_NUMBER_OFFSET 1
 
 // The dora number id.
-#define TILE_DORA_NUMBER_ID 6
+#define TILE_DORA_NUMBER 5
 
 typedef enum TileFlag {
     Concealed = 0b00000000,
@@ -88,7 +88,7 @@ class Tile {
      * @param [in] number: The last 4 bits of the tile byte.
      * encode                          | applied type
      * ------------------------------- | -------------
-     * 0001 - 1010(1 - 5, 5(dora) - 9) | C, D and B.
+     * 0001 - 1010(1 - 9)              | C, D and B.
      * 0001 - 0110(1 - 7)              | S.
      *
      * @param dora: Is dora tile.
@@ -98,7 +98,7 @@ class Tile {
     /**
      * Constructor that construct from a pre-cooked data.
      */
-    Tile(const uint8_t data);
+    Tile(const uint8_t data, bool dora);
 
     /**
      * Constructor that makes a null tile.
@@ -170,15 +170,8 @@ class Tile {
      * @return Type in 2 bits.
      */
     inline uint8_t getTypeID() const;
-    /**
-     * Get this tile's number ID.
-     *
-     * @return Number
-     */
-    inline int getNumberID() const;
 
-    inline int numberIDToNumber(int id) const;
-    inline int numberToNumberID(TileType type, int id, bool dora) const;
+    bool mIsDora;
 };
 
 } // namespace mahjong

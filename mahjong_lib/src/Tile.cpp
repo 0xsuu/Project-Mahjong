@@ -15,6 +15,8 @@
 //
 
 #include <cassert>
+#include <iostream>
+#include <bitset>
 
 #include "Tile.h"
 #include "PrintFormat.h"
@@ -33,11 +35,13 @@ Tile::Tile(const TileFlag flag, const TileType type, const int number, bool dora
         assert(type != Special);
     }
 
-    mTileData = flag | type | numberToNumberID(type, number, dora);
+    mTileData  = flag | type | number;
+    mIsDora = dora;
 }
 
-Tile::Tile(const uint8_t data) {
+Tile::Tile(const uint8_t data, bool dora) {
     mTileData = data;
+    mIsDora = dora;
 }
 
 TileFlag Tile::getFlag() const {
@@ -47,15 +51,16 @@ TileType Tile::getType() const {
     return static_cast<TileType>(mTileData & TILE_TYPE_FILTER);
 }
 int Tile::getNumber() const {
-    return numberIDToNumber(getNumberID());
+    return mTileData & TILE_NUMBER_FILTER;
 }
 bool Tile::isDora() const {
-    return getNumberID() == TILE_DORA_NUMBER_ID;
+    return mIsDora;
 }
 
 string Tile::getPrintable() const {
-    return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumberID() - TILE_NUMBER_OFFSET] :
-            MAHJONG_NUMBER[getNumberID() - TILE_NUMBER_OFFSET] + MAHJONG_TYPE[getTypeID()];
+    return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumber() - TILE_NUMBER_OFFSET] :
+           ((isDora() ? MAHJONG_DORA_POINT : MAHJONG_NUMBER[getNumber() - TILE_NUMBER_OFFSET])
+                                            + MAHJONG_TYPE[getTypeID()]);
 }
 
 void Tile::setMeld() {
@@ -80,30 +85,14 @@ bool Tile::operator<=(Tile t) const {
     return mTileData <= t.getData();
 }
 Tile Tile::operator+(int n) const {
-    return Tile(getFlag(), getType(), numberToNumberID(getType(), getNumber() + n, false));
+    return Tile(getData() + static_cast<uint8_t>(n), mIsDora && n == 0);
 }
 Tile Tile::operator-(int n) const {
-    return Tile(getFlag(), getType(), numberToNumberID(getType(), getNumber() - n, false));
+    return Tile(getData() - static_cast<uint8_t>(n), mIsDora && n == 0);
 }
 
 // Private functions.
 
 inline uint8_t Tile::getTypeID() const {
     return static_cast<uint8_t>((mTileData & TILE_TYPE_FILTER) >> 4);
-}
-inline int Tile::getNumberID() const {
-    return mTileData & TILE_NUMBER_FILTER;
-}
-
-inline int Tile::numberIDToNumber(int id) const {
-    return (getType() != Special && id > 5) ? id - 1 : id;
-}
-
-inline int Tile::numberToNumberID(TileType type, int number, bool dora = false) const {
-    if (type == Special) {
-        return number;
-    }
-    else {
-        return ((!dora && number > 5) || (dora && number == 5)) ? number + 1 : number;
-    }
 }

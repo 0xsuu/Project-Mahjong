@@ -27,14 +27,14 @@ using mahjong::Dot;
 using mahjong::Bamboo;
 using mahjong::Special;
 
-TEST(TileTest, CreateNewTile) {
+TEST(TestTile, CreateNewTile) {
     Tile testTile(Melded, Special, 5);
     EXPECT_EQ(testTile.getFlag(), Melded);
     EXPECT_EQ(testTile.getType(), Special);
     EXPECT_EQ(testTile.getNumber(), 5);
 }
 
-TEST(TileTest, ChangeTileFlag) {
+TEST(TestTile, ChangeTileFlag) {
     Tile testTile(Handed, Special, 5);
     EXPECT_EQ(testTile.getFlag(), Handed);
     testTile.setMeld();
@@ -43,7 +43,7 @@ TEST(TileTest, ChangeTileFlag) {
     EXPECT_EQ(testTile.getFlag(), Concealed);
 }
 
-TEST(TileTest, PrintableTest) {
+TEST(TestTile, PrintableTest) {
     Tile C1(Handed, Character, 1);
     Tile C2(Handed, Character, 2);
     Tile C3(Handed, Character, 3);
@@ -73,7 +73,7 @@ TEST(TileTest, PrintableTest) {
     EXPECT_EQ(output, "一萬二萬三萬四筒五筒.五筒六筒七條八條九條東南西北中發白");
 }
 
-TEST(TileTest, DoraTileTest) {
+TEST(TestTile, DoraTileTest) {
     Tile testTile(Melded, Dot, 5, true);
     EXPECT_TRUE(testTile.isDora()) << "Dora D5";
     EXPECT_EQ(testTile.getNumber(), 5) << "Dora D5";
