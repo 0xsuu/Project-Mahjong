@@ -71,8 +71,7 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
         mSelectionCount = static_cast<int>(getHand().getData().size());
 
         mSelectIndex = mSelectionCount;
-        printPlayerHand(withoutTile, tile);
-        printSelectArrow();
+        printBoard(tile);
 
         int currentInput = 0;
         while (currentInput != '\n') {
@@ -90,9 +89,7 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
                     } else if (mSelectIndex == 0) {
                         mSelectIndex = mSelectionCount;
                     }
-                    printPlayer();
-                    printPlayerHand(withoutTile, tile);
-                    printSelectArrow();
+                    printBoard(tile);
                     break;
                 case 67:
                 case 'd':
@@ -106,15 +103,14 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
                     } else if (mSelectIndex == mSelectionCount) {
                         mSelectIndex = 0;
                     }
-                    printPlayer();
-                    printPlayerHand(withoutTile, tile);
-                    printSelectArrow();
+                    printBoard(tile);
                     break;
                 default:
                     break;
             }
         }
 
+        // Get selection.
         if (mSelectIndex < getHand().getData().size() - 1) {
             // Find in withoutTile.
             return Action(Discard, withoutTile[mSelectIndex]);
@@ -128,8 +124,52 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
             throw std::runtime_error("Invalid selection!");
         }
     } else {
+        string outputLine = "discarded: " + tile.getPrintable() + "\n";
+        if (printActions(outputLine, tile)) {
+            mSelectionCount = static_cast<int>(mActionSelections.size());
 
-        return Action();
+            mSelectIndex = mSelectionCount;
+            printBoard(tile);
+
+            int currentInput = 0;
+            while (currentInput != '\n') {
+                currentInput = getch();
+                switch (currentInput) {
+                    case 68:
+                    case 'a':
+                        // Left.
+                        if (mSelectIndex > 0) {
+                            mSelectIndex--;
+                            if (mSelectIndex == getHand().getData().size() - 1 ||
+                                mSelectIndex == getHand().getData().size() + 1) {
+                                mSelectIndex--;
+                            }
+                        } else if (mSelectIndex == 0) {
+                            mSelectIndex = mSelectionCount;
+                        }
+                        printBoard(Tile());
+                        break;
+                    case 67:
+                    case 'd':
+                        // Right.
+                        if (mSelectIndex < mSelectionCount) {
+                            mSelectIndex++;
+                            if (mSelectIndex == getHand().getData().size() - 1 ||
+                                mSelectIndex == getHand().getData().size() + 1) {
+                                mSelectIndex++;
+                            }
+                        } else if (mSelectIndex == mSelectionCount) {
+                            mSelectIndex = 0;
+                        }
+                        printBoard(Tile());
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } else {
+            return Action();
+        }
     }
 }
 
@@ -137,34 +177,32 @@ void UserInputPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 
 }
 
-void UserInputPlayer::printPlayer() {
+
+void UserInputPlayer::printBoard(Tile pickedTile) {
     system("clear");
+    TileGroup withoutTile(getHand().getData());
+    withoutTile.removeTile(pickedTile);
+
+    auto playerAndDiscardedTiles = getPlayerAndDiscardedTiles();
+    std::for_each(playerAndDiscardedTiles.begin(), playerAndDiscardedTiles.end(), [](string &s) {
+        cout << s << "\n\n";
+    });
+    if (pickedTile != Tile()) {
+        printPlayer();
+        printPlayerHand(withoutTile, pickedTile);
+        printSelectArrow();
+    }
+}
+
+void UserInputPlayer::printPlayer() {
     cout << getPrintable() << '\n';
 }
 
 void UserInputPlayer::printPlayerHand(TileGroup g, Tile t) {
     string outputLine = g.getPrintable() + "|" + TILES_SEPARATE_PATTERN
                         + t.getPrintable() + TILES_SEPARATE_PATTERN;
-    mActionSelections.clear();
 
-    bool canWin = getHand().testWin();
-
-    if (canWin) {
-        mActionSelections.push_back(Win);
-        mSelectionCount = static_cast<int>(getHand().getData().size()) + 1;
-        outputLine = outputLine + "->";
-    }
-
-    if (!canWin) {
-        mSelectionCount = static_cast<int>(getHand().getData().size());
-    }
-
-    if (canWin) {
-        mSelectionCount++;
-        outputLine = outputLine + TILES_SEPARATE_PATTERN + "Win!";
-    }
-
-    cout << outputLine << '\n';
+    printActions(outputLine);
 }
 
 void UserInputPlayer::printSelectArrow() {
@@ -173,4 +211,36 @@ void UserInputPlayer::printSelectArrow() {
         cout << TILES_SEPARATE_PATTERN;
     }
     cout << "☝" << '\n';
+}
+
+bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
+    mActionSelections.clear();
+
+    bool canWin;
+    if (addedTile == Tile()) {
+        canWin = getHand().testWin();
+    } else {
+        Hand copyHand(getHand().getData());
+        copyHand.pickTile(addedTile);
+        canWin = copyHand.testWin();
+    }
+
+    if (canWin /*||*/) {
+        mActionSelections.push_back(Win);
+        mSelectionCount = static_cast<int>(getHand().getData().size()) + 1;
+        prevString = prevString + "->";
+    }
+
+    if (!canWin) {
+        mSelectionCount = static_cast<int>(getHand().getData().size());
+    }
+
+    if (canWin) {
+        mSelectionCount++;
+        prevString = prevString + TILES_SEPARATE_PATTERN + "Win!";
+    }
+
+    cout << prevString << '\n';
+
+    return canWin /*||*/;
 }

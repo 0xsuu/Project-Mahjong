@@ -19,6 +19,7 @@
 #include <iostream>
 
 using std::string;
+using std::vector;
 
 using mahjong::Hand;
 using mahjong::Wind;
@@ -52,4 +53,17 @@ string Player::getPrintable() {
     retString = retString + MAHJONG_SPECIAL[getSeatPosition()] + ": " +
             getPlayerName() + " ID" + std::to_string(getID());
     return retString;
+}
+
+vector<string> Player::getPlayerAndDiscardedTiles() {
+    vector<string> retVec;
+    auto playerAndDiscardedTiles = mBoard->getPlayerAndDiscardedTiles();
+    for (auto it = playerAndDiscardedTiles.begin(); it != playerAndDiscardedTiles.end(); it++) {
+        if ((*it).first != this) {
+            string s = "";
+            s += (*it).first->getPrintable() + ":\n" + (*it).second.getPrintable();
+            retVec.push_back(s);
+        }
+    }
+    return retVec;
 }

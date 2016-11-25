@@ -54,6 +54,7 @@ class Player {
     std::string getPlayerName() { return mPlayerName; }
     Wind getSeatPosition() { return mSeatPosition; }
     Hand getHand() { return mHand; }
+    std::vector<std::string> getPlayerAndDiscardedTiles();
     std::string getPrintable();
 
  private:

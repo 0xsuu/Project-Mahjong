@@ -67,6 +67,9 @@ class Board {
     std::vector<Player *> *getPlayers() {
         return mPlayers;
     }
+    std::map<Player *, TileGroup> getPlayerAndDiscardedTiles() {
+        return mDiscardedTiles;
+    };
 
  protected:
     Game *mGame;

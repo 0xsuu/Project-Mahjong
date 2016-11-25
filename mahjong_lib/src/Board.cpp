@@ -114,10 +114,10 @@ void Board::proceedToNextPlayer() {
     mGame->onBeforePlayerPickTile(*mCurrentPlayerIndex, t);
     (*mCurrentPlayerIndex)->pickTile(t);
     mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
+    mDiscardedTiles[*mCurrentPlayerIndex].addTile(t);
     map<Action, Player *> allActions;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
-        mDiscardedTiles[p].addTile(t);
         Action a = p->onTurn(isPlayerTurn, t);
         allActions[a] = p;
         Hand copyHand(p->getHand().getData());
