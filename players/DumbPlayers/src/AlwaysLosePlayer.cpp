@@ -14,4 +14,23 @@
 //  limitations under the License.
 //
 
+#include <Player.h>
 #include "AlwaysLosePlayer.h"
+
+using mahjong::Action;
+using mahjong::Player;
+using mahjong::Tile;
+using mahjong::TileGroup;
+using mahjong::AlwaysLosePlayer;
+
+Action AlwaysLosePlayer::onTurn(bool isMyTurn, Tile tile) {
+    if (isMyTurn) {
+        return Action(Discard, tile);
+    } else {
+        return Action();
+    }
+}
+
+void AlwaysLosePlayer::onOtherPlayerMakeAction(Player *player, Action action) {
+
+}

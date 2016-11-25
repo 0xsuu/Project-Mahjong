@@ -14,4 +14,30 @@
 //  limitations under the License.
 //
 
+#include <random>
 #include "RandomPlayer.h"
+
+using mahjong::Action;
+using mahjong::Player;
+using mahjong::Tile;
+using mahjong::TileGroup;
+using mahjong::RandomPlayer;
+
+Action RandomPlayer::onTurn(bool isMyTurn, Tile tile) {
+    if (isMyTurn) {
+        if (getHand().testWin()) {
+            return Action(Win, Tile());
+        }
+
+        std::random_device rd;
+        std::mt19937 urd(rd());
+        std::uniform_int_distribution<int> tileDistribution(0, static_cast<int>(getHand().getData().size()));
+        return Action(Discard, getHand().getTile(tileDistribution(urd)));
+    } else {
+        return Action();
+    }
+}
+
+void RandomPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
+
+}
