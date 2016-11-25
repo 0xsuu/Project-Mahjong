@@ -277,6 +277,7 @@ TEST(TestHand, TestWinningJudgement_ReportedFailed1) {
             Tile(Handed, Character, 3),
             Tile(Handed, Character, 6),
             Tile(Handed, Character, 7),
+            Tile(Handed, Character, 8),
             Tile(Handed, Dot, 3),
             Tile(Handed, Dot, 3),
             Tile(Handed, Dot, 3),

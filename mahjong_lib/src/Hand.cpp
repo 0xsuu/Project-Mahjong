@@ -17,7 +17,6 @@
 #include <Hand.h>
 
 #include <algorithm>
-#include <iostream>
 
 #include <assert.h>
 
