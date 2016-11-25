@@ -51,6 +51,8 @@ int getch() {
 }
 #endif // WIN32
 
+#define SELECTION_COUNT_FOR_NOT_MY_TURN 1
+
 using std::cin;
 using std::cout;
 using std::string;
@@ -62,8 +64,9 @@ using mahjong::Tile;
 using mahjong::TileGroup;
 using mahjong::UserInputPlayer;
 
-Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
-    if (isMyTurn) {
+Action UserInputPlayer::onTurn(int playerID, Tile tile) {
+    mIsMyTurn = getID() == playerID;
+    if (playerID) {
         printPlayer();
         TileGroup withoutTile(getHand().getData());
         withoutTile.removeTile(tile);
@@ -87,13 +90,9 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
             throw std::runtime_error("Invalid selection!");
         }
     } else {
-        string outputLine = "discarded: " + tile.getPrintable() + "\n";
-        if (printActions(outputLine, tile)) {
-            takeSelectionLineInputs(static_cast<int>(mActionSelections.size()), {}, tile, getHand());
-            return Action(mActionSelections[mSelectIndex], tile);
-        } else {
-            return Action();
-        }
+        mActionSelections.push_back(Pass);
+        takeSelectionLineInputs(SELECTION_COUNT_FOR_NOT_MY_TURN, {0}, Tile(), getHand());
+        return Action(mActionSelections[mSelectIndex], tile);
     }
 }
 
@@ -105,10 +104,16 @@ void UserInputPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 void UserInputPlayer::printBoard(TileGroup withoutTile, Tile pickedTile) {
     system("clear");
 
-    auto playerAndDiscardedTiles = getPlayerAndDiscardedTiles();
-    std::for_each(playerAndDiscardedTiles.begin(), playerAndDiscardedTiles.end(), [](string &s) {
-        cout << s << "\n\n";
-    });
+    auto playerIDAndDiscardedTiles = getPlayerIDAndDiscardedTiles();
+    for (auto it = playerIDAndDiscardedTiles.begin(); it != playerIDAndDiscardedTiles.end(); it++) {
+        string prevString = (*it).second;
+        if (!mIsMyTurn && mCurrentPlayerID == (*it).first) {
+            printActions(prevString, Tile());
+        } else {
+            cout << prevString << '\n';
+        }
+        cout << '\n';
+    }
     if (!pickedTile.isNull()) {
         printPlayer();
         printPlayerHand(withoutTile, pickedTile);
@@ -151,7 +156,7 @@ bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
         copyHand.pickTile(addedTile);
         canWin = copyHand.testWin();
     }
-    //canWin =true;
+//    canWin =true;
 
     if (canWin /*||*/) {
         mActionSelections.push_back(Win);

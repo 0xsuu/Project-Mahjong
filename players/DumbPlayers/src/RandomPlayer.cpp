@@ -23,8 +23,8 @@ using mahjong::Tile;
 using mahjong::TileGroup;
 using mahjong::RandomPlayer;
 
-Action RandomPlayer::onTurn(bool isMyTurn, Tile tile) {
-    if (isMyTurn) {
+Action RandomPlayer::onTurn(int playerID, Tile tile) {
+    if (playerID == getID()) {
         if (getHand().testWin()) {
             return Action(Win, Tile());
         }

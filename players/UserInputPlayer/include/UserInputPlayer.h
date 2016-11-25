@@ -27,7 +27,7 @@ class UserInputPlayer : public Player {
  public:
     UserInputPlayer(std::string playerName) : Player(playerName) {}
 
-    Action onTurn(bool isMyTurn, Tile tile) override;
+    Action onTurn(int playerID, Tile tile) override;
     void onOtherPlayerMakeAction(Player *player, Action action) override;
 
  private:

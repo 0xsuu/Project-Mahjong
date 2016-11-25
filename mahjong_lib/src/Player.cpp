@@ -18,6 +18,7 @@
 
 #include <iostream>
 
+using std::map;
 using std::string;
 using std::vector;
 
@@ -55,15 +56,13 @@ string Player::getPrintable() {
     return retString;
 }
 
-vector<string> Player::getPlayerAndDiscardedTiles() {
-    vector<string> retVec;
+map<int, string> Player::getPlayerIDAndDiscardedTiles() {
+    map<int, string> retMap;
     auto playerAndDiscardedTiles = mBoard->getPlayerAndDiscardedTiles();
     for (auto it = playerAndDiscardedTiles.begin(); it != playerAndDiscardedTiles.end(); it++) {
-        if ((*it).first != this) {
-            string s = "";
-            s += (*it).first->getPrintable() + ":\n" + (*it).second.getPrintable();
-            retVec.push_back(s);
-        }
+        string s = "";
+        s += (*it).first->getPrintable() + ":\n" + (*it).second.getPrintable();
+        retMap[(*it).first->getID()] = s;
     }
-    return retVec;
+    return retMap;
 }

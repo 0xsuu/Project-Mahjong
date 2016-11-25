@@ -24,8 +24,8 @@ using mahjong::Tile;
 using mahjong::TileGroup;
 using mahjong::AlwaysDiscardFirstPlayer;
 
-Action AlwaysDiscardFirstPlayer::onTurn(bool isMyTurn, Tile tile) {
-    if (isMyTurn) {
+Action AlwaysDiscardFirstPlayer::onTurn(int playerID, Tile tile) {
+    if (playerID == getID()) {
         if (getHand().testWin()) {
             return Action(Win, Tile());
         }

@@ -118,7 +118,7 @@ void Board::proceedToNextPlayer() {
     map<Action, Player *> allActions;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
-        Action a = p->onTurn(isPlayerTurn, t);
+        Action a = p->onTurn((*mCurrentPlayerIndex)->getID(), t);
         allActions[a] = p;
         Hand copyHand(p->getHand().getData());
         switch (a.getActionState()) {
