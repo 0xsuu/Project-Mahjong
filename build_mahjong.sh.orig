@@ -24,6 +24,11 @@ if [ "$1" == "--update-code-completion" ]; then
     fi
 }
 complete -F build_mahjong build_mahjong.sh" > /etc/bash_completion.d/build_mahjong.sh
+<<<<<<< HEAD
+=======
+else
+    . /etc/bash_completion.d/build_mahjong.sh
+>>>>>>> 84df5848eb82854979409de6b8cc2185d02b2ff1
 fi
 
 # Go to project directory.
