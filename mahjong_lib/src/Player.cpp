@@ -44,3 +44,10 @@ void Player::discardTile(Tile t) {
 void Player::pickTile(Tile t) {
     mHand.pickTile(t);
 }
+
+string Player::getPrintable() {
+    string retString = "";
+    retString = retString + MAHJONG_SPECIAL[getSeatPosition()] + ": " +
+            getPlayerName() + " ID" + std::to_string(getID());
+    return retString;
+}

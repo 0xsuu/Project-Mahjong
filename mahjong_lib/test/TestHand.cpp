@@ -271,6 +271,23 @@ TEST(TestHand, TestWinningJudgement_Failure) {
     EXPECT_FALSE(h.testWin());
 }
 
+TEST(TestHand, TestWinningJudgement_ReportedFailed1) {
+    Hand h({Tile(Handed, Character, 1),
+            Tile(Handed, Character, 2),
+            Tile(Handed, Character, 3),
+            Tile(Handed, Character, 6),
+            Tile(Handed, Character, 7),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Dot, 3),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Dot, 7),
+            Tile(Handed, Bamboo, 3),
+            Tile(Handed, Bamboo, 3)});
+    EXPECT_TRUE(h.testWin());
+}
+
 TEST(TestHand, TestCanChi) {
     Hand h({Tile(Handed, Character, 1),
             Tile(Handed, Character, 1),

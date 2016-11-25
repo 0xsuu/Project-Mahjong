@@ -17,8 +17,9 @@
 #ifndef MAHJONG_LIB_BOARD_H
 #define MAHJONG_LIB_BOARD_H
 
-#include <string>
+#include <cassert>
 #include <map>
+#include <string>
 #include <vector>
 
 #include "Game.h"
@@ -34,7 +35,9 @@ namespace mahjong {
 class Board {
  public:
     Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool enableDora, int doraStackSize);
+    Board() {}
     ~Board() {
+        assert(mPlayerCount != 0 && "Board not initialised.");
         delete mPlayers;
     }
 
@@ -64,7 +67,7 @@ class Board {
 
  protected:
     Game *mGame;
-    unsigned long mPlayerCount;
+    unsigned long mPlayerCount = 0;
     std::vector<Player *> *mPlayers;
     bool mEnableDora;
     int mDoraStackSize;

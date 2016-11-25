@@ -30,6 +30,7 @@ class UserInputPlayer : public Player {
     void onOtherPlayerMakeAction(Player *player, Action action) override;
 
  private:
+    void printBoard();
     void printPlayer();
     void printPlayerHand(TileGroup g, Tile t);
     void printSelectArrow();

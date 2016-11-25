@@ -123,6 +123,7 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
             throw std::runtime_error("Invalid selection!");
         }
     } else {
+
         return Action();
     }
 }
@@ -133,8 +134,7 @@ void UserInputPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 
 void UserInputPlayer::printPlayer() {
     system("clear");
-    cout << MAHJONG_SPECIAL[getSeatPosition()] << ": "
-         << getPlayerName() << " ID" << getID() << '\n';
+    cout << getPrintable() << '\n';
 }
 
 void UserInputPlayer::printPlayerHand(TileGroup g, Tile t) {
