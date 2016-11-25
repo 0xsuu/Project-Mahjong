@@ -31,13 +31,13 @@ class UserInputPlayer : public Player {
     void onOtherPlayerMakeAction(Player *player, Action action) override;
 
  private:
-    void printBoard(Tile pickedTile);
-    void printOpponents();
+    void printBoard(TileGroup withoutTile, Tile pickedTile);
     void printPlayer();
     void printPlayerHand(TileGroup g, Tile t);
     void printSelectArrow();
     bool printActions(std::string &prevString, Tile addedTile = Tile());
-    void takeSelectionLineInputs(int maxSelection, std::vector<int> nonSelectionIndexes, Tile tile);
+    void takeSelectionLineInputs(int maxSelection, std::vector<int> nonSelectionIndexes,
+                                 Tile tile, TileGroup withoutTile);
 
     int mSelectIndex = 0;
     int mSelectionCount = 0;

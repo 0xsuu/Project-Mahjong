@@ -69,8 +69,9 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
         withoutTile.removeTile(tile);
 
         takeSelectionLineInputs(static_cast<int>(getHand().getData().size()),
-                                {getHand().getData().size() - 1, getHand().getData().size() + 1},
-                                tile);
+                                {static_cast<int>(getHand().getData().size() - 1),
+                                 static_cast<int>(getHand().getData().size() + 1)},
+                                tile, withoutTile);
 
         // Get selection.
         if (mSelectIndex < getHand().getData().size() - 1) {
@@ -88,7 +89,7 @@ Action UserInputPlayer::onTurn(bool isMyTurn, Tile tile) {
     } else {
         string outputLine = "discarded: " + tile.getPrintable() + "\n";
         if (printActions(outputLine, tile)) {
-            takeSelectionLineInputs(static_cast<int>(mActionSelections.size()), {}, tile);
+            takeSelectionLineInputs(static_cast<int>(mActionSelections.size()), {}, tile, getHand());
             return Action(mActionSelections[mSelectIndex], tile);
         } else {
             return Action();
@@ -101,20 +102,20 @@ void UserInputPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
 }
 
 
-void UserInputPlayer::printBoard(Tile pickedTile) {
+void UserInputPlayer::printBoard(TileGroup withoutTile, Tile pickedTile) {
     system("clear");
-    TileGroup withoutTile(getHand().getData());
-    withoutTile.removeTile(pickedTile);
 
     auto playerAndDiscardedTiles = getPlayerAndDiscardedTiles();
     std::for_each(playerAndDiscardedTiles.begin(), playerAndDiscardedTiles.end(), [](string &s) {
         cout << s << "\n\n";
     });
-    if (pickedTile != Tile()) {
+//    if (pickedTile != Tile()) {
         printPlayer();
         printPlayerHand(withoutTile, pickedTile);
         printSelectArrow();
-    }
+//    } else {
+//        printSelectArrow();
+//    }
 }
 
 void UserInputPlayer::printPlayer() {
@@ -147,7 +148,7 @@ bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
         copyHand.pickTile(addedTile);
         canWin = copyHand.testWin();
     }
-    canWin =true;
+//    canWin =true;
 
     if (canWin /*||*/) {
         mActionSelections.push_back(Win);
@@ -169,11 +170,12 @@ bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
     return canWin /*||*/;
 }
 
-void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int> nonSelectionIndexes, Tile tile) {
+void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int> nonSelectionIndexes,
+                                              Tile tile, TileGroup withoutTile) {
     mSelectionCount = maxSelection;
 
     mSelectIndex = mSelectionCount;
-    printBoard(tile);
+    printBoard(withoutTile, tile);
 
     int currentInput = 0;
     while (currentInput != '\n') {
@@ -192,7 +194,7 @@ void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int>
                 } else if (mSelectIndex == 0) {
                     mSelectIndex = mSelectionCount;
                 }
-                printBoard(Tile());
+                printBoard(withoutTile, tile);
                 break;
             case 67:
             case 'd':
@@ -207,7 +209,7 @@ void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int>
                 } else if (mSelectIndex == mSelectionCount) {
                     mSelectIndex = 0;
                 }
-                printBoard(Tile());
+                printBoard(withoutTile, tile);
                 break;
             default:
                 break;
