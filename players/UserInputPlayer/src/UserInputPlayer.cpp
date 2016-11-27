@@ -66,7 +66,7 @@ using mahjong::UserInputPlayer;
 
 Action UserInputPlayer::onTurn(int playerID, Tile tile) {
     mIsMyTurn = getID() == playerID;
-    if (playerID) {
+    if (mIsMyTurn) {
         printPlayer();
         TileGroup withoutTile(getHand().getData());
         withoutTile.removeTile(tile);
@@ -92,7 +92,11 @@ Action UserInputPlayer::onTurn(int playerID, Tile tile) {
     } else {
         mActionSelections.push_back(Pass);
         takeSelectionLineInputs(SELECTION_COUNT_FOR_NOT_MY_TURN, {0}, Tile(), getHand());
-        return Action(mActionSelections[mSelectIndex], tile);
+        if (mActionSelections.size() <= 1) {
+            return Action();
+        } else {
+            return Action(mActionSelections[mSelectIndex], tile);
+        }
     }
 }
 
@@ -109,19 +113,20 @@ void UserInputPlayer::printBoard(TileGroup withoutTile, Tile pickedTile) {
         string prevString = (*it).second;
         if (!mIsMyTurn && mCurrentPlayerID == (*it).first) {
             printActions(prevString, Tile());
+            if (mActionSelections.size() <= 1) {
+                return;
+            } else {
+                printSelectArrow();
+            }
         } else {
             cout << prevString << '\n';
         }
         cout << '\n';
     }
-    if (!pickedTile.isNull()) {
+    if (mIsMyTurn) {
         printPlayer();
         printPlayerHand(withoutTile, pickedTile);
         printSelectArrow();
-    } else {
-        printSelectArrow();
-        printPlayer();
-        printPlayerHand(getHand(), Tile());
     }
 }
 
@@ -184,6 +189,9 @@ void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int>
 
     mSelectIndex = mSelectionCount;
     printBoard(withoutTile, tile);
+    if (!mIsMyTurn && mActionSelections.size() <= 1) {
+        return;
+    }
 
     int currentInput = 0;
     while (currentInput != '\n') {
