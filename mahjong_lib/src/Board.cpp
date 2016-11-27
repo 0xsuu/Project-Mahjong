@@ -114,7 +114,6 @@ void Board::proceedToNextPlayer() {
     mGame->onBeforePlayerPickTile(*mCurrentPlayerIndex, t);
     (*mCurrentPlayerIndex)->pickTile(t);
     mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
-    mDiscardedTiles[*mCurrentPlayerIndex].addTile(t);
     map<Action, Player *> allActions;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
@@ -127,6 +126,7 @@ void Board::proceedToNextPlayer() {
                 break;
             case Discard:
                 p->discardTile(a.getTile());
+                mDiscardedTiles[p].addTile(a.getTile());
                 mGame->onPlayerDiscardTile(p, a.getTile());
                 break;
             case Win:
