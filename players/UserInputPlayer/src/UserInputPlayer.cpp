@@ -146,7 +146,7 @@ void UserInputPlayer::constructBoardString(TileGroup g, Tile t) {
     }
 
     // Add Player information.
-    mCurrentBoard += getPrintable() + "\n";
+    mCurrentBoard += "\n" + getPrintable() + "\n";
 
     // Add Player hand information.
     mCurrentBoard += g.getPrintable() + "|" + (!t.isNull() ?
