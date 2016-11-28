@@ -131,9 +131,9 @@ void Board::proceedToNextPlayer() {
                 break;
             case Win:
                 if (isPlayerTurn) {
-                    assert(t.isNull());
+                    assert(a.getTile().isNull());
                 } else {
-                    assert(!t.isNull());
+                    assert(!a.getTile().isNull());
                     copyHand.pickTile(t);
                 }
                 if (copyHand.testWin()) {

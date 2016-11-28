@@ -161,7 +161,7 @@ bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
         copyHand.pickTile(addedTile);
         canWin = copyHand.testWin();
     }
-//    canWin =true;
+    canWin =true;
 
     if (canWin /*||*/) {
         mActionSelections.push_back(Win);
