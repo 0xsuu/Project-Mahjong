@@ -28,20 +28,23 @@ class UserInputPlayer : public Player {
     UserInputPlayer(std::string playerName) : Player(playerName) {}
 
     Action onTurn(int playerID, Tile tile) override;
-    void onOtherPlayerMakeAction(Player *player, Action action) override;
+    Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override;
 
  private:
-    void printBoard(TileGroup withoutTile, Tile pickedTile);
-    void printPlayer();
-    void printPlayerHand(TileGroup g, Tile t);
+    void printBoard();
+    void constructBoardString(TileGroup g, Tile t);
     void printSelectArrow();
-    bool printActions(std::string &prevString, Tile addedTile = Tile());
-    void takeSelectionLineInputs(int maxSelection, std::vector<int> nonSelectionIndexes,
-                                 Tile tile, TileGroup withoutTile);
+    bool getActionSelections(Tile addedTile);
+    void addActionSelectionDialog();
+    void addDiscardTileDialog(TileGroup withoutTile);
+    Tile getDiscardTileDialogSelection(TileGroup withoutTile, Tile tile);
+    void takeSelectionLineInputs(int minSelection, int maxSelection, int initialIndex,
+                                     std::vector<int> nonSelectionIndexes);
 
     int mSelectIndex = 0;
     int mSelectionCount = 0;
-    std::vector<mahjong::ActionState> mActionSelections;
+    std::vector<mahjong::ActionState> mActionStateSelections;
+    std::string mCurrentBoard;
 };
 } // namespace mahjong.
 

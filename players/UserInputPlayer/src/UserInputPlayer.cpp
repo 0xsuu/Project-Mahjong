@@ -51,7 +51,7 @@ int getch() {
 }
 #endif // WIN32
 
-#define SELECTION_COUNT_FOR_NOT_MY_TURN 1
+#define MIN_SELECTION_COUNT_FOR_NOT_MY_TURN 1
 
 using std::cin;
 using std::cout;
@@ -66,81 +66,92 @@ using mahjong::UserInputPlayer;
 
 Action UserInputPlayer::onTurn(int playerID, Tile tile) {
     mIsMyTurn = getID() == playerID;
+    mCurrentPlayerID = playerID;
     if (mIsMyTurn) {
-        printPlayer();
         TileGroup withoutTile(getHand().getData());
         withoutTile.removeTile(tile);
 
-        takeSelectionLineInputs(static_cast<int>(getHand().getData().size()),
-                                {static_cast<int>(getHand().getData().size() - 1),
-                                 static_cast<int>(getHand().getData().size() + 1)},
-                                tile, withoutTile);
-
-        // Get selection.
-        if (mSelectIndex < getHand().getData().size() - 1) {
-            // Find in withoutTile.
-            return Action(Discard, withoutTile[mSelectIndex]);
-        } else if (mSelectIndex == getHand().getData().size()) {
-            // The tile picked.
-            return Action(Discard, tile);
-        } else if (mSelectIndex > getHand().getData().size() + 1) {
-            // Actions.
-            return Action(mActionSelections[mSelectIndex - getHand().getData().size() - 2], Tile());
-        } else {
-            throw std::runtime_error("Invalid selection!");
-        }
-    } else {
-        mActionSelections.push_back(Pass);
-        takeSelectionLineInputs(SELECTION_COUNT_FOR_NOT_MY_TURN, {0}, Tile(), getHand());
-        if (mActionSelections.size() <= 1) {
-            return Action();
-        } else {
-            return Action(mActionSelections[mSelectIndex], tile);
-        }
-    }
-}
-
-void UserInputPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
-
-}
-
-
-void UserInputPlayer::printBoard(TileGroup withoutTile, Tile pickedTile) {
-    system("clear");
-
-    auto playerIDAndDiscardedTiles = getPlayerIDAndDiscardedTiles();
-    for (auto it = playerIDAndDiscardedTiles.begin(); it != playerIDAndDiscardedTiles.end(); it++) {
-        string prevString = (*it).second;
-        if (!mIsMyTurn && mCurrentPlayerID == (*it).first) {
-            printActions(prevString, Tile());
-            if (mActionSelections.size() <= 1) {
-                return;
+        if (getActionSelections(Tile())) {
+            constructBoardString(withoutTile, tile);
+            addActionSelectionDialog();
+            ActionState selectedActionState = mActionStateSelections[mSelectIndex - MIN_SELECTION_COUNT_FOR_NOT_MY_TURN];
+            if (selectedActionState == Cancel) {
+                constructBoardString(withoutTile, tile);
+                addDiscardTileDialog(withoutTile);
+                return Action(Discard, getDiscardTileDialogSelection(withoutTile, tile));
             } else {
-                printSelectArrow();
+                return Action(selectedActionState, (selectedActionState == Win) ? Tile() : tile);
             }
         } else {
-            cout << prevString << '\n';
+            constructBoardString(withoutTile, tile);
+            addDiscardTileDialog(withoutTile);
+            return Action(Discard, getDiscardTileDialogSelection(withoutTile, tile));
         }
-        cout << '\n';
-    }
-    if (mIsMyTurn) {
-        printPlayer();
-        printPlayerHand(withoutTile, pickedTile);
-        printSelectArrow();
     }
 }
 
-void UserInputPlayer::printPlayer() {
-    cout << getPrintable() << '\n';
+Action UserInputPlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
+    mIsMyTurn = getID() == playerID;
+    mCurrentPlayerID = playerID;
+
+    constructBoardString(getHand(), Tile());
+
+    if (getActionSelections(action.getTile())) {
+        mCurrentBoard = mCurrentBoard + "\n\nPlayer ID" + std::to_string(playerID) + " discarded " + action.getTile().getPrintable() + ":";
+        addActionSelectionDialog();
+        ActionState selectedActionState = mActionStateSelections[mSelectIndex -
+                                                                 MIN_SELECTION_COUNT_FOR_NOT_MY_TURN];
+        return Action(selectedActionState, action.getTile());
+    } else {
+        return Action();
+    }
 }
 
-void UserInputPlayer::printPlayerHand(TileGroup g, Tile t) {
-    string outputLine = g.getPrintable() + "|" + (!t.isNull() ?
-                                                  (TILES_SEPARATE_PATTERN +
-                                                  t.getPrintable() +
-                                                  TILES_SEPARATE_PATTERN) : "");
+void UserInputPlayer::addDiscardTileDialog(TileGroup withoutTile) {
+    auto withoutTileData = withoutTile.getData();
+    auto it = withoutTileData.begin();
+    while ((*it).getFlag() != Handed) {
+        it++;
+    }
+    int firstHandedIndex = static_cast<int>(std::distance(withoutTileData.begin(), it));
+    takeSelectionLineInputs(firstHandedIndex, static_cast<int>(withoutTile.getData().size()) + 1,
+                            static_cast<int>(withoutTile.getData().size()) + 1,
+                            {static_cast<int>(withoutTile.getData().size())});
+}
 
-    printActions(outputLine);
+Tile UserInputPlayer::getDiscardTileDialogSelection(TileGroup withoutTile, Tile tile) {
+    if (mSelectIndex == getHand().getData().size()) {
+        // The tile picked.
+        return tile;
+    } else if (mSelectIndex < getHand().getData().size()) {
+        return withoutTile[mSelectIndex];
+    } else {
+        throw std::runtime_error("Invalid selection!");
+    }
+}
+
+void UserInputPlayer::printBoard() {
+    system("clear");
+
+    cout << mCurrentBoard << '\n';
+}
+
+void UserInputPlayer::constructBoardString(TileGroup g, Tile t) {
+    mCurrentBoard = "";
+
+    // Add all players' discarded tiles.
+    auto playerIDAndDiscardedTiles = getPlayerIDAndDiscardedTiles();
+    for (auto it = playerIDAndDiscardedTiles.begin(); it != playerIDAndDiscardedTiles.end(); it++) {
+        mCurrentBoard += (*it).second + "\n\n";
+    }
+
+    // Add Player information.
+    mCurrentBoard += getPrintable() + "\n";
+
+    // Add Player hand information.
+    mCurrentBoard += g.getPrintable() + "|" + (!t.isNull() ?
+                                               (TILES_SEPARATE_PATTERN +
+                                                t.getPrintable()) : "");
 }
 
 void UserInputPlayer::printSelectArrow() {
@@ -150,9 +161,8 @@ void UserInputPlayer::printSelectArrow() {
     cout << "☝" << '\n';
 }
 
-bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
-    mActionSelections.clear();
-
+bool UserInputPlayer::getActionSelections(Tile addedTile) {
+    mActionStateSelections.clear();
     bool canWin;
     if (addedTile.isNull()) {
         canWin = getHand().testWin();
@@ -161,37 +171,41 @@ bool UserInputPlayer::printActions(string &prevString, Tile addedTile) {
         copyHand.pickTile(addedTile);
         canWin = copyHand.testWin();
     }
-    canWin =true;
-
-    if (canWin /*||*/) {
-        mActionSelections.push_back(Win);
-        mSelectionCount = static_cast<int>(getHand().getData().size()) + 1;
-        prevString = prevString + "->";
-    }
-
-    if (!canWin) {
-        mSelectionCount = static_cast<int>(getHand().getData().size());
-    }
 
     if (canWin) {
-        mSelectionCount++;
-        prevString = prevString + TILES_SEPARATE_PATTERN + "Win!";
+        mActionStateSelections.push_back(Win);
     }
 
-    cout << prevString << '\n';
-
-    return canWin /*||*/;
+    if (canWin /*||*/) {
+        if (!mIsMyTurn) {
+            mActionStateSelections.push_back(Pass);
+        } else {
+            mActionStateSelections.push_back(Cancel);
+        }
+        return true;
+    } else {
+        return false;
+    }
 }
 
-void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int> nonSelectionIndexes,
-                                              Tile tile, TileGroup withoutTile) {
-    mSelectionCount = maxSelection;
+void UserInputPlayer::addActionSelectionDialog() {
+    string outputLine = "";
+    outputLine = outputLine + "->" + TILES_SEPARATE_PATTERN;
+    std::for_each(mActionStateSelections.begin(), mActionStateSelections.end(), [&](ActionState as) {
+        outputLine += MAHJONG_ACTION_STATES[as] + TILES_SEPARATE_PATTERN;
+    });
+    mCurrentBoard += "\n" + outputLine + "\n";
 
-    mSelectIndex = mSelectionCount;
-    printBoard(withoutTile, tile);
-    if (!mIsMyTurn && mActionSelections.size() <= 1) {
-        return;
-    }
+    takeSelectionLineInputs(1, static_cast<int>(mActionStateSelections.size()), 1, {});
+}
+
+void UserInputPlayer::takeSelectionLineInputs(int minSelection, int maxSelection, int initialIndex,
+                                              std::vector<int> nonSelectionIndexes) {
+    mSelectionCount = maxSelection;
+    mSelectIndex = initialIndex;
+
+    printBoard();
+    printSelectArrow();
 
     int currentInput = 0;
     while (currentInput != '\n') {
@@ -200,17 +214,21 @@ void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int>
             case 68:
             case 'a':
                 // Left.
-                if (mSelectIndex > 0) {
+                if (mSelectIndex > minSelection) {
                     mSelectIndex--;
                     if (!nonSelectionIndexes.empty() &&
                             std::find(nonSelectionIndexes.begin(), nonSelectionIndexes.end(), mSelectIndex)
                             != nonSelectionIndexes.end()) {
                         mSelectIndex--;
+                        if (mSelectIndex < minSelection) {
+                            mSelectIndex = mSelectionCount;
+                        }
                     }
-                } else if (mSelectIndex == 0) {
+                } else if (mSelectIndex == minSelection) {
                     mSelectIndex = mSelectionCount;
                 }
-                printBoard(withoutTile, tile);
+                printBoard();
+                printSelectArrow();
                 break;
             case 67:
             case 'd':
@@ -221,11 +239,15 @@ void UserInputPlayer::takeSelectionLineInputs(int maxSelection, std::vector<int>
                             std::find(nonSelectionIndexes.begin(), nonSelectionIndexes.end(), mSelectIndex)
                             != nonSelectionIndexes.end()) {
                         mSelectIndex++;
+                        if (mSelectIndex > mSelectionCount) {
+                            mSelectIndex = minSelection;
+                        }
                     }
                 } else if (mSelectIndex == mSelectionCount) {
-                    mSelectIndex = 0;
+                    mSelectIndex = minSelection;
                 }
-                printBoard(withoutTile, tile);
+                printBoard();
+                printSelectArrow();
                 break;
             default:
                 break;

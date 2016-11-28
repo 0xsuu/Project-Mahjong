@@ -29,7 +29,7 @@ class AlwaysLosePlayer : public Player {
     AlwaysLosePlayer(std::string playerName) : Player(playerName) {}
 
     Action onTurn(int playerID, Tile tile) override;
-    void onOtherPlayerMakeAction(Player *player, Action action) override;
+    Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override;
 };
 }
 

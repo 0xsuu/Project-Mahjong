@@ -35,18 +35,17 @@ Action AlwaysDiscardFirstPlayer::onTurn(int playerID, Tile tile) {
             it++;
         }
         assert(it != handData.end() && "This is impossible! You don't have one tile in hand?");
+        std::cout << "Discarding... " << (*it).getPrintable() << '\n';
         return Action(Discard, *it);
-    } else {
-        Hand copyHand(getHand().getData());
-        copyHand.pickTile(tile);
-        if (copyHand.testWin()) {
-            return Action(Win, tile);
-        } else {
-            return Action();
-        }
     }
 }
 
-void AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
-
+Action AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
+    Hand copyHand(getHand().getData());
+    copyHand.pickTile(action.getTile());
+    if (copyHand.testWin()) {
+        return Action(Win, action.getTile());
+    } else {
+        return Action();
+    }
 }

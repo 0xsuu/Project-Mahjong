@@ -22,17 +22,18 @@
 namespace mahjong {
 /**
  * All the possible actions a player can perform.
- * The value means priority only.
+ * The value means index for output only.
  */
 enum ActionState {
     Pass = 0,
-    Discard = 10,
-    Richii = 100,
-    Chi = 101,
-    Pong = 102,
-    Kang = 150,
-    ConcealedKang = 200,
-    Win = 1000
+    Cancel = 1,
+    Discard = 2,
+    Richii = 3,
+    Chi = 4,
+    Pong = 5,
+    Kang = 6,
+    ConcealedKang = 7,
+    Win = 8
 };
 
 class Action {

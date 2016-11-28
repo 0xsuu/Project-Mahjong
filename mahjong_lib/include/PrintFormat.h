@@ -38,4 +38,6 @@ const std::string MAHJONG_DORA_POINT = ".五";
 
 const std::string MAHJONG_OTHERS[] = {"X"};
 
+const std::string MAHJONG_ACTION_STATES[] = {"Pass", "Cancel", "Discard", "Richii", "Chi", "Pong", "Kang", "ConcealedKang", "Win"};
+
 #endif //MAHJONG_LIB_PRINTFORMAT_H

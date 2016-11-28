@@ -114,41 +114,57 @@ void Board::proceedToNextPlayer() {
     mGame->onBeforePlayerPickTile(*mCurrentPlayerIndex, t);
     (*mCurrentPlayerIndex)->pickTile(t);
     mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
-    map<Action, Player *> allActions;
-    std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
-        bool isPlayerTurn = p->getID() == (*mCurrentPlayerIndex)->getID();
-        Action a = p->onTurn((*mCurrentPlayerIndex)->getID(), t);
-        allActions[a] = p;
-        Hand copyHand(p->getHand().getData());
-        switch (a.getActionState()) {
-            case Pass:
-                mGame->onPlayerPass(p);
-                break;
-            case Discard:
-                p->discardTile(a.getTile());
-                mDiscardedTiles[p].addTile(a.getTile());
-                mGame->onPlayerDiscardTile(p, a.getTile());
-                break;
-            case Win:
-                if (isPlayerTurn) {
-                    assert(a.getTile().isNull());
-                } else {
-                    assert(!a.getTile().isNull());
-                    copyHand.pickTile(t);
-                }
-                if (copyHand.testWin()) {
-                    mRoundEnded = true;
-                    mGame->onRoundFinished(false, p);
-                } else {
-                    throw std::invalid_argument("False win.");
-                }
-                break;
-            default:
-                throw std::invalid_argument("ActionState not recognised.");
-        }
 
-        mRemainTilesCount = mTileStack.getRemainTilesCount();
-    });
+    mRemainTilesCount = mTileStack.getRemainTilesCount();
+
+    Player *p = *mCurrentPlayerIndex;
+    Action a = p->onTurn((*mCurrentPlayerIndex)->getID(), t);
+    switch (a.getActionState()) {
+        case Discard: {
+            p->discardTile(a.getTile());
+            mDiscardedTiles[p].addTile(a.getTile());
+            // Notify all the other players that player p has discarded a tile.
+            map<Action, Player *> allActions;
+            std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *player) {
+                if (p != player) {
+                    Action act = player->onOtherPlayerMakeAction(p->getID(), p->getPlayerName(), a);
+                    allActions[act] = player;
+
+                    Hand copyHand(player->getHand());
+                    switch (act.getActionState()) {
+                        case Pass:
+                            mGame->onPlayerPass(player);
+                            break;
+                        case Win:
+                            assert(!act.getTile().isNull());
+                            copyHand.pickTile(act.getTile());
+                            if (copyHand.testWin()) {
+                                mRoundEnded = true;
+                                mGame->onRoundFinished(false, player);
+                            } else {
+                                throw std::invalid_argument("False win.");
+                            }
+                            break;
+                        default:
+                            throw std::invalid_argument("ActionState not recognised.");
+                    }
+                }
+            });
+            mGame->onPlayerDiscardTile(p, a.getTile());
+            break;
+        }
+        case Win:
+            assert(a.getTile().isNull());
+            if (p->getHand().testWin()) {
+                mRoundEnded = true;
+                mGame->onRoundFinished(false, p);
+            } else {
+                throw std::invalid_argument("False win.");
+            }
+            break;
+        default:
+            throw std::invalid_argument("ActionState not recognised.");
+    }
 
     // Next player's turn.
     mCurrentPlayerIndex++;

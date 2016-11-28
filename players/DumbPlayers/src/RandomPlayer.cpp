@@ -38,6 +38,6 @@ Action RandomPlayer::onTurn(int playerID, Tile tile) {
     }
 }
 
-void RandomPlayer::onOtherPlayerMakeAction(Player *player, Action action) {
+Action RandomPlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
 
 }

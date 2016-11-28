@@ -31,6 +31,6 @@ Action AlwaysLosePlayer::onTurn(int playerID, Tile tile) {
     }
 }
 
-void AlwaysLosePlayer::onOtherPlayerMakeAction(Player *player, Action action) {
+Action AlwaysLosePlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
 
 }
