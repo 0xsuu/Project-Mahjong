@@ -71,18 +71,14 @@ class TestPlayer : public Player {
     TestPlayer(std::string playerName) : Player(playerName) {}
     ~TestPlayer() {}
 
-    mahjong::Action onTurn(bool isMyTurn, Tile tile) override {
-        if (!isMyTurn) {
-            return mahjong::Action();
-        } else {
-            Tile firstTile = getHand().getTile(0);
-            mahjong::Action retAction(mahjong::Discard, firstTile);
-            return retAction;
-        }
+    mahjong::Action onTurn(int playerID, Tile tile) override {
+        Tile firstTile = getHand().getTile(0);
+        mahjong::Action retAction(mahjong::Discard, firstTile);
+        return retAction;
     }
 
-    void onOtherPlayerMakeAction(Player *player, mahjong::Action action) override {
-
+    mahjong::Action onOtherPlayerMakeAction(int playerID, std::string playerName, mahjong::Action action) override {
+        return mahjong::Action();
     }
 };
 
@@ -106,13 +102,10 @@ TEST(TestBoard, General2PlayerBoardTest) {
         legitOutput += "onAfterPlayerPickTile:\n";
     }
     legitOutput += "onRoundStart:\n";
-    for (int i = 0; i < (static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 2 * 13) / 2; i++) {
+    for (int i = 0; i < (static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 2 * 13); i++) {
         legitOutput += "onAfterPlayerPickTile:\n"
                 "onPlayerDiscardTile:\n"
-                "onPlayerPass:\n"
-                "onAfterPlayerPickTile:\n"
-                "onPlayerPass:\n"
-                "onPlayerDiscardTile:\n";
+                "onPlayerPass:\n";
     }
     legitOutput += "onRoundFinished:\n";
     EXPECT_EQ(p1->getHand().getData().size(), 13);
@@ -146,27 +139,12 @@ TEST(TestBoard, General4PlayerBoardTest) {
         legitOutput += "onAfterPlayerPickTile:\n";
     }
     legitOutput += "onRoundStart:\n";
-    for (int i = 0; i < (static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 4 * 13) / 4; i++) {
+    for (int i = 0; i < (static_cast<int>(mahjong::JAPANESE_MAHJONG_TILE_SET) - 4 * 13); i++) {
         legitOutput += "onAfterPlayerPickTile:\n"
                 "onPlayerDiscardTile:\n"
                 "onPlayerPass:\n"
                 "onPlayerPass:\n"
-                "onPlayerPass:\n"
-                "onAfterPlayerPickTile:\n"
-                "onPlayerPass:\n"
-                "onPlayerDiscardTile:\n"
-                "onPlayerPass:\n"
-                "onPlayerPass:\n"
-                "onAfterPlayerPickTile:\n"
-                "onPlayerPass:\n"
-                "onPlayerPass:\n"
-                "onPlayerDiscardTile:\n"
-                "onPlayerPass:\n"
-                "onAfterPlayerPickTile:\n"
-                "onPlayerPass:\n"
-                "onPlayerPass:\n"
-                "onPlayerPass:\n"
-                "onPlayerDiscardTile:\n";
+                "onPlayerPass:\n";
     }
     legitOutput += "onRoundFinished:\n";
     EXPECT_EQ(p1->getHand().getData().size(), 13);

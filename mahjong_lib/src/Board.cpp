@@ -123,6 +123,8 @@ void Board::proceedToNextPlayer() {
         case Discard: {
             p->discardTile(a.getTile());
             mDiscardedTiles[p].addTile(a.getTile());
+            mGame->onPlayerDiscardTile(p, a.getTile());
+
             // Notify all the other players that player p has discarded a tile.
             map<Action, Player *> allActions;
             std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *player) {
@@ -150,7 +152,6 @@ void Board::proceedToNextPlayer() {
                     }
                 }
             });
-            mGame->onPlayerDiscardTile(p, a.getTile());
             break;
         }
         case Win:
