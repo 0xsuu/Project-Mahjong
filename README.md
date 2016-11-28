@@ -18,7 +18,7 @@ Run sudo first.
 sudo whoami
 ```
 
-Then copy and paste following codes.
+Then run through(can copy & paste entire block if sudo is not requiring password) following script to a terminal.
 ```bash
 git clone https://github.com/google/googletest.git
 mkdir -p gtest_build
@@ -28,4 +28,5 @@ make
 sudo make install
 cd ..
 rm -rf ./googletest ./gtest_build
+
 ```
