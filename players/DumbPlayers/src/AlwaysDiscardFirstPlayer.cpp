@@ -35,7 +35,6 @@ Action AlwaysDiscardFirstPlayer::onTurn(int playerID, Tile tile) {
             it++;
         }
         assert(it != handData.end() && "This is impossible! You don't have one tile in hand?");
-        std::cout << "Discarding... " << (*it).getPrintable() << '\n';
         return Action(Discard, *it);
     }
 }

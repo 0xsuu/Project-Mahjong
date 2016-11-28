@@ -96,9 +96,14 @@ void Board::reset() {
     setup(mTileSetType, mRoundWind);
 }
 
-void Board::shiftRoundWind() {
-    mRoundWind == North ? mRoundWind = East :
-            mRoundWind = static_cast<Wind>(static_cast<int>(mRoundWind) + 1);
+void Board::shiftToNextRound() {
+    if (mRoundNumber >= 4) {
+        mRoundNumber = 1;
+        mRoundWind == North ? mRoundWind = East :
+                mRoundWind = static_cast<Wind>(static_cast<int>(mRoundWind) + 1);
+    } else {
+        mRoundNumber++;
+    }
 }
 
 void Board::proceedToNextPlayer() {
@@ -143,6 +148,7 @@ void Board::proceedToNextPlayer() {
                             if (copyHand.testWin()) {
                                 mRoundEnded = true;
                                 mGame->onRoundFinished(false, player);
+                                return;
                             } else {
                                 throw std::invalid_argument("False win.");
                             }
@@ -159,6 +165,7 @@ void Board::proceedToNextPlayer() {
             if (p->getHand().testWin()) {
                 mRoundEnded = true;
                 mGame->onRoundFinished(false, p);
+                return;
             } else {
                 throw std::invalid_argument("False win.");
             }

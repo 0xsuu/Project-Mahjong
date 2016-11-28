@@ -58,7 +58,7 @@ class Board {
     void setup(TileSetType tileSetType, Wind roundWind);
     void reset();
 
-    void shiftRoundWind();
+    void shiftToNextRound();
 
     void proceedToNextPlayer();
 
@@ -70,6 +70,12 @@ class Board {
     std::map<Player *, TileGroup> getPlayerAndDiscardedTiles() {
         return mDiscardedTiles;
     };
+    Wind getRoundWind() {
+        return mRoundWind;
+    }
+    int getRoundNumber() {
+        return mRoundNumber;
+    }
 
  protected:
     Game *mGame;
@@ -80,6 +86,7 @@ class Board {
 
     TileSetType mTileSetType;
     Wind mRoundWind;
+    int mRoundNumber;
     TileStack mTileStack;
     std::vector<Player *>::iterator mCurrentPlayerIndex;
 

@@ -32,12 +32,12 @@ Action RandomPlayer::onTurn(int playerID, Tile tile) {
         std::random_device rd;
         std::mt19937 urd(rd());
         std::uniform_int_distribution<int> tileDistribution(0, static_cast<int>(getHand().getData().size()));
-        return Action(Discard, getHand().getTile(tileDistribution(urd)));
-    } else {
-        return Action();
+        int index = tileDistribution(urd);
+        return Action(Discard, index == getHand().getData().size() ? tile :
+                               getHand().getTile(index));
     }
 }
 
 Action RandomPlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
-
+    return Action();
 }
