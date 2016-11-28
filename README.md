@@ -11,3 +11,21 @@ mkdir mahjong
 cd mahjong
 git clone https://github.com/al1enSuu/Project-Mahjong.git
 ```
+
+## GTest Install Instructions
+Run sudo first.
+```
+sudo whoami
+```
+
+Then copy and paste following codes.
+```bash
+git clone https://github.com/google/googletest.git
+mkdir -p gtest_build
+cd gtest_build
+cmake ../googletest
+make
+sudo make install
+cd ..
+rm -rf ./googletest ./gtest_build
+```
