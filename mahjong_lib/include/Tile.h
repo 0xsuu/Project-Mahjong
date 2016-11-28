@@ -132,6 +132,13 @@ class Tile {
     bool isDora() const;
 
     /**
+     * Get if this tile is a NULL tile.
+     *
+     * @return Is null tile
+     */
+    bool isNull() const;
+
+    /**
      * Get entire data.
      *
      * @return mTileData

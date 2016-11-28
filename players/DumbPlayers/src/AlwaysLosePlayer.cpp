@@ -23,14 +23,14 @@ using mahjong::Tile;
 using mahjong::TileGroup;
 using mahjong::AlwaysLosePlayer;
 
-Action AlwaysLosePlayer::onTurn(bool isMyTurn, Tile tile) {
-    if (isMyTurn) {
+Action AlwaysLosePlayer::onTurn(int playerID, Tile tile) {
+    if (playerID == getID()) {
         return Action(Discard, tile);
     } else {
         return Action();
     }
 }
 
-void AlwaysLosePlayer::onOtherPlayerMakeAction(Player *player, Action action) {
+Action AlwaysLosePlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
 
 }

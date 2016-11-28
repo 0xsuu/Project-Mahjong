@@ -17,6 +17,7 @@
 #ifndef MAHJONG_LIB_PLAYER_H
 #define MAHJONG_LIB_PLAYER_H
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -42,20 +43,27 @@ class Player {
     /**
      * This is called when each player plays.
      *
+     * Note: When it is your turn, the tile you received is added to your hand automatially,
+     * the parameter tile is just for information.
+     *
      * @param tile: The tile they discarded or the tile you received.
      * @return An ActionState indicate what action you gonna make.
      */
-    virtual Action onTurn(bool isMyTurn, Tile tile) = 0;
+    virtual Action onTurn(int playerID, Tile tile) = 0;
 
-    virtual void onOtherPlayerMakeAction(Player *player, Action action) = 0;
+    virtual Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) = 0;
 
     // Accessors.
     int getID() { return mID; }
     std::string getPlayerName() { return mPlayerName; }
     Wind getSeatPosition() { return mSeatPosition; }
     Hand getHand() { return mHand; }
-    std::vector<std::string> getPlayerAndDiscardedTiles();
+    std::map<int, std::string> getPlayerIDAndDiscardedTiles();
     std::string getPrintable();
+
+ protected:
+    bool mIsMyTurn;
+    int mCurrentPlayerID = 0;
 
  private:
     int mID;
