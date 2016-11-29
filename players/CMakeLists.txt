@@ -63,3 +63,16 @@ file(GLOB_RECURSE DUP_HEADER_FILES ${CMAKE_DUP_INCLUDE_DIR}/*.h ${MAHJONG_LIB_IN
 
 add_library(DumbPlayers ${DUP_SOURCE_FILES})
 target_link_libraries(DumbPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
+
+# Non-Learning Players.
+set(CMAKE_NONLP_SOURCE_DIR "${PROJECT_ROOT_DIRECTORY}/NonLearningPlayers/src")
+set(CMAKE_NONLP_INCLUDE_DIR "${PROJECT_ROOT_DIRECTORY}/NonLearningPlayers/include")
+
+include_directories(${CMAKE_NONLP_INCLUDE_DIR}/)
+
+file(GLOB_RECURSE NONLP_SOURCE_FILES ${CMAKE_NONLP_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE NONLP_HEADER_FILES ${CMAKE_NONLP_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
+
+add_library(NonLearningPlayers ${NONLP_SOURCE_FILES})
+target_link_libraries(NonLearningPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
+

@@ -127,10 +127,18 @@ if [ "$1" == "--player" ]; then
 
     if [ "$2" = "dumb" ]; then
         echo "Building DumpPlayers..."
-        cmake ..//"$PROJECT_MAHJONG"/players/
+        cmake ../"$PROJECT_MAHJONG"/players/
         make DumbPlayers
         exit 0
     fi
+
+    if [ "$2" = "nonlp" ]; then
+        echo "Building NonLearningPlayers..."
+        cmake ../"$PROJECT_MAHJONG"/players/
+        make NonLearningPlayers
+        exit 0
+    fi
+
 
     echo "Please specify a game to build!"
     exit -1

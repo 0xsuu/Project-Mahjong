@@ -14,22 +14,21 @@
 //  limitations under the License.
 //
 
-#include "SimpleGame.h"
-#include <UserInputPlayer.h>
-#include <AlwaysDiscardFirstPlayer.h>
-#include <GreedyPlayer.h>
+#ifndef MAHJONG_PLAYER_GREEDY_PLAYER_H
+#define MAHJONG_PLAYER_GREEDY_PLAYER_H
 
-using mahjong::SimpleGame;
-using mahjong::UserInputPlayer;
-using mahjong::AlwaysDiscardFirstPlayer;
-using mahjong::GreedyPlayer;
+#include <Player.h>
 
-int main() {
-    GreedyPlayer *p1 = new GreedyPlayer("Greedy");
-    AlwaysDiscardFirstPlayer *p2 = new AlwaysDiscardFirstPlayer("BOT ADFT");
-    SimpleGame *game = new SimpleGame(p1, p2, nullptr, nullptr, 100);
+namespace mahjong {
+class GreedyPlayer : public Player {
+ public:
+    GreedyPlayer(std::string playerName) : Player(playerName) {}
 
-    game->startGame();
+    Action onTurn(int playerID, Tile tile) override;
+    Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override;
 
-    return 0;
+ private:
+    int getHeuristic(Hand hand);
+};
 }
+#endif // MAHJONG_PLAYER_GREEDY_PLAYER_H
