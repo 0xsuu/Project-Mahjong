@@ -42,7 +42,7 @@ class SimpleGame : public Game {
     void onRoundFinished(bool drained, Player *winner) override;
     void onNextRound(bool eastWin) override;
 
-    void onGameOver();
+    void onGameOver() override;
 
     // Rule interfaces.
     int calculateScore(Hand mHand) override;
