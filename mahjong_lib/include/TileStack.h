@@ -77,8 +77,9 @@ class TileStack {
     int mNonPlayingTileCount;
     bool mEnableDora;
 
-    std::random_device mRandomDevice;
     std::vector<Tile> *mRemainTiles;
+
+    std::mt19937 mRandomDevice;
 };
 
 }

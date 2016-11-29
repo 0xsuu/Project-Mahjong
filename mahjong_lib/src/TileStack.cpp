@@ -27,6 +27,8 @@ using mahjong::Tile;
 
 TileStack::TileStack() {
     mRemainTiles = new vector<Tile>();
+    std::random_device random_device;
+    mRandomDevice = std::mt19937(random_device());
 }
 TileStack::TileStack(TileSetType tileSetType, bool enableDora, int notPlayingCount) : TileStack() {
     setup(tileSetType, enableDora, notPlayingCount);
@@ -57,8 +59,7 @@ void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCo
             throw std::invalid_argument("Tile Set Type not recognised.");
     }
 
-    std::mt19937 rd(mRandomDevice());
-    shuffle(mRemainTiles->begin(), mRemainTiles->end(), rd);
+    shuffle(mRemainTiles->begin(), mRemainTiles->end(), mRandomDevice);
 }
 
 void TileStack::reset() {

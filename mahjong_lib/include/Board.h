@@ -95,6 +95,9 @@ class Board {
     // Information for showing.
     bool mRoundEnded = true;
     int mRemainTilesCount = 0;
+
+ private:
+    std::mt19937 mRandomDevice;
 };
 
 } // namespace mahjong.

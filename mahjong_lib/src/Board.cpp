@@ -42,6 +42,8 @@ Board::Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool en
         mPlayers->push_back(p4);
     }
     mPlayerCount = mPlayers->size();
+    std::random_device random_device;
+    mRandomDevice = std::mt19937(random_device());
 }
 
 void Board::setup(TileSetType tileSetType, Wind roundWind) {
@@ -53,12 +55,9 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mGame->onRoundSetup();
 
     // Shuffle the players first, i.e. seat positions randomised.
-    std::random_device random_device;
-    std::mt19937 rd(random_device());
-    shuffle(mPlayers->begin(), mPlayers->end(), rd);
+    shuffle(mPlayers->begin(), mPlayers->end(), mRandomDevice);
 
     // Generate an unique ID for each player.
-    std::random_device randomDevice;
     std::uniform_int_distribution<unsigned int> IDDistribution(10000, 30000);
 
     // Assign initial hands and other setups.
@@ -77,10 +76,10 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
         Hand sortedHand = initialHands[indexPlayer];
         sortedHand.sort();
-        unsigned int randomID = IDDistribution(randomDevice);
+        unsigned int randomID = IDDistribution(mRandomDevice);
         // Make sure all the IDs are unique.
         while (std::find(allocatedIDs.begin(), allocatedIDs.end(), randomID) != allocatedIDs.end()) {
-            randomID = IDDistribution(randomDevice);
+            randomID = IDDistribution(mRandomDevice);
         }
         p->setupPlayer(randomID, Winds[indexPlayer], sortedHand, this);
         indexPlayer++;
