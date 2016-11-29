@@ -60,6 +60,13 @@ class TestGame : public Game {
     void onRoundFinished(bool drained, Player *winner) override {
         std::cout << "onRoundFinished:\n";
     }
+    void onNextRound(bool eastWin) override {
+
+    }
+
+    void onGameOver() override {
+
+    }
 
     int calculateScore(Hand mHand) override {
         return 0;

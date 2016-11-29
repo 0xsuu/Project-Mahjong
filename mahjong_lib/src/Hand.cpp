@@ -131,6 +131,10 @@ bool Hand::testWin() {
     return false;
 }
 
+void Hand::clear() {
+    mTilesData.clear();
+}
+
 vector<Tile> Hand::canChi(Tile tile) const {
     if (tile.getType() == Special) {
         return {};

@@ -40,11 +40,15 @@ class SimpleGame : public Game {
     void onPlayerDiscardTile(Player *player, Tile tile) override;
     void onPlayerPass(Player *player) override;
     void onRoundFinished(bool drained, Player *winner) override;
+    void onNextRound(bool eastWin) override;
+
+    void onGameOver() override;
 
     // Rule interfaces.
     int calculateScore(Hand mHand) override;
 
  private:
+    std::map<Player *, int> mPlayerWinCount;
     Board *mBoard;
 
     void printPlayer(Player *p);

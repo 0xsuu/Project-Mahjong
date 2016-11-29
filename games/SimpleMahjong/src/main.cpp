@@ -17,17 +17,25 @@
 #include "SimpleGame.h"
 #include <UserInputPlayer.h>
 #include <AlwaysDiscardFirstPlayer.h>
+#include <RandomPlayer.h>
+#include <AlwaysLosePlayer.h>
 #include <GreedyPlayer.h>
 
 using mahjong::SimpleGame;
 using mahjong::UserInputPlayer;
 using mahjong::AlwaysDiscardFirstPlayer;
+using mahjong::RandomPlayer;
+using mahjong::AlwaysLosePlayer;
 using mahjong::GreedyPlayer;
 
 int main() {
     GreedyPlayer *p1 = new GreedyPlayer("Greedy");
-    AlwaysDiscardFirstPlayer *p2 = new AlwaysDiscardFirstPlayer("BOT ADFT");
-    SimpleGame *game = new SimpleGame(p1, p2, nullptr, nullptr, 100);
+    AlwaysDiscardFirstPlayer *p2 = new AlwaysDiscardFirstPlayer("BOT ADFT2");
+//    AlwaysDiscardFirstPlayer *p3 = new AlwaysDiscardFirstPlayer("BOT ADFT 3");
+//    AlwaysDiscardFirstPlayer *p4 = new AlwaysDiscardFirstPlayer("BOT ADFT 4");
+    mahjong::Player *p3 = nullptr;
+    mahjong::Player *p4 = nullptr;
+    SimpleGame *game = new SimpleGame(p1, p2, p3, p4, 5000);
 
     game->startGame();
 

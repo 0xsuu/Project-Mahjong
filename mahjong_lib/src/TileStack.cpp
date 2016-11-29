@@ -27,6 +27,9 @@ using mahjong::Tile;
 
 TileStack::TileStack() {
     mRemainTiles = new vector<Tile>();
+
+    std::random_device randomDevice;
+    mRandomDevice = std::mt19937(randomDevice());
 }
 TileStack::TileStack(TileSetType tileSetType, bool enableDora, int notPlayingCount) : TileStack() {
     setup(tileSetType, enableDora, notPlayingCount);
@@ -37,6 +40,7 @@ void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCo
     mEnableDora = enableDora;
     mNonPlayingTileCount = notPlayingCount;
 
+    assert(mRemainTiles->size() == 0);
     switch (tileSetType) {
         case JAPANESE_MAHJONG_TILE_SET:
             for (int i = 1; i <= 9; ++i) {
@@ -57,11 +61,12 @@ void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCo
             throw std::invalid_argument("Tile Set Type not recognised.");
     }
 
-    std::mt19937 rd(mRandomDevice());
-    shuffle(mRemainTiles->begin(), mRemainTiles->end(), rd);
+    shuffle(mRemainTiles->begin(), mRemainTiles->end(), mRandomDevice);
 }
 
 void TileStack::reset() {
+    mRemainTiles->clear();
+
     setup(mTileSetType, mEnableDora, mNonPlayingTileCount);
 }
 
