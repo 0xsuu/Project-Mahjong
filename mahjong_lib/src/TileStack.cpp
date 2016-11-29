@@ -27,8 +27,9 @@ using mahjong::Tile;
 
 TileStack::TileStack() {
     mRemainTiles = new vector<Tile>();
-    std::random_device random_device;
-    mRandomDevice = std::mt19937(random_device());
+
+    std::random_device randomDevice;
+    mRandomDevice = std::mt19937(randomDevice());
 }
 TileStack::TileStack(TileSetType tileSetType, bool enableDora, int notPlayingCount) : TileStack() {
     setup(tileSetType, enableDora, notPlayingCount);
@@ -39,6 +40,7 @@ void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCo
     mEnableDora = enableDora;
     mNonPlayingTileCount = notPlayingCount;
 
+    assert(mRemainTiles->size() == 0);
     switch (tileSetType) {
         case JAPANESE_MAHJONG_TILE_SET:
             for (int i = 1; i <= 9; ++i) {
@@ -63,6 +65,8 @@ void TileStack::setup(TileSetType tileSetType, bool enableDora, int notPlayingCo
 }
 
 void TileStack::reset() {
+    mRemainTiles->clear();
+
     setup(mTileSetType, mEnableDora, mNonPlayingTileCount);
 }
 

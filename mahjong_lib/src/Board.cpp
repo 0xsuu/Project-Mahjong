@@ -92,10 +92,20 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
 }
 
 void Board::reset() {
-    setup(mTileSetType, mRoundWind);
+    mTileStack.reset();
+    for (auto it = mPlayers->begin(); it < mPlayers->end(); it++) {
+        if ((*it)->getSeatPosition() == East) {
+            mCurrentPlayerIndex = it;
+            break;
+        }
+    }
+    mGame->onRoundStart();
 }
 
 void Board::shiftToNextRound() {
+    std::for_each(mPlayers->begin(), mPlayers->end(), [](Player *p) {
+        p->shiftSeatPosition();
+    });
     if (mRoundNumber >= 4) {
         mRoundNumber = 1;
         mRoundWind == North ? mRoundWind = East :
