@@ -61,27 +61,22 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     std::uniform_int_distribution<unsigned int> IDDistribution(10000, 30000);
 
     // Assign initial hands and other setups.
-    vector<Hand> initialHands(mPlayers->size(), Hand());
-    for (int i = 0; i < 13; ++i) {
-        int indexPlayer = 0;
-        std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
-            Tile t = mTileStack.drawTile();
-            mGame->onAfterPlayerPickTile(p, t);
-            initialHands[indexPlayer].addTile(t);
-            indexPlayer++;
-        });
-    }
     int indexPlayer = 0;
     vector<unsigned int> allocatedIDs;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
-        Hand sortedHand = initialHands[indexPlayer];
-        sortedHand.sort();
+        Hand initialHand;
+        for (int i = 0; i < 13; ++i) {
+            Tile t = mTileStack.drawTile();
+            mGame->onAfterPlayerPickTile(p, t);
+            initialHand.addTile(t);
+        }
+        initialHand.sort();
         unsigned int randomID = IDDistribution(mRandomDevice);
         // Make sure all the IDs are unique.
         while (std::find(allocatedIDs.begin(), allocatedIDs.end(), randomID) != allocatedIDs.end()) {
             randomID = IDDistribution(mRandomDevice);
         }
-        p->setupPlayer(randomID, Winds[indexPlayer], sortedHand, this);
+        p->setupPlayer(randomID, Winds[indexPlayer], initialHand, this);
         indexPlayer++;
     });
 
@@ -93,10 +88,19 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
 
 void Board::reset() {
     mTileStack.reset();
+    mDiscardedTiles.clear();
     for (auto it = mPlayers->begin(); it < mPlayers->end(); it++) {
+        // Assign initial hands.
+        Hand initialHand;
+        for (int i = 0; i < 13; ++i) {
+            Tile t = mTileStack.drawTile();
+            mGame->onAfterPlayerPickTile(*it, t);
+            initialHand.addTile(t);
+        }
+        initialHand.sort();
+        (*it)->resetPlayer(initialHand);
         if ((*it)->getSeatPosition() == East) {
             mCurrentPlayerIndex = it;
-            break;
         }
     }
     mGame->onRoundStart();

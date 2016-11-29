@@ -34,6 +34,7 @@ class Player {
     virtual ~Player() {}
 
     void setupPlayer(int ID, Wind seatPosition, Hand initialHand, Board *board);
+    void resetPlayer(Hand hand);
 
     void shiftSeatPosition();
     void discardTile(Tile t);

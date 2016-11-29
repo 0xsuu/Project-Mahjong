@@ -36,6 +36,11 @@ void Player::setupPlayer(int ID,
     mBoard = board;
 }
 
+void Player::resetPlayer(Hand hand) {
+    mHand.clear();
+    mHand = hand;
+}
+
 void Player::shiftSeatPosition() {
     mSeatPosition == North ? mSeatPosition = East :
        mSeatPosition = static_cast<Wind>(static_cast<int>(mSeatPosition) + 1);

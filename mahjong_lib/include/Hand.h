@@ -105,6 +105,8 @@ class Hand : public TileGroup {
      */
     bool testWin();
 
+    void clear();
+
     std::vector<Tile> canChi(Tile tile) const;
     bool canPong(Tile tile) const;
     bool canKang(Tile tile) const;

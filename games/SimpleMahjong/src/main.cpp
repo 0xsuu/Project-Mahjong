@@ -27,11 +27,13 @@ using mahjong::RandomPlayer;
 using mahjong::AlwaysLosePlayer;
 
 int main() {
-    AlwaysDiscardFirstPlayer *p1 = new AlwaysDiscardFirstPlayer("BOT ADFT 1");
+    UserInputPlayer *p1 = new UserInputPlayer("Human");
     AlwaysDiscardFirstPlayer *p2 = new AlwaysDiscardFirstPlayer("BOT ADFT 2");
-    AlwaysDiscardFirstPlayer *p3 = new AlwaysDiscardFirstPlayer("BOT ADFT 3");
-    AlwaysDiscardFirstPlayer *p4 = new AlwaysDiscardFirstPlayer("BOT ADFT 4");
-    SimpleGame *game = new SimpleGame(p1, p2, p3, p4, 500);
+//    AlwaysDiscardFirstPlayer *p3 = new AlwaysDiscardFirstPlayer("BOT ADFT 3");
+//    AlwaysDiscardFirstPlayer *p4 = new AlwaysDiscardFirstPlayer("BOT ADFT 4");
+    mahjong::Player *p3 = nullptr;
+    mahjong::Player *p4 = nullptr;
+    SimpleGame *game = new SimpleGame(p1, p2, p3, p4, 10);
 
     game->startGame();
 
