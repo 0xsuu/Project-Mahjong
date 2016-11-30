@@ -16,7 +16,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 
 #include "Board.h"
 
