@@ -75,8 +75,10 @@ int GreedyPlayer::getHeuristic(Hand hand) {
     }
     for (auto it = handData.begin(); it < handData.end() - 3; it++) {
         if (*it == *(it + 1) && *(it + 1) == *(it + 2) && *(it + 2) == *(it + 3)) {
-            if ((*it).getFlag() == Concealed | Melded && (*it + 1).getFlag() == Concealed | Melded &&
-                    (*it + 2).getFlag() == Concealed | Melded && (*it + 3).getFlag() == Concealed | Melded) {
+            if (((*it).getFlag() == Concealed | (*it).getFlag() == Melded) &&
+                   ((*it + 1).getFlag() == Concealed | (*it + 1).getFlag() == Melded) &&
+                   ((*it + 2).getFlag() == Concealed | (*it + 2).getFlag() == Melded) &&
+                   ((*it + 3).getFlag() == Concealed | (*it + 3).getFlag() == Melded)) {
                 kang++;
             }
         }
