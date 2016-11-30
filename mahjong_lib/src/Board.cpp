@@ -41,6 +41,8 @@ Board::Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool en
         mPlayers->push_back(p4);
     }
     mPlayerCount = mPlayers->size();
+    std::random_device random_device;
+    mRandomDevice = std::mt19937(random_device());
 }
 
 void Board::setup(TileSetType tileSetType, Wind roundWind) {
@@ -52,36 +54,28 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
     mGame->onRoundSetup();
 
     // Shuffle the players first, i.e. seat positions randomised.
-    std::random_device random_device;
-    std::mt19937 rd(random_device());
-    shuffle(mPlayers->begin(), mPlayers->end(), rd);
+    shuffle(mPlayers->begin(), mPlayers->end(), mRandomDevice);
 
     // Generate an unique ID for each player.
-    std::random_device randomDevice;
     std::uniform_int_distribution<unsigned int> IDDistribution(10000, 30000);
 
     // Assign initial hands and other setups.
-    vector<Hand> initialHands(mPlayers->size(), Hand());
-    for (int i = 0; i < 13; ++i) {
-        int indexPlayer = 0;
-        std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
-            Tile t = mTileStack.drawTile();
-            mGame->onAfterPlayerPickTile(p, t);
-            initialHands[indexPlayer].addTile(t);
-            indexPlayer++;
-        });
-    }
     int indexPlayer = 0;
     vector<unsigned int> allocatedIDs;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
-        Hand sortedHand = initialHands[indexPlayer];
-        sortedHand.sort();
-        unsigned int randomID = IDDistribution(randomDevice);
+        Hand initialHand;
+        for (int i = 0; i < 13; ++i) {
+            Tile t = mTileStack.drawTile();
+            mGame->onAfterPlayerPickTile(p, t);
+            initialHand.addTile(t);
+        }
+        initialHand.sort();
+        unsigned int randomID = IDDistribution(mRandomDevice);
         // Make sure all the IDs are unique.
         while (std::find(allocatedIDs.begin(), allocatedIDs.end(), randomID) != allocatedIDs.end()) {
-            randomID = IDDistribution(randomDevice);
+            randomID = IDDistribution(mRandomDevice);
         }
-        p->setupPlayer(randomID, Winds[indexPlayer], sortedHand, this);
+        p->setupPlayer(randomID, Winds[indexPlayer], initialHand, this);
         indexPlayer++;
     });
 
@@ -92,12 +86,36 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
 }
 
 void Board::reset() {
-    setup(mTileSetType, mRoundWind);
+    mTileStack.reset();
+    mDiscardedTiles.clear();
+    for (auto it = mPlayers->begin(); it < mPlayers->end(); it++) {
+        // Assign initial hands.
+        Hand initialHand;
+        for (int i = 0; i < 13; ++i) {
+            Tile t = mTileStack.drawTile();
+            mGame->onAfterPlayerPickTile(*it, t);
+            initialHand.addTile(t);
+        }
+        initialHand.sort();
+        (*it)->resetPlayer(initialHand);
+        if ((*it)->getSeatPosition() == East) {
+            mCurrentPlayerIndex = it;
+        }
+    }
+    mGame->onRoundStart();
 }
 
-void Board::shiftRoundWind() {
-    mRoundWind == North ? mRoundWind = East :
-            mRoundWind = static_cast<Wind>(static_cast<int>(mRoundWind) + 1);
+void Board::shiftToNextRound() {
+    std::for_each(mPlayers->begin(), mPlayers->end(), [](Player *p) {
+        p->shiftSeatPosition();
+    });
+    if (mRoundNumber >= 4) {
+        mRoundNumber = 1;
+        mRoundWind == North ? mRoundWind = East :
+                mRoundWind = static_cast<Wind>(static_cast<int>(mRoundWind) + 1);
+    } else {
+        mRoundNumber++;
+    }
 }
 
 void Board::proceedToNextPlayer() {
@@ -142,6 +160,7 @@ void Board::proceedToNextPlayer() {
                             if (copyHand.testWin()) {
                                 mRoundEnded = true;
                                 mGame->onRoundFinished(false, player);
+                                return;
                             } else {
                                 throw std::invalid_argument("False win.");
                             }
@@ -158,6 +177,7 @@ void Board::proceedToNextPlayer() {
             if (p->getHand().testWin()) {
                 mRoundEnded = true;
                 mGame->onRoundFinished(false, p);
+                return;
             } else {
                 throw std::invalid_argument("False win.");
             }

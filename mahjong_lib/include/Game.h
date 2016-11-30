@@ -44,6 +44,9 @@ class Game {
     virtual void onPlayerDiscardTile(Player *player, Tile tile) = 0;
     virtual void onPlayerPass(Player *player) = 0;
     virtual void onRoundFinished(bool drained, Player *winner) = 0;
+    virtual void onNextRound(bool eastWin) = 0;
+
+    virtual void onGameOver() = 0;
 
     // Rule interfaces.
     virtual int calculateScore(Hand mHand) = 0;

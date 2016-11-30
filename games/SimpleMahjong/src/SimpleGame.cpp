@@ -26,6 +26,19 @@ using mahjong::SimpleGame;
 SimpleGame::SimpleGame(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount) :
         Game(p1, p2, p3, p4, roundCount) {
     mBoard = new Board(this, p1, p2, p3, p4, false, 0);
+    if (p1 != nullptr) {
+        mPlayerWinCount[p1] = 0;
+    }
+    if (p2 != nullptr) {
+        mPlayerWinCount[p2] = 0;
+    }
+    if (p3 != nullptr) {
+        mPlayerWinCount[p3] = 0;
+    }
+    if (p4 != nullptr) {
+        mPlayerWinCount[p4] = 0;
+    }
+
 }
 
 void SimpleGame::startGame() {
@@ -37,7 +50,8 @@ void SimpleGame::startGame() {
 // Callback implementations.
 void SimpleGame::onRoundStart() {
     system("clear");
-    cout << "Round "<< mCurrentRound <<" start.\n";
+    cout << MAHJONG_SPECIAL[mBoard->getRoundWind()] << mBoard->getRoundNumber()
+         <<" started.(NO. "<< mCurrentRound <<")\n";
     while (!mRoundFinished) {
         mBoard->proceedToNextPlayer();
     }
@@ -64,8 +78,31 @@ void SimpleGame::onRoundFinished(bool drained, Player *winner) {
         cout << "Tile Stack Drained. Tie!\n";
     } else {
         cout << winner->getPlayerName() << " wins!\n";
+        mPlayerWinCount[winner]++;
     }
     mRoundFinished = true;
+    if (mCurrentRound < mRoundCount) {
+        onNextRound(winner ? winner->getSeatPosition() == East : false);
+    } else {
+        onGameOver();
+    }
+}
+
+void SimpleGame::onNextRound(bool eastWin) {
+    mRoundFinished = false;
+    mCurrentRound++;
+    if (!eastWin) {
+        mBoard->shiftToNextRound();
+    }
+    mBoard->reset();
+}
+
+void SimpleGame::onGameOver() {
+    long playerCount = mPlayerWinCount.size();
+    for (auto it = mPlayerWinCount.begin(); it != mPlayerWinCount.end(); it++) {
+        cout << (*it).first->getPrintable() << " win rate: "
+             << static_cast<double>((*it).second) / mRoundCount * 100.0 << "%\n";
+    }
 }
 
 // Rule implementation.

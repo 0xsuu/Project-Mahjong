@@ -14,21 +14,21 @@
 //  limitations under the License.
 //
 
+#ifndef MAHJONG_PLAYER_GREEDY_PLAYER_H
+#define MAHJONG_PLAYER_GREEDY_PLAYER_H
+
 #include <Player.h>
-#include "AlwaysLosePlayer.h"
 
-using mahjong::Action;
-using mahjong::Player;
-using mahjong::Tile;
-using mahjong::TileGroup;
-using mahjong::AlwaysLosePlayer;
+namespace mahjong {
+class GreedyPlayer : public Player {
+ public:
+    GreedyPlayer(std::string playerName) : Player(playerName) {}
 
-Action AlwaysLosePlayer::onTurn(int playerID, Tile tile) {
-    if (playerID == getID()) {
-        return Action(Discard, tile);
-    }
+    Action onTurn(int playerID, Tile tile) override;
+    Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override;
+
+ private:
+    int getHeuristic(Hand hand);
+};
 }
-
-Action AlwaysLosePlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
-    return Action();
-}
+#endif // MAHJONG_PLAYER_GREEDY_PLAYER_H
