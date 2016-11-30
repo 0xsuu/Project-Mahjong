@@ -17,6 +17,12 @@
 #ifndef MAHJONG_LIB_CONSTANTS_H
 #define MAHJONG_LIB_CONSTANTS_H
 
+#include <iostream>
+#include <utility>
+
+// Uncomment/Comment the following line to Enable/Disable debug output.
+ #define DEBUG_BUILD
+
 namespace mahjong {
 enum Wind {
     East = 0,
@@ -39,6 +45,26 @@ class Tile;
 class TileGroup;
 class TileStack;
 
+/**
+ * Logger.
+ */
+void LOG();
+
+template<typename First, typename ...Rest>
+void LOG(First &&first, Rest &&...rest)  {
+    std::cout << std::forward<First>(first);
+    if (sizeof...(Rest) != 0) {
+        LOG(std::forward<Rest>(rest)...);
+    }
+}
+
+#ifdef DEBUG_BUILD
+#define LOGI(TAG, ...) LOG(TAG, ":\t", __VA_ARGS__, '\n');
+#define LOGE(TAG, ...) LOG("\033[1;31m", TAG, ":\t", __VA_ARGS__, "\033[0m\n");
+#else
+#define LOGI(TAG, ...)
+#define LOGE(TAG, ...)
+#endif
 } // namespace mahjong.
 
 #endif // MAHJONG_LIB_CONSTANTS_H

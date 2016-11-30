@@ -16,8 +16,6 @@
 
 #include <Board.h>
 
-#include <iostream>
-
 using std::map;
 using std::string;
 using std::vector;
