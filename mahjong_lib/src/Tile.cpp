@@ -15,8 +15,6 @@
 //
 
 #include <cassert>
-#include <iostream>
-#include <bitset>
 
 #include "Tile.h"
 #include "PrintFormat.h"
@@ -29,7 +27,7 @@ using mahjong::TileType;
 
 Tile::Tile(const TileFlag flag, const TileType type, const int number, bool dora) {
     // Make sure the number is legal.
-    // assert(number <= 9 && number >= 1);
+    assert(number <= 9 && number >= 1);
     if (dora) {
         assert(number == 5);
         assert(type != Special);
