@@ -22,8 +22,6 @@
 #include "Tile.h"
 #include "TileGroup.h"
 
-#include <boost/python.hpp>
-
 namespace mahjong {
 class Hand : public TileGroup {
  public:
