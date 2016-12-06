@@ -36,6 +36,8 @@ Action AlwaysDiscardFirstPlayer::onTurn(int playerID, Tile tile) {
         }
         assert(it != handData.end() && "This is impossible! You don't have one tile in hand?");
         return Action(Discard, *it);
+    } else {
+        return Action();
     }
 }
 

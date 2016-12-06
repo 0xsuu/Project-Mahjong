@@ -87,6 +87,8 @@ Action UserInputPlayer::onTurn(int playerID, Tile tile) {
             addDiscardTileDialog(withoutTile);
             return Action(Discard, getDiscardTileDialogSelection(withoutTile, tile));
         }
+    } else {
+        return Action();
     }
 }
 

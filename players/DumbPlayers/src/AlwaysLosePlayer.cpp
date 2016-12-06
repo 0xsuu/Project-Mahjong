@@ -26,6 +26,8 @@ using mahjong::AlwaysLosePlayer;
 Action AlwaysLosePlayer::onTurn(int playerID, Tile tile) {
     if (playerID == getID()) {
         return Action(Discard, tile);
+    } else {
+        return Action();
     }
 }
 

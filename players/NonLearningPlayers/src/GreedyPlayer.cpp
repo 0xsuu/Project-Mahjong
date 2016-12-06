@@ -43,6 +43,8 @@ Action GreedyPlayer::onTurn(int playerID, Tile tile) {
         }
 
         return Action(Discard, *maxIt);
+    } else {
+        return Action();
     }
 }
 

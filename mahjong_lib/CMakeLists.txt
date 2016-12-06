@@ -52,7 +52,7 @@ link_directories(/usr/local/lib/)
 #
 
 # Static lib.
-add_library(mahjong ${SOURCE_FILES} ${PROJECT_ROOT_DIRECTORY}/PythonInterface/MahjongLibInterface.cpp)
+add_library(mahjong ${SOURCE_FILES})
 set_property(TARGET mahjong PROPERTY POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(mahjong -lboost_python)
 
