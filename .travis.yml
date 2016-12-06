@@ -7,7 +7,7 @@ branches:
 addons:
   apt:
     packages:
-      - g++-4.8
+      - g++-4.9
       - clang++-3.7
     sources:
       - ubuntu-toolchain-r-test
@@ -16,7 +16,7 @@ addons:
 compiler: g++
 
 install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
 
 script:
   - git clone https://github.com/google/googletest.git
