@@ -9,12 +9,12 @@ from libmahjong import *
 from libplayers import *
 from libgames import *
 
-p1 = GreedyPlayer("BOT Greedy 1")
-p2 = UserInputPlayer("Smart Human")
-p3 = GreedyPlayer("BOT Greedy 2")
-p4 = GreedyPlayer("BOT Greedy 3")
+p1 = makeGreedyPlayer("BOT Greedy 1")
+p2 = makeUserInputPlayer("Smart Human")
+p3 = None
+p4 = None
 
-game = SimpleGame(p1, p2, p3, p4, 1)
+game = SimpleGame(p1, p2, p3, p4, 1000)
 
 game.startGame()
 

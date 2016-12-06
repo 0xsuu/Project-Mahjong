@@ -25,12 +25,25 @@ using mahjong::GreedyPlayer;
 using mahjong::UserInputPlayer;
 
 using mahjong::Hand;
+using mahjong::Player;
 using mahjong::Tile;
 
+Player *makeGreedyPlayer(std::string playerName) {
+    return new GreedyPlayer(playerName);
+}
+Player *makeUserInputPlayer(std::string playerName) {
+    return new UserInputPlayer(playerName);
+}
+
 BOOST_PYTHON_MODULE(libplayers) {
+    using boost::python::bases;
     using boost::python::class_;
+    using boost::python::def;
     using boost::python::enum_;
     using boost::python::init;
+
+    def("makeGreedyPlayer", makeGreedyPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
+    def("makeUserInputPlayer", makeUserInputPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
 
     class_<AlwaysDiscardFirstPlayer>("AlwaysDiscardFirstPlayer",
                                      init<std::string>())

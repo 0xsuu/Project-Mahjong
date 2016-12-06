@@ -18,9 +18,12 @@
 #include <SimpleGame.h>
 
 using mahjong::SimpleGame;
+
+using mahjong::Game;
 using mahjong::Player;
 
 BOOST_PYTHON_MODULE(libgames) {
+    using boost::python::bases;
     using boost::python::class_;
     using boost::python::enum_;
     using boost::python::init;
