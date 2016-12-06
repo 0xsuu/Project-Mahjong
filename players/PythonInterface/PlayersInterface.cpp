@@ -16,8 +16,6 @@
 
 #include <boost/python.hpp>
 
-#include <string>
-
 #include <AlwaysDiscardFirstPlayer.h>
 #include <GreedyPlayer.h>
 #include <UserInputPlayer.h>
