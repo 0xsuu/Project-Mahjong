@@ -94,6 +94,13 @@ if [ "$1" == "--game" ]; then
         exit 0
     fi
 
+    # Build dynamic lib for Python interface.
+    if [ "$2" == "python" ]; then
+        cmake ../"$PROJECT_MAHJONG"/games/
+        make dGames
+        exit 0
+    fi
+
     echo "Please specify a game to build!"
     exit -1
 fi

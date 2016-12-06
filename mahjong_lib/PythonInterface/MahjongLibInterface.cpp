@@ -17,7 +17,6 @@
 #include <boost/python.hpp>
 
 #include <Hand.h>
-#include <Tile.h>
 
 using mahjong::Hand;
 using mahjong::Tile;
