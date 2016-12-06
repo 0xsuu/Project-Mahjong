@@ -49,6 +49,7 @@ include_directories(${CMAKE_UIP_INCLUDE_DIR}/)
 file(GLOB_RECURSE UIP_SOURCE_FILES ${CMAKE_UIP_SOURCE_DIR}/*.cpp)
 file(GLOB_RECURSE UIP_HEADER_FILES ${CMAKE_UIP_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCLUDE_PATH}/*.h)
 
+# Static lib.
 add_library(UserInputPlayer ${UIP_SOURCE_FILES})
 target_link_libraries(UserInputPlayer "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
 
@@ -76,3 +77,20 @@ file(GLOB_RECURSE NONLP_HEADER_FILES ${CMAKE_NONLP_INCLUDE_DIR}/*.h ${MAHJONG_LI
 add_library(NonLearningPlayers ${NONLP_SOURCE_FILES})
 target_link_libraries(NonLearningPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
 
+# Static lib.
+add_library(AllPlayers STATIC
+        ${UIP_SOURCE_FILES}
+        ${DUP_SOURCE_FILES}
+        ${NONLP_SOURCE_FILES})
+set_target_properties(AllPlayers PROPERTIES OUTPUT_NAME players)
+
+# Dynamic lib, uses the same name as the static one.
+# This also automatically include the python interface.
+add_library(dPlayers SHARED
+        ${UIP_SOURCE_FILES}
+        ${DUP_SOURCE_FILES}
+        ${NONLP_SOURCE_FILES}
+        ${PROJECT_ROOT_DIRECTORY}/PythonInterface/PlayersInterface.cpp)
+set_target_properties(dPlayers PROPERTIES OUTPUT_NAME players)
+set_property(TARGET dPlayers PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(dPlayers -lboost_python)

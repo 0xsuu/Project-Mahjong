@@ -51,9 +51,15 @@ if [ "$1" == "--lib" ]; then
         exit 0
     fi
 
+    # Build dynamic lib for Python interface.
+    if [ "$2" == "python" ]; then
+        cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
+        make dmahjong
+        exit 0
+    fi
+
     cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
     make mahjong
-    make dmahjong
     exit 0
 fi
 
@@ -112,13 +118,6 @@ if [ "$1" == "--player" ]; then
         exit 0
     fi
 
-    if [ "$2" == "all" ]; then
-        echo "Building all players..."
-        cmake ../"$PROJECT_MAHJONG"/players/
-        make
-        exit 0
-    fi
-
     if [ "$2" == "user" ]; then
         echo "Building UserInputPlayer..."
         cmake ../"$PROJECT_MAHJONG"/players/
@@ -140,10 +139,16 @@ if [ "$1" == "--player" ]; then
         exit 0
     fi
 
+    if [ "$2" == "python" ]; then
+        cmake ../"$PROJECT_MAHJONG"/players/
+        make dPlayers
+        exit 0
+    fi
 
-    echo "Please specify a game to build!"
-    exit -1
-
+    echo "Building all players..."
+        cmake ../"$PROJECT_MAHJONG"/players/
+        make AllPlayers
+    exit 0
 fi
 
 # Show help.

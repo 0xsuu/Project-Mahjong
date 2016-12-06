@@ -30,10 +30,15 @@ script:
   - ./build_mahjong.sh --lib test
   - ./build_mahjong.sh --player all
   - ./build_mahjong.sh --game simple norun
+  - export CPLUS_INCLUDE_PATH=/usr/include/python2.7
+  - ./build_mahjong.sh --lib python
+  - ./build_mahjong.sh --player python
   - export CXX="clang++-3.7"
   - ./build_mahjong.sh --lib test
   - ./build_mahjong.sh --player all
   - ./build_mahjong.sh --game simple norun
+  - ./build_mahjong.sh --lib python
+  - ./build_mahjong.sh --player python
 
 sudo: required
 
