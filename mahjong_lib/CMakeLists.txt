@@ -49,7 +49,12 @@ link_directories(/usr/local/lib/)
 # Build targets
 #
 
+# Static lib.
 add_library(mahjong ${SOURCE_FILES})
+
+# Dynamic lib, uses the same name as the static one.
+add_library(dmahjong SHARED ${SOURCE_FILES})
+set_target_properties(dmahjong PROPERTIES OUTPUT_NAME mahjong)
 
 #
 # Build gtest (Require installation gtest)

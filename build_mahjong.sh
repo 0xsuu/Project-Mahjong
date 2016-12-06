@@ -53,6 +53,7 @@ if [ "$1" == "--lib" ]; then
 
     cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
     make mahjong
+    make dmahjong
     exit 0
 fi
 
