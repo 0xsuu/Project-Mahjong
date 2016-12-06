@@ -17,12 +17,29 @@
 #include <boost/python.hpp>
 
 #include <Hand.h>
+#include <Player.h>
 
+using mahjong::Action;
+using mahjong::ActionState;
 using mahjong::Hand;
 using mahjong::Tile;
 using mahjong::TileGroup;
 using mahjong::TileFlag;
 using mahjong::TileType;
+using mahjong::Player;
+
+struct PlayerWrapper : Player {
+    PlayerWrapper(std::string playerName) : Player(playerName) {}
+
+    Action onTurn(int playerID, Tile tile) override {
+        throw std::runtime_error("PlayerWrapper class cannot be called.");
+    }
+    Action onOtherPlayerMakeAction(int playerID,
+                                   std::string playerName,
+                                   Action action) override {
+        throw std::runtime_error("PlayerWrapper class cannot be called.");
+    }
+};
 
 BOOST_PYTHON_MODULE(libmahjong) {
     using boost::python::class_;
@@ -30,7 +47,7 @@ BOOST_PYTHON_MODULE(libmahjong) {
     using boost::python::init;
 
     /**
-     * Wrap for enums.
+     * Expose enums.
      */
     enum_<TileFlag>("TileFlag")
             .value("Concealed", mahjong::Concealed)
@@ -41,9 +58,19 @@ BOOST_PYTHON_MODULE(libmahjong) {
             .value("Dot", mahjong::Dot)
             .value("Bamboo", mahjong::Bamboo)
             .value("Special", mahjong::Special);
+    enum_<ActionState>("ActionState")
+            .value("Pass", mahjong::Pass)
+            .value("Cancel", mahjong::Cancel)
+            .value("Discard", mahjong::Discard)
+            .value("Richii", mahjong::Richii)
+            .value("Chi", mahjong::Chi)
+            .value("Pong", mahjong::Pong)
+            .value("Kang", mahjong::Kang)
+            .value("ConcealedKang", mahjong::ConcealedKang)
+            .value("Win", mahjong::Win);
 
     /**
-     * Wrap for Tile class.
+     * Expose Tile class.
      */
     class_<Tile>("Tile",
                  init<>())
@@ -59,10 +86,28 @@ BOOST_PYTHON_MODULE(libmahjong) {
             .def("getPrintable", &Tile::getPrintable)
             .def("setMeld", &Tile::setMeld)
             .def("setConceal", &Tile::setConceal)
-            .def("EQ", &Tile::operator==)
-            .def("NE", &Tile::operator!=)
-            .def("LT", &Tile::operator<)
-            .def("LE", &Tile::operator<=)
-            .def("plus", &Tile::operator+)
-            .def("minus", &Tile::operator-);
+            .def("__eq__", &Tile::operator==)
+            .def("__ne__", &Tile::operator!=)
+            .def("__lt__", &Tile::operator<)
+            .def("__le__", &Tile::operator<=)
+            .def("__add__", &Tile::operator+)
+            .def("__sub__", &Tile::operator-);
+
+    /**
+     * Expose Player class.
+     */
+    class_<PlayerWrapper>("Player",
+                          init<std::string>())
+            .def("onTurn", &PlayerWrapper::onTurn)
+            .def("onOtherPlayerMakeAction", &PlayerWrapper::onOtherPlayerMakeAction);
+
+    /**
+     * Expose Action class.
+     */
+    class_<Action>("Action",
+                   init<>())
+            .def(init<ActionState, Tile>())
+            .def("getActionState", &Action::getActionState)
+            .def("getTile", &Action::getTile)
+            .def("__lt__", &Action::operator<);
 }

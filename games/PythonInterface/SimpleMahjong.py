@@ -9,9 +9,17 @@ from libmahjong import *
 from libplayers import *
 from libgames import *
 
+class StupidPlayer(Player):
+    def __init__(self, playerName):
+        print "hi"
+        super(StupidPlayer, self).__init__(playerName)
+    def onTurn(playerID, tile):
+        print "onTurn:"
+
 p1 = makeGreedyPlayer("BOT Greedy 1")
-p2 = makeUserInputPlayer("Smart Human")
-p3 = None
+p2 = makeGreedyPlayer("BOT Greedy 2")
+#p2 = makeUserInputPlayer("Smart Human")
+p3 = StupidPlayer("SB")
 p4 = None
 
 game = SimpleGame(p1, p2, p3, p4, 1000)
