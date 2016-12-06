@@ -54,8 +54,10 @@ add_library(mahjong ${SOURCE_FILES})
 
 # Dynamic lib, uses the same name as the static one.
 # This also automatically include the python interface.
-add_library(dmahjong SHARED ${SOURCE_FILES} ${PROJECT_ROOT_DIRECTORY}/PythonInterface/MahjongPythonInterface.h)
+add_library(dmahjong SHARED ${SOURCE_FILES} ${PROJECT_ROOT_DIRECTORY}/PythonInterface/MahjongPythonInterface.cpp)
 set_target_properties(dmahjong PROPERTIES OUTPUT_NAME mahjong)
+set_property(TARGET dmahjong PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(dmahjong -lboost_python)
 
 #
 # Build gtest (Require installation gtest)

@@ -17,15 +17,6 @@
 #ifndef MAHJONG_LIB_PYTHON_INTERFACE_H
 #define MAHJONG_LIB_PYTHON_INTERFACE_H
 
-#include <boost/python.hpp>
 
-#include <Hand.h>
-#include <Tile.h>
-
-using mahjong::Hand;
-
-BOOST_PYTHON_MODULE(mahjong) {
-    using boost::python::class_;
-}
 
 #endif // MAHJONG_LIB_PYTHON_INTERFACE_H
