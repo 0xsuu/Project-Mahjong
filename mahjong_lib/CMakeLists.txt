@@ -56,10 +56,14 @@ target_link_libraries(mahjong -lboost_python)
 
 # Dynamic lib, uses the same name as the static one.
 # This also automatically include the python interface.
+if(APPLE)
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif(APPLE)
+
 add_library(dmahjong SHARED ${SOURCE_FILES} ${PROJECT_ROOT_DIRECTORY}/PythonInterface/MahjongLibInterface.cpp)
 set_target_properties(dmahjong PROPERTIES OUTPUT_NAME mahjong)
 set_property(TARGET dmahjong PROPERTY POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(dmahjong -lboost_python)
+target_link_libraries(dmahjong -lpython -lboost_python)
 
 #
 # Build gtest (Require installation gtest)
