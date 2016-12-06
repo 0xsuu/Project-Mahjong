@@ -16,7 +16,7 @@ if [ "$1" == "--update-code-completion" ]; then
     COMPREPLY=()
     cur=\"\${COMP_WORDS[COMP_CWORD]}\"
     prev=\"\${COMP_WORDS[COMP_CWORD-1]}\"
-    opts=\"--help --lib --game --player --update-code-completion\"
+    opts=\"--help --lib --game --player --update-code-completion --python\"
 
     if [[ \${cur} == -* ]] ; then
         COMPREPLY=( \$(compgen -W \"\${opts}\" -- \${cur}) )
@@ -28,6 +28,9 @@ fi
 
 # Go to project directory.
 cd ../
+
+# Set python include path.
+export CPLUS_INCLUDE_PATH=/usr/include/python2.7
 
 if [ "$1" == "--lib" ]; then
     # Create build folder.
@@ -155,6 +158,14 @@ if [ "$1" == "--player" ]; then
     echo "Building all players..."
         cmake ../"$PROJECT_MAHJONG"/players/
         make AllPlayers
+    exit 0
+fi
+
+if [ "$1" == "--python" ]; then
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --lib python
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --player python
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --game python
+
     exit 0
 fi
 

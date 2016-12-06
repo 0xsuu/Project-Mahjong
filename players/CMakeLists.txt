@@ -83,8 +83,10 @@ add_library(AllPlayers STATIC
         ${DUP_SOURCE_FILES}
         ${NONLP_SOURCE_FILES})
 set_target_properties(AllPlayers PROPERTIES OUTPUT_NAME players)
+set_property(TARGET AllPlayers PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(AllPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a")
 
-# Dynamic lib, uses the same name as the static one.
+        # Dynamic lib, uses the same name as the static one.
 # This also automatically include the python interface.
 add_library(dPlayers SHARED
         ${UIP_SOURCE_FILES}
@@ -93,4 +95,4 @@ add_library(dPlayers SHARED
         ${PROJECT_ROOT_DIRECTORY}/PythonInterface/PlayersInterface.cpp)
 set_target_properties(dPlayers PROPERTIES OUTPUT_NAME players)
 set_property(TARGET dPlayers PROPERTY POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(dPlayers -lboost_python)
+target_link_libraries(dPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" -lboost_python)

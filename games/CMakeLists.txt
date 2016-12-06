@@ -60,6 +60,10 @@ source_group("SimpleMahjongHeaders" FILES ${SM_HEADER_FILES})
 add_executable(SimpleMahjong ${SM_SOURCE_FILES})
 target_link_libraries(SimpleMahjong "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" ${PLAYERS_LIB_PATH})
 
-add_library(dGames SHARED ${SM_SOURCE_FILES})
+add_library(dGames SHARED
+        ${SM_SOURCE_FILES}
+        ${PROJECT_ROOT_DIRECTORY}/PythonInterface/GamesInterface.cpp)
 set_target_properties(dGames PROPERTIES OUTPUT_NAME games)
 target_link_libraries(dGames "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" ${PLAYERS_LIB_PATH})
+set_property(TARGET dGames PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(dGames -lboost_python)
