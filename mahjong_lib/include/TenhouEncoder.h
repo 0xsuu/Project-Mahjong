@@ -136,8 +136,9 @@ class TenhouEncoder {
 
     rapidjson::Document mJSONObject;
 
-    template<typename T>
-    void writeArray(std::vector<T> arr);
+    void writeArray(std::vector<std::string> arr);
+    void writeArray(std::vector<int> arr);
+    void writeArray(mahjong::TileGroup arr);
     int toTenhouTile(Tile t);
 };
 

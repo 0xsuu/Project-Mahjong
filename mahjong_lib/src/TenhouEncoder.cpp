@@ -17,9 +17,13 @@
 #include "TenhouEncoder.h"
 
 #include <prettywriter.h>
+
 #include <algorithm>
+
 #include <Tile.h>
 #include <TileGroup.h>
+
+#define TENHOU_DISCARD_PICKED_TILE_ID 60;
 
 using std::for_each;
 using std::string;
@@ -90,9 +94,9 @@ void TenhouEncoder::setLogs(int round, int subRound, int number,
     assert(initialHands.size() == pickedTileGroups.size() &&
                    pickedTileGroups.size() == discardedTileGroups.size());
     for (int i = 0; i < initialHands.size(); i++) {
-        auto initialHand = initialHands[i].getData();
-        auto pickedTileGroup = pickedTileGroups[i].getData();
-        auto discardedTileGroup = discardedTileGroups[i].getData();
+        auto initialHand = initialHands[i];
+        auto pickedTileGroup = pickedTileGroups[i];
+        auto discardedTileGroup = discardedTileGroups[i];
         writeArray(initialHand);
         writeArray(pickedTileGroup);
         writeArray(discardedTileGroup);
@@ -137,14 +141,43 @@ void TenhouEncoder::writeArray(std::vector<int> arr) {
     mWriter.EndArray();
 }
 
-void TenhouEncoder::writeArray(std::vector<Tile> arr) {
+void TenhouEncoder::writeArray(TileGroup tg) {
+    auto arr = tg.getData();
     mWriter.StartArray();
+    int index = 0;
     for_each(arr.begin(), arr.end(), [&](Tile &t) {
-        mWriter.Int(toTenhouTile(t));
+        if (!t.isNull() && (t.getFlag() == Melded || t.getFlag() == Concealed)) {
+            string obj = "";
+            auto comb = tg.getCombinationIndexes()[index];
+            // Judge if is Pong or Chi or Kang or Concealed Kang.
+            if (comb.size() == 3) {
+                obj += 'k';
+            } else {
+                if (comb[0] == comb[1]) {
+                    obj += 'p';
+                } else {
+                    obj += 'c';
+                }
+            }
+            for_each(comb.begin(), comb.end(), [&](Tile &t) {
+                obj += std::to_string(toTenhouTile(t));
+            });
+            obj += std::to_string(toTenhouTile(t));
+            mWriter.String(obj.c_str());
+        } else {
+            mWriter.Int(toTenhouTile(t));
+        }
+        index++;
     });
+
     mWriter.EndArray();
 }
 
 int TenhouEncoder::toTenhouTile(Tile t) {
-    return (static_cast<int>(t.getType()) >> 4 + 1) * 10 + t.getNumber();
+    // TODO: Add dora converter: 51, 52, 53.
+    if (t.isNull()) {
+        return TENHOU_DISCARD_PICKED_TILE_ID;
+    } else {
+        return ((static_cast<int>(t.getType()) >> 4) + 1) * 10 + t.getNumber();
+    }
 }

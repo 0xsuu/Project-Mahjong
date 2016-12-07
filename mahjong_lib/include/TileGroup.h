@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <iostream>
+#include <map>
 
 #include "PrintFormat.h"
 
@@ -57,15 +58,29 @@ class TileGroup {
         });
         return printableString;
     }
+
+    void addCombinationIndex(int index, std::vector<Tile> restTiles) {
+        Tile t = getTile(index);
+        assert(t.getFlag() == Melded ||
+               t.getFlag() == Concealed);
+        mCombinationIndexes[index] = restTiles;
+    }
+    void addCurrentCombinationIndex(std::vector<Tile> restTiles) {
+        addCombinationIndex(mTilesData.size() - 1, restTiles);
+    }
+
     /**
      * Accessors.
      */
     Tile getTile(int n) { return mTilesData[n]; }
     Tile operator[](int index) { return getTile(index); }
     std::vector<Tile> getData() { return mTilesData; }
+    std::map<int, std::vector<Tile>> getCombinationIndexes() { return mCombinationIndexes; }
 
  protected:
     std::vector<Tile> mTilesData;
+
+    std::map<int, std::vector<Tile>> mCombinationIndexes;
 };
 }
 
