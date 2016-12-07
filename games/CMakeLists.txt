@@ -24,6 +24,8 @@ else()
     message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+set(CMAKE_MACOSX_RPATH 1)
+
 #
 # Setting variables
 #
@@ -34,15 +36,12 @@ set(PROJECT_MAHJONG "${PROJECT_ROOT_DIRECTORY}/../")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_MAHJONG}/../Mahjong-games")
 set(MAHJONG_LIB_INCLUDE_PATH "${PROJECT_MAHJONG}/mahjong_lib/include")
 
-# UserInputPlayer
+# Players
 set(USER_INPUT_PLAYER_INCLUDE_PATH "${PROJECT_MAHJONG}/players/UserInputPlayer/include")
-set(USER_INPUT_PLAYER_LIB_PATH "${PROJECT_MAHJONG}/../build_players/libUserInputPlayer.a")
-
 set(DUMB_PLAYERS_INCLUDE_PATH "${PROJECT_MAHJONG}/players/DumbPlayers/include")
-set(DUMB_PLAYERS_LIB_PATH "${PROJECT_MAHJONG}/../build_players/libDumbPlayers.a")
-
 set(NON_LEARNING_PLAYERS_INCLUDE_PATH "${PROJECT_MAHJONG}/players/NonLearningPlayers/include")
-set(NON_LEARNING_PLAYERS_LIB_PATH "${PROJECT_MAHJONG}/../build_players/libNonLearningPlayers.a")
+
+set(PLAYERS_LIB_PATH "${PROJECT_MAHJONG}/../build_players/libplayers.a")
 
 include_directories(${MAHJONG_LIB_INCLUDE_PATH}/ ${USER_INPUT_PLAYER_INCLUDE_PATH}/ ${DUMB_PLAYERS_INCLUDE_PATH}/ ${NON_LEARNING_PLAYERS_INCLUDE_PATH}/)
 
@@ -61,5 +60,16 @@ file(GLOB_RECURSE SM_HEADER_FILES ${CMAKE_SM_INCLUDE_DIR}/*.h ${MAHJONG_LIB_INCL
 source_group("SimpleMahjongHeaders" FILES ${SM_HEADER_FILES})
 
 add_executable(SimpleMahjong ${SM_SOURCE_FILES})
-target_link_libraries(SimpleMahjong "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" ${USER_INPUT_PLAYER_LIB_PATH} ${DUMB_PLAYERS_LIB_PATH} ${NON_LEARNING_PLAYERS_LIB_PATH})
+target_link_libraries(SimpleMahjong "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" ${PLAYERS_LIB_PATH})
 
+if(APPLE)
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif(APPLE)
+
+add_library(dGames SHARED
+        ${SM_SOURCE_FILES}
+        ${PROJECT_ROOT_DIRECTORY}/PythonInterface/GamesInterface.cpp)
+set_target_properties(dGames PROPERTIES OUTPUT_NAME games)
+target_link_libraries(dGames "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" ${PLAYERS_LIB_PATH})
+set_property(TARGET dGames PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(dGames -lpython -lboost_python)

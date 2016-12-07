@@ -16,7 +16,7 @@ if [ "$1" == "--update-code-completion" ]; then
     COMPREPLY=()
     cur=\"\${COMP_WORDS[COMP_CWORD]}\"
     prev=\"\${COMP_WORDS[COMP_CWORD-1]}\"
-    opts=\"--help --lib --game --player --update-code-completion\"
+    opts=\"--help --lib --game --player --update-code-completion --python\"
 
     if [[ \${cur} == -* ]] ; then
         COMPREPLY=( \$(compgen -W \"\${opts}\" -- \${cur}) )
@@ -28,6 +28,9 @@ fi
 
 # Go to project directory.
 cd ../
+
+# Set python include path.
+export CPLUS_INCLUDE_PATH=/usr/include/python2.7
 
 if [ "$1" == "--lib" ]; then
     # Create build folder.
@@ -51,9 +54,15 @@ if [ "$1" == "--lib" ]; then
         exit 0
     fi
 
+    # Build dynamic lib for Python interface.
+    if [ "$2" == "python" ]; then
+        cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
+        make dmahjong
+        exit 0
+    fi
+
     cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
     make mahjong
-    make dmahjong
     exit 0
 fi
 
@@ -88,6 +97,13 @@ if [ "$1" == "--game" ]; then
         exit 0
     fi
 
+    # Build dynamic lib for Python interface.
+    if [ "$2" == "python" ]; then
+        cmake ../"$PROJECT_MAHJONG"/games/
+        make dGames
+        exit 0
+    fi
+
     echo "Please specify a game to build!"
     exit -1
 fi
@@ -112,13 +128,6 @@ if [ "$1" == "--player" ]; then
         exit 0
     fi
 
-    if [ "$2" == "all" ]; then
-        echo "Building all players..."
-        cmake ../"$PROJECT_MAHJONG"/players/
-        make
-        exit 0
-    fi
-
     if [ "$2" == "user" ]; then
         echo "Building UserInputPlayer..."
         cmake ../"$PROJECT_MAHJONG"/players/
@@ -140,10 +149,24 @@ if [ "$1" == "--player" ]; then
         exit 0
     fi
 
+    if [ "$2" == "python" ]; then
+        cmake ../"$PROJECT_MAHJONG"/players/
+        make dPlayers
+        exit 0
+    fi
 
-    echo "Please specify a game to build!"
-    exit -1
+    echo "Building all players..."
+        cmake ../"$PROJECT_MAHJONG"/players/
+        make AllPlayers
+    exit 0
+fi
 
+if [ "$1" == "--python" ]; then
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --lib python
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --player python
+    ./"$PROJECT_MAHJONG"/build_mahjong.sh --game python
+
+    exit 0
 fi
 
 # Show help.

@@ -24,6 +24,8 @@ else()
     message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+set(CMAKE_MACOSX_RPATH 1)
+
 #
 # Setting variables
 #
@@ -51,10 +53,19 @@ link_directories(/usr/local/lib/)
 
 # Static lib.
 add_library(mahjong ${SOURCE_FILES})
+set_property(TARGET mahjong PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(mahjong -lboost_python)
 
 # Dynamic lib, uses the same name as the static one.
-add_library(dmahjong SHARED ${SOURCE_FILES})
+# This also automatically include the python interface.
+if(APPLE)
+    set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif(APPLE)
+
+add_library(dmahjong SHARED ${SOURCE_FILES} ${PROJECT_ROOT_DIRECTORY}/PythonInterface/MahjongLibInterface.cpp)
 set_target_properties(dmahjong PROPERTIES OUTPUT_NAME mahjong)
+set_property(TARGET dmahjong PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(dmahjong -lpython -lboost_python)
 
 #
 # Build gtest (Require installation gtest)

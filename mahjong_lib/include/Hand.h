@@ -23,13 +23,13 @@
 #include "TileGroup.h"
 
 namespace mahjong {
-
 class Hand : public TileGroup {
  public:
     /**
      * Constructor for an empty hand.
      */
     Hand() {}
+
     /**
      * Constructor for initialise with a vector of Tiles.
      */
@@ -45,6 +45,7 @@ class Hand : public TileGroup {
      * @param t The picked tile.
      */
     void pickTile(Tile t);
+
     /**
      * Discard one tile from hand.
      *
@@ -53,6 +54,7 @@ class Hand : public TileGroup {
      * @param index Index of tile to discard.
      */
     void discardTile(int index);
+
     /**
      * Discard one tile from hand.
      *
@@ -108,11 +110,13 @@ class Hand : public TileGroup {
     void clear();
 
     std::vector<Tile> canChi(Tile tile) const;
+
     bool canPong(Tile tile) const;
+
     bool canKang(Tile tile) const;
+
     bool canRichii(Tile tile) const;
 };
-
 } // namespace mahjong.
 
 #endif // MAHJONG_LIB_HAND_H

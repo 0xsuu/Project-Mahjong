@@ -14,23 +14,10 @@
 //  limitations under the License.
 //
 
-#include <Player.h>
-#include "AlwaysLosePlayer.h"
+#include <gtest/gtest.h>
 
-using mahjong::Action;
-using mahjong::Player;
-using mahjong::Tile;
-using mahjong::TileGroup;
-using mahjong::AlwaysLosePlayer;
+#include <TenhouEncoding.h>
 
-Action AlwaysLosePlayer::onTurn(int playerID, Tile tile) {
-    if (playerID == getID()) {
-        return Action(Discard, tile);
-    } else {
-        return Action();
-    }
-}
+TEST(TestTenhouEncoding, TestConstruction) {
 
-Action AlwaysLosePlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
-    return Action();
 }
