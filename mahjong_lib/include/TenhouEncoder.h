@@ -17,6 +17,10 @@
 #ifndef MAHJONG_LIB_TENHOU_ENCODER_H
 #define MAHJONG_LIB_TENHOU_ENCODER_H
 
+#include <vector>
+
+#include <Constants.h>
+
 #include "document.h"
 #include "writer.h"
 #include "stringbuffer.h"
@@ -47,24 +51,95 @@ namespace mahjong {
  *
  * Explanation:
  * {"title": [Array of Titles],
- * "name": [Array of Players' names],
- * "rule": {"disp":"表記名", "aka":Number of Aka dora tile}, // Alternative: aka51:2 aka52:1 aka53:1.
- * "log":[[[Round(e.g. 東1局), Sub-round(e.g. 一本场), 供託],
- * [Players' points], [Dora tiles], [Hidden dora tiles],
- * [Player1's initial hand],
- * [Players's picked tiles], // String means stealing tiles from others.
- * [Player1's discarded tiles],
- * [Player2's initial hand],
- * [Player2's picked tiles],
- * [Player2's discarded tiles],
- * [Player3's initial hand],
- * [Player3's picked tiles],
- * [Player3's discarded tiles],
- * [Player4's initial hand],
- * [Player4's picked tiles],
- * [Player4's discarded tiles],
- * ["Result", [players' points +-], [,,,"Winning points", "Winning hand types details"]]]]]}
+ *  "name": [Array of Players' names],
+ *  "rule": {"disp":"表記名", "aka":Number of Aka dora tile}, // Alternative: aka51:2 aka52:1 aka53:1.
+ *  "log":[[
+ *      [Round(e.g. 東1局), Sub-round(e.g. 一本场), 供託],
+ *      [Players' points], [Dora tiles], [Hidden dora tiles],
+ *      [Player1's initial hand],
+ *      [Players's picked tiles], // String means stealing tiles from others.
+ *      [Player1's discarded tiles],
+ *      [Player2's initial hand],
+ *      [Player2's picked tiles],
+ *      [Player2's discarded tiles],
+ *      [Player3's initial hand],
+ *      [Player3's picked tiles],
+ *      [Player3's discarded tiles],
+ *      [Player4's initial hand],
+ *      [Player4's picked tiles],
+ *      [Player4's discarded tiles],
+ *      ["Result of the game", [players' points +-],
+ *          [,,,"Winning points", "Winning hand types details"]]
+ *  ]]}
+ *
+ * Tiles encoding:
+ * m: Character
+ * p: Dot
+ * s: Bamboo
+ *
+ * 11 - 19: 1m - 9m
+ * 21 - 29: 1p - 9p
+ * 31 - 39: 1s - 9s
+ * 41 - 47: 東南西北白發中
+ * 60: Passed
  */
+
+/**
+ * This class is capable for generate Tenhou specified
+ */
+class TenhouEncoder {
+ public:
+    TenhouEncoder() {
+        mWriter.Reset(mStringBuffer);
+        mWriter.StartObject();
+    }
+
+    void setTitles(std::vector<std::string> titles);
+    void setPlayerNames(std::vector<std::string> names);
+    void setRules(std::string ruleName, int aka);
+    void setRules(std::string ruleName, int aka51, int aka52, int aka53);
+    /**
+     * Call after game ends.
+     *
+     * @param round
+     * @param subRound
+     * @param number
+     * @param playerPoints
+     * @param doraTiles
+     * @param hiddenDoraTiles
+     * @param initialHands
+     * @param pickedTileGroups
+     * @param discardedTileGroups
+     * @param result
+     * @param pointVariants
+     * @param opponentStates
+     * @param winningPointsString
+     * @param winningHandNames
+     */
+    void setLogs(int round, int subRound, int number,
+                 std::vector<int> playerPoints,
+                 std::vector<int> doraTiles, std::vector<int> hiddenDoraTiles,
+                 std::vector<mahjong::TileGroup> initialHands,
+                 std::vector<mahjong::TileGroup> pickedTileGroups,
+                 std::vector<mahjong::TileGroup> discardedTileGroups,
+                 std::string result,
+                 std::vector<int> pointVariants,
+                 std::vector<int> opponentStates,
+                 std::string winningPointsString,
+                 std::vector<std::string> winningHandNames);
+
+    std::string getString();
+
+ private:
+    rapidjson::StringBuffer mStringBuffer;
+    rapidjson::Writer<rapidjson::StringBuffer> mWriter;
+
+    rapidjson::Document mJSONObject;
+
+    template<typename T>
+    void writeArray(std::vector<T> arr);
+    int toTenhouTile(Tile t);
+};
 
 /**
  * Winning types and fan.
@@ -113,15 +188,5 @@ namespace mahjong {
  * 小四喜(役満) 小四喜(役満5枚) 小四喜(役満10枚)
  * 四槓子(役満) 四槓子(役満5枚) 四槓子(役満10枚)
  */
-
-class TenhouEncoder {
- public:
-    TenhouEncoder() {}
-
-    std::string getString();
-
- private:
-    rapidjson::Document mJSONObject;
-};
 } // namespace mahjong.
 #endif //MAHJONG_LIB_TENHOU_ENCODER_H
