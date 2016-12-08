@@ -107,10 +107,16 @@ class Hand : public TileGroup {
 
     void clear();
 
+    // Set states.
+    void setTsumo() { mTsumo = true; }
+
     std::vector<Tile> canChi(Tile tile) const;
     bool canPong(Tile tile) const;
     bool canKang(Tile tile) const;
     bool canRichii(Tile tile) const;
+
+ private:
+    bool mTsumo = false;
 };
 
 } // namespace mahjong.

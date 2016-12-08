@@ -25,6 +25,7 @@
 #include "Constants.h"
 #include "Game.h"
 #include "Hand.h"
+#include "HandCategories.h"
 #include "Player.h"
 #include "TileGroup.h"
 #include "TileStack.h"
@@ -102,8 +103,10 @@ class Board {
     bool mRoundEnded = true;
     int mRemainTilesCount = 0;
 
-    void finishRound(Result result, Player *winner, int point,
-                     Player *loser, std::vector<std::string> winningTypes);
+    void finishRound(Result result, Player *winner, std::vector<int> point,
+                     Player *loser);
+    std::vector<int> calculatePoints(Result result, Player *player, int loserIndex);
+    std::vector<Yaku> mWinningYaku;
 
  private:
     std::mt19937 mRandomDevice;

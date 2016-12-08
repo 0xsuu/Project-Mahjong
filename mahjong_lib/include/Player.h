@@ -66,6 +66,8 @@ class Player {
     bool mIsMyTurn;
     int mCurrentPlayerID = 0;
 
+    int point;
+
  private:
     int mID;
     std::string mPlayerName;

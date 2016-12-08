@@ -32,6 +32,7 @@ void Player::setupPlayer(int ID,
     mSeatPosition = seatPosition;
     mHand = initialHand;
     mBoard = board;
+    point = 25000;
 }
 
 void Player::resetPlayer(Hand hand) {
