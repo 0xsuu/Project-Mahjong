@@ -76,12 +76,13 @@ namespace mahjong {
  * m: Character
  * p: Dot
  * s: Bamboo
+ * z: Special
  *
  * 11 - 19: 1m - 9m
  * 21 - 29: 1p - 9p
  * 31 - 39: 1s - 9s
- * 41 - 47: 東南西北白發中
- * 60: Passed
+ * 41 - 47: 1z - 7z
+ * 60: Discard picked tile
  */
 
 /**
