@@ -40,4 +40,6 @@ const std::string MAHJONG_OTHERS[] = {"X"};
 
 const std::string MAHJONG_ACTION_STATES[] = {"Pass", "Cancel", "Discard", "Richii", "Chi", "Pong", "Kang", "ConcealedKang", "Win"};
 
+const std::string MAHJONG_RESULT_TYPES[] = {"自摸", "胡", "流局"};
+
 #endif //MAHJONG_LIB_PRINTFORMAT_H

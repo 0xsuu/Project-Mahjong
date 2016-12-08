@@ -61,6 +61,7 @@ class Player {
     Hand getHand() { return mHand; }
     std::map<int, std::string> getPlayerIDAndDiscardedTiles();
     std::string getPrintable();
+    int getPoint() { return point; }
 
  protected:
     bool mIsMyTurn;

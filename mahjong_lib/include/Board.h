@@ -32,9 +32,9 @@
 
 namespace mahjong {
 enum Result {
-    Tsumo,
-    Ron,
-    Ryuukyoku
+    Tsumo = 0,
+    Ron = 1,
+    Ryuukyoku = 2
 };
 /**
  * This class controls the rules of the game.
@@ -96,6 +96,7 @@ class Board {
     TileStack mTileStack;
     std::vector<Player *>::iterator mCurrentPlayerIndex;
 
+    std::map<Player *, TileGroup> mInitialHands;
     std::map<Player *, TileGroup> mPickedTiles;
     std::map<Player *, TileGroup> mDiscardedTiles;
 
@@ -103,7 +104,7 @@ class Board {
     bool mRoundEnded = true;
     int mRemainTilesCount = 0;
 
-    void finishRound(Result result, Player *winner, std::vector<int> point,
+    void finishRound(Result result, Player *winner, std::vector<int> pointVariants,
                      Player *loser);
     std::vector<int> calculatePoints(Result result, Player *player, int loserIndex);
     std::vector<Yaku> mWinningYaku;

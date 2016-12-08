@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <ctime>
 
 #include "Board.h"
 #include "TenhouEncoder.h"
@@ -77,6 +78,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
             randomID = IDDistribution(mRandomDevice);
         }
         p->setupPlayer(randomID, Winds[indexPlayer], initialHand, this);
+        mInitialHands[p] = initialHand;
         indexPlayer++;
     });
 
@@ -88,6 +90,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
 
 void Board::reset() {
     mTileStack.reset();
+    mInitialHands.clear();
     mPickedTiles.clear();
     mDiscardedTiles.clear();
     mWinningYaku.clear();
@@ -101,6 +104,7 @@ void Board::reset() {
         }
         initialHand.sort();
         (*it)->resetPlayer(initialHand);
+        mInitialHands[*it] = initialHand;
         if ((*it)->getSeatPosition() == East) {
             mCurrentPlayerIndex = it;
         }
@@ -203,8 +207,44 @@ void Board::proceedToNextPlayer() {
     }
 }
 
-void Board::finishRound(Result result, Player *winner, vector<int> point, Player *loser) {
+void Board::finishRound(Result result, Player *winner, vector<int> pointVariants, Player *loser) {
     mGame->onRoundFinished(result == Ryuukyoku, winner);
+
+    // Get current time.
+    time_t _tm =time(NULL);
+    struct tm * currentTime = localtime (&_tm);
+
+    TenhouEncoder logGenerator;
+    std::string roundTitle = "Round ";
+    roundTitle += mRoundNumber;
+
+    logGenerator.setTitles({roundTitle, asctime(currentTime)});
+
+    vector<std::string> playerNames;
+    vector<int> playerPoints;
+    vector<TileGroup> playerInitialHands;
+    vector<TileGroup> playerPickedTiles;
+    vector<TileGroup> playerDiscardedTiles;
+    std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
+        playerNames.push_back(p->getPlayerName());
+        playerPoints.push_back(p->getPoint());
+        playerInitialHands.push_back(mInitialHands[p]);
+        playerPickedTiles.push_back(mPickedTiles[p]);
+        playerDiscardedTiles.push_back(mDiscardedTiles[p]);
+    });
+    logGenerator.setPlayerNames(playerNames);
+    logGenerator.setRules("", 0);
+
+    vector<std::string> winningYakuNames;
+    std::for_each(mWinningYaku.begin(), mWinningYaku.end(), [&winningYakuNames](Yaku &yaku) {
+        winningYakuNames.push_back(yaku.getName());
+    });
+
+    logGenerator.setLogs((mRoundNumber - 1) % 16, 0 /* TODO: add sub-round */, 0,
+                         playerPoints,
+                         {}, {}, playerInitialHands, playerPickedTiles, playerDiscardedTiles,
+                         MAHJONG_RESULT_TYPES[result], pointVariants,
+                         vector<int>(mPlayers->size() - 1, 0), "Win", winningYakuNames);
 }
 
 vector<int> Board::calculatePoints(Result result, Player *player, int loserIndex) {
@@ -219,11 +259,13 @@ vector<int> Board::calculatePoints(Result result, Player *player, int loserIndex
             resultPoints[std::distance(mPlayers->begin(),
                                  std::find(mPlayers->begin(), mPlayers->end(), player))] = 1;
             resultPoints[loserIndex] = -1;
+            mWinningYaku.push_back(YAKU_PINFU);
             break;
         case Tsumo:
             std::for_each(resultPoints.begin(), resultPoints.end(), [](int &point) { point = -1; });
             resultPoints[std::distance(mPlayers->begin(),
                                        std::find(mPlayers->begin(), mPlayers->end(), player))] = 1;
+            mWinningYaku.push_back(YAKU_TSUMOHOU);
             break;
         case Ryuukyoku:
             break;
