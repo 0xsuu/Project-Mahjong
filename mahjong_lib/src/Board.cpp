@@ -208,8 +208,9 @@ void Board::finishRound(Result result, Player *winner, vector<int> point, Player
 }
 
 vector<int> Board::calculatePoints(Result result, Player *player, int loserIndex) {
-    Hand playerHand = player->getHand();
-    assert(playerHand.testWin() && "This player cannot win.");
+    if (player != nullptr) {
+        assert(player->getHand().testWin() && "This player cannot win.");
+    }
 
     vector<int> resultPoints(mPlayers->size(), 0);
 

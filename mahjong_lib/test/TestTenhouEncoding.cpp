@@ -59,7 +59,6 @@ TEST(TestTenhouEncoding, TestConstructingExample) {
               {discardP1, TileGroup(), TileGroup(), TileGroup()},
               "和了", {2900, 0, -2900, 0}, {0, 2, 0}, "30符2飜2900点",
               {"断幺九(1飜)", "ドラ(1飜)"});
-    std::cout <<t.getString();
 
     ASSERT_EQ("{\"title\":[\"第二期　天鳳名人戦\","
                       "\"第１節　Ａ卓　１戦目\"],"
