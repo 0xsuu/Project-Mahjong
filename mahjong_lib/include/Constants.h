@@ -58,6 +58,7 @@ void LOG(First &&first, Rest &&...rest)  {
     }
 }
 
+#undef DEBUG_BUILD
 #ifdef DEBUG_BUILD
 #define LOGI(TAG, ...) LOG(TAG, ":\t", __VA_ARGS__, '\n');
 #define LOGE(TAG, ...) LOG("\033[1;31m", TAG, ":\t", __VA_ARGS__, "\033[0m\n");
