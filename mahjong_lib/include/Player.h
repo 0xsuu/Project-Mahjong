@@ -62,6 +62,7 @@ class Player {
     std::map<int, std::string> getPlayerIDAndDiscardedTiles();
     std::string getPrintable();
     int getPoint() { return point; }
+    void addPoint(int number) { point += number; }
 
  protected:
     bool mIsMyTurn;

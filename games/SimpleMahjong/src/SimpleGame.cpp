@@ -98,11 +98,11 @@ void SimpleGame::onNextRound(bool eastWin) {
 }
 
 void SimpleGame::onGameOver() {
-    long playerCount = mPlayerWinCount.size();
     for (auto it = mPlayerWinCount.begin(); it != mPlayerWinCount.end(); it++) {
         cout << (*it).first->getPrintable() << " win rate: "
              << static_cast<double>((*it).second) / mRoundCount * 100.0 << "%\n";
     }
+    LOGE("", mBoard->getTenhouUrl());
 }
 
 // Rule implementation.

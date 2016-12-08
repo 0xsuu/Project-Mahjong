@@ -116,6 +116,8 @@ class Board {
 
  private:
     std::mt19937 mRandomDevice;
+
+    std::string TAG = "Board";
 };
 
 } // namespace mahjong.

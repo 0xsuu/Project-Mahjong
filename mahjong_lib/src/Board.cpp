@@ -209,7 +209,14 @@ void Board::proceedToNextPlayer() {
 }
 
 void Board::finishRound(Result result, Player *winner, vector<int> pointVariants, Player *loser) {
-    mGame->onRoundFinished(result == Ryuukyoku, winner);
+    LOGI(TAG, "Round finished, starting logging");
+
+    int playerIndex = 0;
+    std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
+        p->addPoint(pointVariants[playerIndex]);
+        playerIndex++;
+    });
+    LOGI(TAG, "Applied points changes to all players");
 
     // Get current time.
     time_t _tm =time(NULL);
@@ -248,13 +255,11 @@ void Board::finishRound(Result result, Player *winner, vector<int> pointVariants
                          vector<int>(mPlayers->size() - 1, 0), "Win", winningYakuNames);
 
     mTenhouUrl = logGenerator.getUrl();
+
+    mGame->onRoundFinished(result == Ryuukyoku, winner);
 }
 
 vector<int> Board::calculatePoints(Result result, Player *player, int loserIndex) {
-    if (player != nullptr) {
-        assert(player->getHand().testWin() && "This player cannot win.");
-    }
-
     vector<int> resultPoints(mPlayers->size(), 0);
 
     switch (result) {
