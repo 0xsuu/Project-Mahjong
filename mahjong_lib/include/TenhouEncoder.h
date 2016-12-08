@@ -130,6 +130,7 @@ class TenhouEncoder {
                  std::vector<std::string> winningHandNames);
 
     std::string getString();
+    std::string getUrl();
 
  private:
     rapidjson::StringBuffer mStringBuffer;

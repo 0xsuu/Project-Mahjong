@@ -124,6 +124,12 @@ void TenhouEncoder::setLogs(int round, int subRound, int number,
 string TenhouEncoder::getString() {
     return mStringBuffer.GetString();
 }
+string TenhouEncoder::getUrl() {
+    string url = "http://tenhou.net/6/#json=";
+    url += mStringBuffer.GetString();
+    url += "&ts=0";
+    return url;
+}
 
 void TenhouEncoder::writeArray(std::vector<string> arr) {
     mWriter.StartArray();
