@@ -82,6 +82,9 @@ class Board {
     int getRoundNumber() {
         return mRoundNumber;
     }
+    std::string getTenhouUrl() {
+        return mTenhouUrl;
+    }
 
  protected:
     Game *mGame;
@@ -108,6 +111,8 @@ class Board {
                      Player *loser);
     std::vector<int> calculatePoints(Result result, Player *player, int loserIndex);
     std::vector<Yaku> mWinningYaku;
+
+    std::string mTenhouUrl;
 
  private:
     std::mt19937 mRandomDevice;

@@ -94,6 +94,7 @@ void Board::reset() {
     mPickedTiles.clear();
     mDiscardedTiles.clear();
     mWinningYaku.clear();
+    mTenhouUrl = "";
     for (auto it = mPlayers->begin(); it < mPlayers->end(); it++) {
         // Assign initial hands.
         Hand initialHand;
@@ -216,7 +217,7 @@ void Board::finishRound(Result result, Player *winner, vector<int> pointVariants
 
     TenhouEncoder logGenerator;
     std::string roundTitle = "Round ";
-    roundTitle += mRoundNumber;
+    roundTitle += std::to_string(mRoundNumber);
 
     logGenerator.setTitles({roundTitle, asctime(currentTime)});
 
@@ -245,6 +246,8 @@ void Board::finishRound(Result result, Player *winner, vector<int> pointVariants
                          {}, {}, playerInitialHands, playerPickedTiles, playerDiscardedTiles,
                          MAHJONG_RESULT_TYPES[result], pointVariants,
                          vector<int>(mPlayers->size() - 1, 0), "Win", winningYakuNames);
+
+    mTenhouUrl = logGenerator.getUrl();
 }
 
 vector<int> Board::calculatePoints(Result result, Player *player, int loserIndex) {
