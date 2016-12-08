@@ -18,6 +18,7 @@
 #include <cassert>
 
 #include "Board.h"
+#include "TenhouEncoder.h"
 
 using std::map;
 using std::vector;
@@ -87,6 +88,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
 
 void Board::reset() {
     mTileStack.reset();
+    mPickedTiles.clear();
     mDiscardedTiles.clear();
     for (auto it = mPlayers->begin(); it < mPlayers->end(); it++) {
         // Assign initial hands.
@@ -131,6 +133,7 @@ void Board::proceedToNextPlayer() {
     mGame->onBeforePlayerPickTile(*mCurrentPlayerIndex, t);
     (*mCurrentPlayerIndex)->pickTile(t);
     mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
+    mPickedTiles[*mCurrentPlayerIndex].addTile(t);
 
     mRemainTilesCount = mTileStack.getRemainTilesCount();
 
@@ -164,7 +167,6 @@ void Board::proceedToNextPlayer() {
                             } else {
                                 throw std::invalid_argument("False win.");
                             }
-                            break;
                         default:
                             throw std::invalid_argument("ActionState not recognised.");
                     }
@@ -181,9 +183,9 @@ void Board::proceedToNextPlayer() {
             } else {
                 throw std::invalid_argument("False win.");
             }
-            break;
         default:
-            throw std::invalid_argument("ActionState not recognised.");
+            throw std::invalid_argument("ActionState not recognised, or"
+                                                "player returned action with onTurn() when it is not his turn.");
     }
 
     // Next player's turn.

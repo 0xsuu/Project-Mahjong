@@ -90,6 +90,7 @@ class Board {
     TileStack mTileStack;
     std::vector<Player *>::iterator mCurrentPlayerIndex;
 
+    std::map<Player *, TileGroup> mPickedTiles;
     std::map<Player *, TileGroup> mDiscardedTiles;
 
     // Information for showing.
