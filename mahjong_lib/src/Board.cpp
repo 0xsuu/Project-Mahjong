@@ -241,14 +241,14 @@ void Board::finishRound(Result result, Player *winner, vector<int> pointVariants
         playerDiscardedTiles.push_back(mDiscardedTiles[p]);
     });
     logGenerator.setPlayerNames(playerNames);
-    logGenerator.setRules("", 0);
+    logGenerator.setRules("Rule", 0);
 
     vector<std::string> winningYakuNames;
     std::for_each(mWinningYaku.begin(), mWinningYaku.end(), [&winningYakuNames](Yaku &yaku) {
         winningYakuNames.push_back(yaku.getName());
     });
 
-    logGenerator.setLogs((mRoundNumber - 1) % 16, 0 /* TODO: add sub-round */, 0,
+    logGenerator.setLogs(mRoundNumber % 16, 0 /* TODO: add sub-round */, 0,
                          playerPoints,
                          {}, {}, playerInitialHands, playerPickedTiles, playerDiscardedTiles,
                          MAHJONG_RESULT_TYPES[result], pointVariants,
