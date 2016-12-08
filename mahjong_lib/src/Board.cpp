@@ -16,8 +16,10 @@
 
 #include <algorithm>
 #include <cassert>
+#include <ctime>
 
 #include "Board.h"
+#include "TenhouEncoder.h"
 
 using std::map;
 using std::vector;
@@ -76,6 +78,7 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
             randomID = IDDistribution(mRandomDevice);
         }
         p->setupPlayer(randomID, Winds[indexPlayer], initialHand, this);
+        mInitialHands[p] = initialHand;
         indexPlayer++;
     });
 
@@ -87,7 +90,11 @@ void Board::setup(TileSetType tileSetType, Wind roundWind) {
 
 void Board::reset() {
     mTileStack.reset();
+    mInitialHands.clear();
+    mPickedTiles.clear();
     mDiscardedTiles.clear();
+    mWinningYaku.clear();
+    mTenhouUrl = "";
     for (auto it = mPlayers->begin(); it < mPlayers->end(); it++) {
         // Assign initial hands.
         Hand initialHand;
@@ -98,6 +105,7 @@ void Board::reset() {
         }
         initialHand.sort();
         (*it)->resetPlayer(initialHand);
+        mInitialHands[*it] = initialHand;
         if ((*it)->getSeatPosition() == East) {
             mCurrentPlayerIndex = it;
         }
@@ -122,7 +130,7 @@ void Board::proceedToNextPlayer() {
     // Check drained.
     if (mTileStack.isEmpty()) {
         mRoundEnded = true;
-        mGame->onRoundFinished(true, nullptr);
+        finishRound(Ryuukyoku, nullptr, calculatePoints(Ryuukyoku, nullptr, -1), nullptr);
         return;
     }
 
@@ -130,60 +138,67 @@ void Board::proceedToNextPlayer() {
     Tile t = mTileStack.drawTile();
     mGame->onBeforePlayerPickTile(*mCurrentPlayerIndex, t);
     (*mCurrentPlayerIndex)->pickTile(t);
+    mPickedTiles[*mCurrentPlayerIndex].addTile(t);
     mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
 
     mRemainTilesCount = mTileStack.getRemainTilesCount();
 
-    Player *p = *mCurrentPlayerIndex;
-    Action a = p->onTurn((*mCurrentPlayerIndex)->getID(), t);
+    Player *currentPlayer = *mCurrentPlayerIndex;
+    Action a = currentPlayer->onTurn((*mCurrentPlayerIndex)->getID(), t);
     switch (a.getActionState()) {
         case Discard: {
-            p->discardTile(a.getTile());
-            mDiscardedTiles[p].addTile(a.getTile());
-            mGame->onPlayerDiscardTile(p, a.getTile());
+            currentPlayer->discardTile(a.getTile());
+            mDiscardedTiles[currentPlayer].addTile(a.getTile());
+            mGame->onPlayerDiscardTile(currentPlayer, a.getTile());
 
             // Notify all the other players that player p has discarded a tile.
             map<Action, Player *> allActions;
-            std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *player) {
-                if (p != player) {
-                    Action act = player->onOtherPlayerMakeAction(p->getID(), p->getPlayerName(), a);
-                    allActions[act] = player;
+            int playerIndex = 0;
+            std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *playerForReaction) {
+                if (currentPlayer != playerForReaction) {
+                    Action act = playerForReaction->onOtherPlayerMakeAction(
+                            currentPlayer->getID(), currentPlayer->getPlayerName(), a);
+                    allActions[act] = playerForReaction;
 
-                    Hand copyHand(player->getHand());
+                    Hand copyHand(playerForReaction->getHand());
                     switch (act.getActionState()) {
                         case Pass:
-                            mGame->onPlayerPass(player);
+                            mGame->onPlayerPass(playerForReaction);
                             break;
                         case Win:
                             assert(!act.getTile().isNull());
                             copyHand.pickTile(act.getTile());
                             if (copyHand.testWin()) {
                                 mRoundEnded = true;
-                                mGame->onRoundFinished(false, player);
+
+                                finishRound(Ron, playerForReaction,
+                                            calculatePoints(Ron, playerForReaction, playerIndex),
+                                            currentPlayer);
                                 return;
                             } else {
                                 throw std::invalid_argument("False win.");
                             }
-                            break;
                         default:
                             throw std::invalid_argument("ActionState not recognised.");
                     }
                 }
+                playerIndex++;
             });
             break;
         }
         case Win:
             assert(a.getTile().isNull());
-            if (p->getHand().testWin()) {
+            if (currentPlayer->getHand().testWin()) {
                 mRoundEnded = true;
-                mGame->onRoundFinished(false, p);
+                currentPlayer->getHand().setTsumo();
+                finishRound(Tsumo, currentPlayer, calculatePoints(Tsumo, currentPlayer, -1), nullptr);
                 return;
             } else {
                 throw std::invalid_argument("False win.");
             }
-            break;
         default:
-            throw std::invalid_argument("ActionState not recognised.");
+            throw std::invalid_argument("ActionState not recognised, or"
+                                                "player returned action with onTurn() when it is not his turn.");
     }
 
     // Next player's turn.
@@ -191,4 +206,86 @@ void Board::proceedToNextPlayer() {
     if (mCurrentPlayerIndex == mPlayers->end()) {
         mCurrentPlayerIndex = mPlayers->begin();
     }
+}
+
+void Board::finishRound(Result result, Player *winner, vector<int> pointVariants, Player *loser) {
+    LOGI(TAG, "Round finished");
+
+    int playerIndex = 0;
+    std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
+        p->addPoint(pointVariants[playerIndex]);
+        playerIndex++;
+    });
+    LOGI(TAG, "Applied points changes to all players");
+
+#ifndef MAHJONG_DO_NOT_LOG
+    // Get current time.
+    time_t _tm =time(NULL);
+    struct tm * currentTime = localtime (&_tm);
+
+    TenhouEncoder logGenerator;
+    std::string roundTitle = "Round ";
+    roundTitle += std::to_string(mRoundNumber);
+
+    logGenerator.setTitles({roundTitle, asctime(currentTime)});
+
+    vector<std::string> playerNames;
+    vector<int> playerPoints;
+    vector<TileGroup> playerInitialHands;
+    vector<TileGroup> playerPickedTiles;
+    vector<TileGroup> playerDiscardedTiles;
+    std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
+        playerNames.push_back(p->getPlayerName());
+        playerPoints.push_back(p->getPoint());
+        playerInitialHands.push_back(mInitialHands[p]);
+        playerPickedTiles.push_back(mPickedTiles[p]);
+        playerDiscardedTiles.push_back(mDiscardedTiles[p]);
+    });
+    logGenerator.setPlayerNames(playerNames);
+    logGenerator.setRules("Rule", 0);
+
+    vector<std::string> winningYakuNames;
+    std::for_each(mWinningYaku.begin(), mWinningYaku.end(), [&winningYakuNames](Yaku &yaku) {
+        winningYakuNames.push_back(yaku.getName());
+    });
+
+    logGenerator.setLogs(mRoundNumber % 16, 0 /* TODO: add sub-round */, 0,
+                         playerPoints,
+                         {}, {}, playerInitialHands, playerPickedTiles, playerDiscardedTiles,
+                         MAHJONG_RESULT_TYPES[result], pointVariants,
+                         vector<int>(mPlayers->size() - 1, 0), "Win", winningYakuNames);
+
+    mTenhouUrl = logGenerator.getUrl();
+#endif
+
+    mGame->onRoundFinished(result == Ryuukyoku, winner);
+}
+
+vector<int> Board::calculatePoints(Result result, Player *player, int loserIndex) {
+    vector<int> resultPoints(mPlayers->size(), 0);
+
+    switch (result) {
+        case Ron:
+            resultPoints[std::distance(mPlayers->begin(),
+                                 std::find(mPlayers->begin(),
+                                           mPlayers->end(), player))] += YAKU_PINFU.getPoint();
+            resultPoints[loserIndex] -= YAKU_PINFU.getPoint();
+            mWinningYaku.push_back(YAKU_PINFU);
+            break;
+        case Tsumo:
+            std::for_each(resultPoints.begin(), resultPoints.end(), [](int &point) {
+                point -= YAKU_PINFU.getPoint();
+            });
+            resultPoints[std::distance(mPlayers->begin(),
+                                       std::find(mPlayers->begin(),
+                                                 mPlayers->end(), player))] += YAKU_PINFU.getPoint();
+            mWinningYaku.push_back(YAKU_TSUMOHOU);
+            break;
+        case Ryuukyoku:
+            break;
+        default:
+            throw std::runtime_error("You shouldn't get here!");
+    }
+
+    return resultPoints;
 }

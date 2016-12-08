@@ -133,6 +133,7 @@ bool Hand::testWin() {
 
 void Hand::clear() {
     mTilesData.clear();
+    mTsumo = false;
 }
 
 vector<Tile> Hand::canChi(Tile tile) const {

@@ -25,11 +25,17 @@
 #include "Constants.h"
 #include "Game.h"
 #include "Hand.h"
+#include "HandCategories.h"
 #include "Player.h"
 #include "TileGroup.h"
 #include "TileStack.h"
 
 namespace mahjong {
+enum Result {
+    Tsumo = 0,
+    Ron = 1,
+    Ryuukyoku = 2
+};
 /**
  * This class controls the rules of the game.
  *
@@ -76,6 +82,9 @@ class Board {
     int getRoundNumber() {
         return mRoundNumber;
     }
+    std::string getTenhouUrl() {
+        return mTenhouUrl;
+    }
 
  protected:
     Game *mGame;
@@ -90,14 +99,25 @@ class Board {
     TileStack mTileStack;
     std::vector<Player *>::iterator mCurrentPlayerIndex;
 
+    std::map<Player *, TileGroup> mInitialHands;
+    std::map<Player *, TileGroup> mPickedTiles;
     std::map<Player *, TileGroup> mDiscardedTiles;
 
     // Information for showing.
     bool mRoundEnded = true;
     int mRemainTilesCount = 0;
 
+    void finishRound(Result result, Player *winner, std::vector<int> pointVariants,
+                     Player *loser);
+    std::vector<int> calculatePoints(Result result, Player *player, int loserIndex);
+    std::vector<Yaku> mWinningYaku;
+
+    std::string mTenhouUrl;
+
  private:
     std::mt19937 mRandomDevice;
+
+    std::string TAG = "Board";
 };
 
 } // namespace mahjong.
