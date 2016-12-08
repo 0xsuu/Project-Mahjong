@@ -30,6 +30,11 @@
 #include "TileStack.h"
 
 namespace mahjong {
+enum Result {
+    Tsumo,
+    Ron,
+    Ryuukyoku
+};
 /**
  * This class controls the rules of the game.
  *
@@ -96,6 +101,9 @@ class Board {
     // Information for showing.
     bool mRoundEnded = true;
     int mRemainTilesCount = 0;
+
+    void finishRound(Result result, Player *winner, int point,
+                     Player *loser, std::vector<std::string> winningTypes);
 
  private:
     std::mt19937 mRandomDevice;

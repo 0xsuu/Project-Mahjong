@@ -132,8 +132,8 @@ void Board::proceedToNextPlayer() {
     Tile t = mTileStack.drawTile();
     mGame->onBeforePlayerPickTile(*mCurrentPlayerIndex, t);
     (*mCurrentPlayerIndex)->pickTile(t);
-    mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
     mPickedTiles[*mCurrentPlayerIndex].addTile(t);
+    mGame->onAfterPlayerPickTile(*mCurrentPlayerIndex, t);
 
     mRemainTilesCount = mTileStack.getRemainTilesCount();
 
