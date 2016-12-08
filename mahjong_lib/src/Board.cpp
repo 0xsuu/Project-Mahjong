@@ -209,7 +209,7 @@ void Board::proceedToNextPlayer() {
 }
 
 void Board::finishRound(Result result, Player *winner, vector<int> pointVariants, Player *loser) {
-    LOGI(TAG, "Round finished, starting logging");
+    LOGI(TAG, "Round finished");
 
     int playerIndex = 0;
     std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
@@ -218,6 +218,7 @@ void Board::finishRound(Result result, Player *winner, vector<int> pointVariants
     });
     LOGI(TAG, "Applied points changes to all players");
 
+#ifndef MAHJONG_DO_NOT_LOG
     // Get current time.
     time_t _tm =time(NULL);
     struct tm * currentTime = localtime (&_tm);
@@ -255,6 +256,7 @@ void Board::finishRound(Result result, Player *winner, vector<int> pointVariants
                          vector<int>(mPlayers->size() - 1, 0), "Win", winningYakuNames);
 
     mTenhouUrl = logGenerator.getUrl();
+#endif
 
     mGame->onRoundFinished(result == Ryuukyoku, winner);
 }
@@ -265,14 +267,18 @@ vector<int> Board::calculatePoints(Result result, Player *player, int loserIndex
     switch (result) {
         case Ron:
             resultPoints[std::distance(mPlayers->begin(),
-                                 std::find(mPlayers->begin(), mPlayers->end(), player))] = 1;
-            resultPoints[loserIndex] = -1;
+                                 std::find(mPlayers->begin(),
+                                           mPlayers->end(), player))] += YAKU_PINFU.getPoint();
+            resultPoints[loserIndex] -= YAKU_PINFU.getPoint();
             mWinningYaku.push_back(YAKU_PINFU);
             break;
         case Tsumo:
-            std::for_each(resultPoints.begin(), resultPoints.end(), [](int &point) { point = -1; });
+            std::for_each(resultPoints.begin(), resultPoints.end(), [](int &point) {
+                point -= YAKU_PINFU.getPoint();
+            });
             resultPoints[std::distance(mPlayers->begin(),
-                                       std::find(mPlayers->begin(), mPlayers->end(), player))] = 1;
+                                       std::find(mPlayers->begin(),
+                                                 mPlayers->end(), player))] += YAKU_PINFU.getPoint();
             mWinningYaku.push_back(YAKU_TSUMOHOU);
             break;
         case Ryuukyoku:
