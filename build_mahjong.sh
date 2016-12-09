@@ -33,9 +33,12 @@ if [ "$1" == "--coverage" ]; then
     mkdir -p ./build_mahjong
     cd ./build_mahjong
 
-    cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Coverage
+    cmake ../"$PROJECT_MAHJONG"/mahjong_lib
+    make
 
+    cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_BUILD_TYPE=Coverage
     make coverage
+
     tput setaf 2
     echo "Coverage report generated: $(pwd)coverage_report/index.html"
     tput sgr0
@@ -62,13 +65,13 @@ if [ "$1" == "--lib" ]; then
 
     # Run test.
     if [ "$2" == "test" ]; then
-        cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
+        cmake ../"$PROJECT_MAHJONG"/mahjong_lib/
         make libma_test
         ../libma_gtest/libma_test
         exit 0
     fi
 
-    cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
+    cmake ../"$PROJECT_MAHJONG"/mahjong_lib/
     make mahjong
     make dmahjong
     exit 0
