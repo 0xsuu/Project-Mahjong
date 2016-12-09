@@ -33,10 +33,8 @@ if [ "$1" == "--coverage" ]; then
     mkdir -p ./build_mahjong
     cd ./build_mahjong
 
-    cmake ../"$PROJECT_MAHJONG"/mahjong_lib
-    make
-
     cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_BUILD_TYPE=Coverage
+    make
     make coverage
 
     tput setaf 2
