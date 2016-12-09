@@ -21,7 +21,7 @@ Run sudo first.
 sudo whoami
 ```
 
-Then run through(can copy & paste entire block if sudo is not requiring password) following script to a terminal.
+Then run through(can copy & paste entire block if sudo is not requiring password) yhe following script.
 ```bash
 git clone https://github.com/google/googletest.git
 mkdir -p gtest_build
