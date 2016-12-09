@@ -24,6 +24,8 @@ else()
     message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+ENABLE_TESTING()
+
 #
 # Setting variables
 #
@@ -52,7 +54,26 @@ link_directories(/usr/local/lib/)
 #
 
 # Static lib.
-add_library(mahjong ${SOURCE_FILES})
+if( CMAKE_BUILD_TYPE STREQUAL "Coverage" )
+    include(${PROJECT_ROOT_DIRECTORY}/CodeCoverage.cmake)
+
+    set(TEMP_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(TEMP_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+    set(TEMP_CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
+
+    set(CMAKE_CXX_FLAGS "${COVERAGE_FLAGS}")
+    set(CMAKE_C_FLAGS "${COVERAGE_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS ${COVERAGE_FLAGS})
+
+    message("[+L] Will build mahjong library for coverage")
+    add_library(mahjong ${SOURCE_FILES} ${HEADER_FILES})
+
+    set(CMAKE_CXX_FLAGS "${TEMP_CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS "${TEMP_CMAKE_C_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS ${TEMP_CMAKE_EXE_LINKER_FLAGS})
+else()
+    add_library(mahjong ${SOURCE_FILES} ${HEADER_FILES})
+endif()
 
 # Dynamic lib, uses the same name as the static one.
 add_library(dmahjong SHARED ${SOURCE_FILES})
@@ -70,3 +91,8 @@ file(GLOB_RECURSE GTEST_FILES ${PROJECT_ROOT_DIRECTORY}/test/*.cpp)
 add_executable(libma_test ${GTEST_FILES})
 add_dependencies(libma_test mahjong)
 target_link_libraries(libma_test gtest "${PROJECT_ROOT_DIRECTORY}/../../build_mahjong/libmahjong.a" "${CMAKE_THREAD_LIBS_INIT}")
+add_test(NAME libma_test COMMAND libma_test)
+
+if( CMAKE_BUILD_TYPE STREQUAL "Coverage" )
+    SETUP_TARGET_FOR_COVERAGE(coverage "make test || true" coverage_report)
+endif()

@@ -16,7 +16,7 @@ if [ "$1" == "--update-code-completion" ]; then
     COMPREPLY=()
     cur=\"\${COMP_WORDS[COMP_CWORD]}\"
     prev=\"\${COMP_WORDS[COMP_CWORD-1]}\"
-    opts=\"--help --lib --game --player --update-code-completion\"
+    opts=\"--help --lib --game --player --update-code-completion --coverage\"
 
     if [[ \${cur} == -* ]] ; then
         COMPREPLY=( \$(compgen -W \"\${opts}\" -- \${cur}) )
@@ -28,6 +28,24 @@ fi
 
 # Go to project directory.
 cd ../
+
+if [ "$1" == "--coverage" ]; then
+    mkdir -p ./build_mahjong
+    cd ./build_mahjong
+
+    cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_BUILD_TYPE=Coverage
+    make
+    make coverage
+
+    tput setaf 2
+    echo "Coverage report generated: $(pwd)coverage_report/index.html"
+    tput sgr0
+    if [ "$(uname -s)" == "Darwin" ]; then
+        open ./coverage_report/index.html
+    fi
+
+    exit 0
+fi
 
 if [ "$1" == "--lib" ]; then
     # Create build folder.
@@ -45,13 +63,13 @@ if [ "$1" == "--lib" ]; then
 
     # Run test.
     if [ "$2" == "test" ]; then
-        cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
+        cmake ../"$PROJECT_MAHJONG"/mahjong_lib/
         make libma_test
         ../libma_gtest/libma_test
         exit 0
     fi
 
-    cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DCMAKE_CXX_COMPILER=clang++
+    cmake ../"$PROJECT_MAHJONG"/mahjong_lib/
     make mahjong
     make dmahjong
     exit 0
