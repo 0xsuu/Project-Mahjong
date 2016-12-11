@@ -15,6 +15,7 @@
 //
 
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include <AlwaysDiscardFirstPlayer.h>
 #include <GreedyPlayer.h>
@@ -38,7 +39,7 @@ public:
     }
 
     Action onTurn(int playerID, Tile tile) override {
-        return boost::python::call_method<Action>(mPythonClassObject, "onTurn", playerID, tile);
+        return boost::python::call_method<Action>(mPythonClassObject, "onTurn", this, playerID, tile);
     }
     Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override {
         return boost::python::call_method<Action>(mPythonClassObject, "onOtherPlayerMakeAction",
@@ -89,5 +90,9 @@ BOOST_PYTHON_MODULE(libplayers) {
     class_<mahjong::PythonPlayer>("PythonPlayer",
                          init<std::string, PyObject *>())
             .def("onTurn", &mahjong::PythonPlayer::onTurn)
-            .def("onOtherPlayerMakeAction", &mahjong::PythonPlayer::onOtherPlayerMakeAction);
+            .def("onOtherPlayerMakeAction", &mahjong::PythonPlayer::onOtherPlayerMakeAction)
+            .def("getID", &PlayerWrapper::getID)
+            .def("getHand", &PlayerWrapper::getHand);
+    class_<std::vector<Tile> >("TileVec")
+            .def(boost::python::vector_indexing_suite<std::vector<Tile>>());
 }

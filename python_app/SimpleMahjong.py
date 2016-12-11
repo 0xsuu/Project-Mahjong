@@ -11,23 +11,20 @@ from libgames import *
 
 class StupidPlayer(Player):
     def __init__(self, playerName):
-        print "hi"
         super(StupidPlayer, self).__init__(playerName)
-    def onTurn(self, playerID, tile):
-        print "onTurn"
-        if playerID == getID():
-            if getHand().testWin():
-                return Action(Win, Tile())
+    def onTurn(self, this, playerID, tile):
+        if playerID == this.getID():
+            if this.getHand().testWin():
+                return Action(ActionState.Win, Tile())
 
-            handData = getHand().getData()
-            it = handData.begin()
-            while it.getFlag() != Handed:
+            handData = this.getHand().getData()
+            it = 0
+            while handData[it].getFlag() != TileFlag.Handed:
                 it += 1
-            return Action(Discard, it)
+            return Action(ActionState.Discard, handData[it])
         else:
             return Action()
     def onOtherPlayerMakeAction(self, playerID, playerName, action):
-        print "onOtherPlayerMakeAction:"
         return Action()
 
 p1 = makeGreedyPlayer("BOT Greedy 1")
