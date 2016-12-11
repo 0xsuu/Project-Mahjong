@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-sys.path.append("../../../build_mahjong")
+sys.path.append("../../build_mahjong")
 from libmahjong import *
 
 testTile = Tile()
