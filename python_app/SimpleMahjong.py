@@ -14,8 +14,18 @@ class StupidPlayer(Player):
         print "hi"
         super(StupidPlayer, self).__init__(playerName)
     def onTurn(self, playerID, tile):
-        print "onTurn:"
-        return Action()
+        print "onTurn"
+        if playerID == getID():
+            if getHand().testWin():
+                return Action(Win, Tile())
+
+            handData = getHand().getData()
+            it = handData.begin()
+            while it.getFlag() != Handed:
+                it += 1
+            return Action(Discard, it)
+        else:
+            return Action()
     def onOtherPlayerMakeAction(self, playerID, playerName, action):
         print "onOtherPlayerMakeAction:"
         return Action()

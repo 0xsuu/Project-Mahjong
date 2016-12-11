@@ -86,13 +86,21 @@ BOOST_PYTHON_MODULE(libmahjong) {
             .def("__sub__", &Tile::operator-);
 
     /**
+     * Expose Hand Class.
+     */
+     class_<Hand>("Hand",init<>())
+             .def("testWin", &Hand::testWin)
+             .def("getData", &Hand::getData);
+
+    /**
      * Expose Player class.
      */
     class_<PlayerWrapper>("Player",
                           init<std::string>())
             .def("onTurn", &PlayerWrapper::onTurn)
             .def("onOtherPlayerMakeAction", &PlayerWrapper::onOtherPlayerMakeAction)
-            .def("getPlayerName", &PlayerWrapper::getPlayerName);
+            .def("getPlayerName", &PlayerWrapper::getPlayerName)
+            .def("getHand", &PlayerWrapper::getHand);
 
     /**
      * Expose Action class.

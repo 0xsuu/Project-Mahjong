@@ -30,9 +30,10 @@ using mahjong::PlayerWrapper;
 using mahjong::Tile;
 
 namespace mahjong {
-class PythonPlayer : public PlayerWrapper {
+class PythonPlayer : public Player {
 public:
-    PythonPlayer(std::string playerName, PyObject *pyClassObject) : PlayerWrapper(playerName) {
+    PythonPlayer(std::string playerName, PyObject *pyClassObject) : Player(playerName) {
+        assert(pyClassObject != nullptr);
         mPythonClassObject = pyClassObject;
     }
 
@@ -58,7 +59,7 @@ Player *makePythonPlayer(PyObject *classObject) {
     return new PythonPlayer(boost::python::call_method<std::string>(classObject, "getPlayerName"),
                             classObject);
 }
-}
+} // namespace mahjong.
 
 BOOST_PYTHON_MODULE(libplayers) {
     using boost::python::bases;
@@ -85,4 +86,8 @@ BOOST_PYTHON_MODULE(libplayers) {
                             init<std::string>())
             .def("onTurn", &GreedyPlayer::onTurn)
             .def("onOtherPlayerMakeAction", &GreedyPlayer::onOtherPlayerMakeAction);
+    class_<mahjong::PythonPlayer>("PythonPlayer",
+                         init<std::string, PyObject *>())
+            .def("onTurn", &mahjong::PythonPlayer::onTurn)
+            .def("onOtherPlayerMakeAction", &mahjong::PythonPlayer::onOtherPlayerMakeAction);
 }
