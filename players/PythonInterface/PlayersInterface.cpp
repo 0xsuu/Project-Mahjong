@@ -26,13 +26,38 @@ using mahjong::UserInputPlayer;
 
 using mahjong::Hand;
 using mahjong::Player;
+using mahjong::PlayerWrapper;
 using mahjong::Tile;
+
+namespace mahjong {
+class PythonPlayer : public PlayerWrapper {
+public:
+    PythonPlayer(std::string playerName, PyObject *pyClassObject) : PlayerWrapper(playerName) {
+        mPythonClassObject = pyClassObject;
+    }
+
+    Action onTurn(int playerID, Tile tile) override {
+        return boost::python::call_method<Action>(mPythonClassObject, "onTurn", playerID, tile);
+    }
+    Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override {
+        return boost::python::call_method<Action>(mPythonClassObject, "onOtherPlayerMakeAction",
+                                                  playerID, playerName, action);
+    }
+
+private:
+    PyObject *mPythonClassObject;
+};
 
 Player *makeGreedyPlayer(std::string playerName) {
     return new GreedyPlayer(playerName);
 }
 Player *makeUserInputPlayer(std::string playerName) {
     return new UserInputPlayer(playerName);
+}
+Player *makePythonPlayer(PyObject *classObject) {
+    return new PythonPlayer(boost::python::call_method<std::string>(classObject, "getPlayerName"),
+                            classObject);
+}
 }
 
 BOOST_PYTHON_MODULE(libplayers) {
@@ -42,8 +67,9 @@ BOOST_PYTHON_MODULE(libplayers) {
     using boost::python::enum_;
     using boost::python::init;
 
-    def("makeGreedyPlayer", makeGreedyPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
-    def("makeUserInputPlayer", makeUserInputPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
+    def("makeGreedyPlayer", mahjong::makeGreedyPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
+    def("makeUserInputPlayer", mahjong::makeUserInputPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
+    def("makePythonPlayer", mahjong::makePythonPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
 
     class_<AlwaysDiscardFirstPlayer>("AlwaysDiscardFirstPlayer",
                                      init<std::string>())

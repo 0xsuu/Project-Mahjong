@@ -77,6 +77,19 @@ class Player {
     Hand mHand;
     Board *mBoard;
 };
+
+struct PlayerWrapper : Player {
+    PlayerWrapper(std::string playerName) : Player(playerName) {}
+
+    Action onTurn(int playerID, Tile tile) override {
+        throw std::runtime_error("PlayerWrapper class cannot be called.");
+    }
+    Action onOtherPlayerMakeAction(int playerID,
+                                   std::string playerName,
+                                   Action action) override {
+        throw std::runtime_error("PlayerWrapper class cannot be called.");
+    }
+};
 } // namespace mahjong.
 
 #endif // MAHJONG_LIB_PLAYER_H

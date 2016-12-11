@@ -28,22 +28,10 @@ using mahjong::Tile;
 using mahjong::TileGroup;
 using mahjong::TileFlag;
 using mahjong::TileType;
-using mahjong::TileSetType
+using mahjong::TileSetType;
 using mahjong::Player;
+using mahjong::PlayerWrapper;
 using mahjong::Wind;
-
-struct PlayerWrapper : Player {
-    PlayerWrapper(std::string playerName) : Player(playerName) {}
-
-    Action onTurn(int playerID, Tile tile) override {
-        throw std::runtime_error("PlayerWrapper class cannot be called.");
-    }
-    Action onOtherPlayerMakeAction(int playerID,
-                                   std::string playerName,
-                                   Action action) override {
-        throw std::runtime_error("PlayerWrapper class cannot be called.");
-    }
-};
 
 BOOST_PYTHON_MODULE(libmahjong) {
     using boost::python::class_;
@@ -103,7 +91,8 @@ BOOST_PYTHON_MODULE(libmahjong) {
     class_<PlayerWrapper>("Player",
                           init<std::string>())
             .def("onTurn", &PlayerWrapper::onTurn)
-            .def("onOtherPlayerMakeAction", &PlayerWrapper::onOtherPlayerMakeAction);
+            .def("onOtherPlayerMakeAction", &PlayerWrapper::onOtherPlayerMakeAction)
+            .def("getPlayerName", &PlayerWrapper::getPlayerName);
 
     /**
      * Expose Action class.
