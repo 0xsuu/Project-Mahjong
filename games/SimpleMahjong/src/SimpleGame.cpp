@@ -25,7 +25,7 @@ using mahjong::SimpleGame;
 
 SimpleGame::SimpleGame(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount) :
         Game(p1, p2, p3, p4, roundCount) {
-    mBoard = new Board(this, p1, p2, p3, p4, false, 0);
+    mBoard = new Board(this, p1, p2, p3, p4, false, 14);
     if (p1 != nullptr) {
         mPlayerWinCount[p1] = 0;
     }
@@ -97,11 +97,11 @@ void SimpleGame::onNextRound(bool eastWin) {
 }
 
 void SimpleGame::onGameOver() {
-    long playerCount = mPlayerWinCount.size();
     for (auto it = mPlayerWinCount.begin(); it != mPlayerWinCount.end(); it++) {
         cout << (*it).first->getPrintable() << " win rate: "
              << static_cast<double>((*it).second) / mRoundCount * 100.0 << "%\n";
     }
+    LOGE("", mBoard->getTenhouUrl());
 }
 
 // Rule implementation.
