@@ -12,6 +12,10 @@ cd mahjong
 git clone https://github.com/al1enSuu/Project-Mahjong.git
 ```
 
+## Prerequisites
+* Build library tests: gtest
+* Build python interface: boost
+
 ## Build Instructions
 [Build Instructions](https://github.com/al1enSuu/Project-Mahjong/wiki/Compile-Instructions)
 
