@@ -96,6 +96,9 @@ int GreedyPlayer::getHeuristic(Hand hand) {
         }
     }
     for (auto it = handData.begin(); it < handData.end() - 2; it++) {
+        if ((*it).getType() == Special) {
+            break;
+        }
         auto itNext = std::find(it, handData.end(), *it + 1);
         if (itNext < handData.end() - 1) {
             straightOfTwo++;
