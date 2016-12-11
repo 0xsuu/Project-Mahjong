@@ -21,12 +21,16 @@
 
 using mahjong::Action;
 using mahjong::ActionState;
+using mahjong::Board;
+using mahjong::Game;
 using mahjong::Hand;
 using mahjong::Tile;
 using mahjong::TileGroup;
 using mahjong::TileFlag;
 using mahjong::TileType;
+using mahjong::TileSetType
 using mahjong::Player;
+using mahjong::Wind;
 
 struct PlayerWrapper : Player {
     PlayerWrapper(std::string playerName) : Player(playerName) {}
