@@ -197,7 +197,7 @@ void Board::proceedToNextPlayer() {
                 throw std::invalid_argument("False win.");
             }
         default:
-            throw std::invalid_argument("ActionState not recognised, or"
+            throw std::invalid_argument("ActionState not recognised, or "
                                                 "player returned action with onTurn() when it is not his turn.");
     }
 

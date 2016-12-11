@@ -38,7 +38,6 @@ SimpleGame::SimpleGame(Player *p1, Player *p2, Player *p3, Player *p4, int round
     if (p4 != nullptr) {
         mPlayerWinCount[p4] = 0;
     }
-
 }
 
 void SimpleGame::startGame() {

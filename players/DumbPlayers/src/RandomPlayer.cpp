@@ -35,6 +35,8 @@ Action RandomPlayer::onTurn(int playerID, Tile tile) {
         int index = tileDistribution(urd);
         return Action(Discard, index == getHand().getData().size() ? tile :
                                getHand().getTile(index));
+    } else {
+        return Action();
     }
 }
 

@@ -35,7 +35,7 @@ int main() {
     AlwaysDiscardFirstPlayer *p4 = new AlwaysDiscardFirstPlayer("BOT ADFT 4");
 //    mahjong::Player *p3 = nullptr;
 //    mahjong::Player *p4 = nullptr;
-    SimpleGame *game = new SimpleGame(p1, p2, p3, p4, 1);
+    SimpleGame *game = new SimpleGame(p1, p2, p3, p4, 1000);
 
     game->startGame();
 

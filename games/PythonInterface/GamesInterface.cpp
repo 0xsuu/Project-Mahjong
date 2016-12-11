@@ -13,24 +13,22 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
+#include <boost/python.hpp>
 
-#include <Player.h>
-#include "AlwaysLosePlayer.h"
+#include <SimpleGame.h>
 
-using mahjong::Action;
+using mahjong::SimpleGame;
+
+using mahjong::Game;
 using mahjong::Player;
-using mahjong::Tile;
-using mahjong::TileGroup;
-using mahjong::AlwaysLosePlayer;
 
-Action AlwaysLosePlayer::onTurn(int playerID, Tile tile) {
-    if (playerID == getID()) {
-        return Action(Discard, tile);
-    } else {
-        return Action();
-    }
-}
+BOOST_PYTHON_MODULE(libgames) {
+    using boost::python::bases;
+    using boost::python::class_;
+    using boost::python::enum_;
+    using boost::python::init;
 
-Action AlwaysLosePlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
-    return Action();
+    class_<SimpleGame>("SimpleGame",
+                       init<Player *, Player *, Player *, Player *, int>())
+            .def("startGame", &SimpleGame::startGame);
 }
