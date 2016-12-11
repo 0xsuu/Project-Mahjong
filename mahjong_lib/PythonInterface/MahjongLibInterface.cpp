@@ -100,7 +100,8 @@ BOOST_PYTHON_MODULE(libmahjong) {
             .def("onTurn", &PlayerWrapper::onTurn)
             .def("onOtherPlayerMakeAction", &PlayerWrapper::onOtherPlayerMakeAction)
             .def("getPlayerName", &PlayerWrapper::getPlayerName)
-            .def("getHand", &PlayerWrapper::getHand);
+            .def("getHand", &PlayerWrapper::getHand)
+            .def("getID", &PlayerWrapper::getID);
 
     /**
      * Expose Action class.

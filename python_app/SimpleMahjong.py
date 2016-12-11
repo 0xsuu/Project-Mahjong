@@ -34,7 +34,8 @@ p1 = makeGreedyPlayer("BOT Greedy 1")
 p2 = makeGreedyPlayer("BOT Greedy 2")
 #p2 = makeUserInputPlayer("Smart Human")
 p3 = makeGreedyPlayer("BOT Greedy 3")
-p4 = makePythonPlayer(StupidPlayer("SB"))
+SB = StupidPlayer("SB")
+p4 = makePythonPlayer(SB)
 
 game = SimpleGame(p1, p2, p3, p4, 1000)
 
