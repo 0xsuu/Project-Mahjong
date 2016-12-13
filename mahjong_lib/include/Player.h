@@ -30,10 +30,10 @@
 namespace mahjong {
 class Player {
  public:
-    Player(std::string playerName) : mPlayerName(playerName) {}
+    Player(const std::string playerName) : mPlayerName(playerName) {}
     virtual ~Player() {}
 
-    void setupPlayer(int ID, Wind seatPosition, Hand initialHand, Board *board);
+    void setupPlayer(const int ID, Wind seatPosition, Hand initialHand, Board *board);
     void resetPlayer(Hand hand);
 
     void shiftSeatPosition();

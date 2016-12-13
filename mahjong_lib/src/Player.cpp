@@ -24,7 +24,7 @@ using mahjong::Hand;
 using mahjong::Wind;
 using mahjong::Player;
 
-void Player::setupPlayer(int ID,
+void Player::setupPlayer(const int ID,
                          Wind seatPosition,
                          mahjong::Hand initialHand,
                          mahjong::Board *board) {
