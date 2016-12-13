@@ -13,19 +13,19 @@ git clone https://github.com/al1enSuu/Project-Mahjong.git
 ```
 
 ## Supporting Environment
-### On Linux
-```diff
-+ Supporting CMake 2.8+
-+ Supporting Clang++ 3.7+
-+ Supporting Python 2.7
-+ Supporting Python 3.4 (Have to replace all -lpython with -lpython3.4m)
-```
-### On Mac
-```diff
-+ Supporting CMake 2.8+
-+ Supporting Clang++ 800
-+ Supporting Python 3.7
-```
+### Linux
++ + Supporting CMake 2.8+
++ + Supporting Clang++ 3.7+
++ + Supporting Python 2.7
++ + Supporting Python 3.4 (Have to replace all -lpython with -lpython3.4m)
+
+### Mac
++ + Supporting CMake 2.8+
++ + Supporting Clang++ 800
++ + Supporting Python 3.7
+
+### Windows
++ - Not tested.
 
 ## Prerequisites
 * Build library tests: gtest
