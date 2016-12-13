@@ -48,11 +48,14 @@ void SimpleGame::startGame() {
 
 // Callback implementations.
 void SimpleGame::onRoundStart() {
-    system("clear");
-    cout << MAHJONG_SPECIAL[mBoard->getRoundWind()] << mBoard->getRoundNumber()
-         <<" started.(NO. "<< mCurrentRound <<")\n";
-    while (!mRoundFinished) {
-        mBoard->proceedToNextPlayer();
+    for (int i = 0; i < mRoundCount; ++i) {
+        system("clear");
+        cout << MAHJONG_SPECIAL[mBoard->getRoundWind()] << mBoard->getRoundNumber()
+             <<" started.(NO. "<< mCurrentRound <<")\n";
+        while (!mRoundFinished) {
+            mBoard->proceedToNextPlayer();
+        }
+        onNextRound(false);
     }
 }
 
@@ -80,9 +83,7 @@ void SimpleGame::onRoundFinished(bool drained, Player *winner) {
         mPlayerWinCount[winner]++;
     }
     mRoundFinished = true;
-    if (mCurrentRound < mRoundCount) {
-        onNextRound(winner ? winner->getSeatPosition() == East : false);
-    } else {
+    if (mCurrentRound >= mRoundCount) {
         onGameOver();
     }
 }

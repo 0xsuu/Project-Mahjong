@@ -110,7 +110,6 @@ void Board::reset() {
             mCurrentPlayerIndex = it;
         }
     }
-    mGame->onRoundStart();
 }
 
 void Board::shiftToNextRound() {
