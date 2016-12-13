@@ -27,6 +27,10 @@ git clone https://github.com/al1enSuu/Project-Mahjong.git
 + Supporting Python 3.7
 ```
 
+## Prerequisites
+* Build library tests: gtest
+* Build python interface: boost
+
 ## Build Instructions
 [Build Instructions](https://github.com/al1enSuu/Project-Mahjong/wiki/Compile-Instructions)
 

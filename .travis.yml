@@ -1,0 +1,40 @@
+language: cpp
+
+branches:
+  only: 
+    - master
+
+addons:
+  apt:
+    packages:
+      - g++-4.9
+      - clang++-3.7
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.7
+
+compiler: g++
+
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+
+script:
+  - git clone https://github.com/google/googletest.git
+  - mkdir build_gtest
+  - cd build_gtest
+  - cmake ../googletest/
+  - make
+  - sudo make install
+  - cd ..
+  - sudo apt-get install libboost-all-dev
+  - sudo ./build_mahjong.sh --update-code-completion
+  - ./build_mahjong.sh --lib test
+  - ./build_mahjong.sh --player all
+  - ./build_mahjong.sh --game simple norun
+  - export CXX="clang++-3.7"
+  - ./build_mahjong.sh --lib test
+  - ./build_mahjong.sh --player all
+  - ./build_mahjong.sh --game simple norun
+
+sudo: required
+

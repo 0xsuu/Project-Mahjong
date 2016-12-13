@@ -14,3 +14,53 @@
 //  limitations under the License.
 //
 
+#ifndef MAHJONG_LIB_GAME_H
+#define MAHJONG_LIB_GAME_H
+
+#include <string>
+#include <vector>
+
+#include "Constants.h"
+#include "Player.h"
+#include "PrintFormat.h"
+
+namespace mahjong {
+/**
+ * An interface for implementing UI.
+ */
+class Game {
+ public:
+    Game(Player *p1, Player *p2, Player *p3, Player *p4, int roundCount) :
+            mPlayer1(p1), mPlayer2(p2), mPlayer3(p3), mPlayer4(p4), mRoundCount(roundCount) {}
+    virtual ~Game() {}
+
+    virtual void startGame() = 0;
+
+    // Callback interfaces.
+    virtual void onRoundSetup() = 0;
+    virtual void onRoundStart() = 0;
+    virtual void onBeforePlayerPickTile(Player *player, Tile tile) = 0;
+    virtual void onAfterPlayerPickTile(Player *player, Tile tile) = 0;
+    virtual void onPlayerDiscardTile(Player *player, Tile tile) = 0;
+    virtual void onPlayerPass(Player *player) = 0;
+    virtual void onRoundFinished(bool drained, Player *winner) = 0;
+    virtual void onNextRound(bool eastWin) = 0;
+
+    virtual void onGameOver() = 0;
+
+    // Rule interfaces.
+    virtual int calculateScore(Hand mHand) = 0;
+
+ protected:
+    Player *mPlayer1;
+    Player *mPlayer2;
+    Player *mPlayer3;
+    Player *mPlayer4;
+    int mRoundCount;
+    int mCurrentRound;
+    bool mRoundFinished;
+};
+
+} // namespace mahjong.
+
+#endif // MAHJONG_LIB_GAME_H

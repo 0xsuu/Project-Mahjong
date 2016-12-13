@@ -14,29 +14,88 @@
 //  limitations under the License.
 //
 
-#include <assert.h>
+#include <cassert>
 
 #include "Tile.h"
+#include "PrintFormat.h"
+
+using std::string;
 
 using mahjong::Tile;
 using mahjong::TileFlag;
 using mahjong::TileType;
 
-Tile::Tile(const TileFlag flag, const TileType type, const int number) {
+Tile::Tile(const TileFlag flag, const TileType type, const int number, bool dora) {
     // Make sure the number is legal.
     assert(number <= 9 && number >= 1);
+    if (dora) {
+        assert(number == 5);
+        assert(type != Special);
+    }
 
-    mTileData = flag << 6 | type << 4 | number;
+    mTileData  = flag | type | number;
+    mIsDora = dora;
 }
 
-TileFlag Tile::getFlag() {
-    return static_cast<TileFlag>(mTileData >> 6);
+Tile::Tile(const uint8_t data, bool dora) {
+    mTileData = data;
+    mIsDora = dora;
 }
 
-TileType Tile::getType() {
-    return static_cast<TileType>(mTileData >> 4 & 0b11);
+TileFlag Tile::getFlag() const {
+    return static_cast<TileFlag>(mTileData & TILE_FLAG_FILTER);
+}
+TileType Tile::getType() const {
+    return static_cast<TileType>(mTileData & TILE_TYPE_FILTER);
+}
+int Tile::getNumber() const {
+    return mTileData & TILE_NUMBER_FILTER;
+}
+bool Tile::isDora() const {
+    return mIsDora;
 }
 
-int Tile::getNumber() {
-    return mTileData & 0b1111;
-};
+bool Tile::isNull() const {
+    return mTileData == 0;
+}
+
+string Tile::getPrintable() const {
+    assert(!isNull());
+    return getTypeID() == TILE_TYPE_ID_SPECIAL ? MAHJONG_SPECIAL[getNumber() - TILE_NUMBER_OFFSET] :
+           ((isDora() ? MAHJONG_DORA_POINT : MAHJONG_NUMBER[getNumber() - TILE_NUMBER_OFFSET])
+                                            + MAHJONG_TYPE[getTypeID()]);
+}
+
+void Tile::setMeld() {
+    mTileData = static_cast<uint8_t>((mTileData & TILE_REMOVE_FLAG_FILTER) | Melded);
+}
+void Tile::setConceal() {
+    mTileData = static_cast<uint8_t>((mTileData & TILE_REMOVE_FLAG_FILTER) | Concealed);
+}
+
+// Operator overloads.
+
+bool Tile::operator==(Tile t) const {
+    return mTileData == t.getData();
+}
+bool Tile::operator!=(Tile t) const {
+    return mTileData != t.getData();
+}
+bool Tile::operator<(Tile t) const {
+    return mTileData < t.getData();
+}
+bool Tile::operator<=(Tile t) const {
+    return mTileData <= t.getData();
+}
+Tile Tile::operator+(int n) const {
+    return Tile(getData() + static_cast<uint8_t>(n), mIsDora && n == 0);
+}
+Tile Tile::operator-(int n) const {
+    return Tile(getData() - static_cast<uint8_t>(n), mIsDora && n == 0);
+}
+
+// Private functions.
+
+inline uint8_t Tile::getTypeID() const {
+    return static_cast<uint8_t>((mTileData & TILE_TYPE_FILTER) >> 4);
+}
