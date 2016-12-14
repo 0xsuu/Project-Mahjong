@@ -36,7 +36,7 @@ git clone https://github.com/al1enSuu/Project-Mahjong.git
 [Build Instructions](https://github.com/al1enSuu/Project-Mahjong/wiki/Compile-Instructions)
 
 ## GTest Install Instructions
-Run sudo first.
+Run sudo first(to cache the authentication).
 ```
 sudo whoami
 ```
