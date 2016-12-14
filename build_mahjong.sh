@@ -119,6 +119,7 @@ if [ "$1" == "--game" ]; then
     # Build dynamic lib for Python interface.
     if [ "$2" == "python" ]; then
         ../"$PROJECT_MAHJONG"/build_mahjong.sh --player all "-DGAME_TYPE=SIMPLE_MAHJONG"
+
         cmake ../"$PROJECT_MAHJONG"/games/
         make dGames
         exit 0
