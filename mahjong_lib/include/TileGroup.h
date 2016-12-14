@@ -31,6 +31,27 @@ class TileGroup {
     TileGroup(std::vector<Tile> tileData) {
         mTilesData = tileData;
     }
+    /**
+     * From Tenhou tiles string.
+     */
+    TileGroup(std::string tileString) {
+        auto currentIt = tileString.begin();
+        char types[] = {'m', 'p', 's', 'z'};
+        std::map<char, TileType> typesMap = {{'m', Character}, {'p', Dot},
+                                             {'s', Bamboo}, {'z', Special}};
+        for (int i = 0; i < 4; i++) {
+            auto findIt = std::find(currentIt, tileString.end(), types[i]);
+            if (findIt == tileString.end()) {
+                continue;
+            } else {
+                std::for_each(currentIt, findIt, [&](const char &c) {
+                    assert(c <= '9' && c >= '1');
+                    mTilesData.push_back(Tile(Handed, typesMap[types[i]], c - '0'));
+                });
+                currentIt = findIt + 1;
+            }
+        }
+    }
 
     /**
      * Add tile.

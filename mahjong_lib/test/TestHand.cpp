@@ -43,6 +43,40 @@ TEST(TestHand, Creations) {
     EXPECT_EQ(h1.getData(), h2.getData());
 }
 
+TEST(TestHand, ConstructFromTenhouString) {
+    Hand h1("1m9p1s7z");
+    Hand h2({Tile(Handed, Character, 1),
+             Tile(Handed, Dot, 9),
+             Tile(Handed, Bamboo, 1),
+             Tile(Handed, Special, 7)});
+    ASSERT_EQ(h1.getData(), h2.getData());
+
+    Hand h3("123m19p1111s777z");
+    Hand h4({Tile(Handed, Character, 1),
+             Tile(Handed, Character, 2),
+             Tile(Handed, Character, 3),
+             Tile(Handed, Dot, 1),
+             Tile(Handed, Dot, 9),
+             Tile(Handed, Bamboo, 1),
+             Tile(Handed, Bamboo, 1),
+             Tile(Handed, Bamboo, 1),
+             Tile(Handed, Bamboo, 1),
+             Tile(Handed, Special, 7),
+             Tile(Handed, Special, 7),
+             Tile(Handed, Special, 7)});
+    ASSERT_EQ(h3.getData(), h4.getData());
+
+    Hand h5("9p1s7z");
+    Hand h6({Tile(Handed, Dot, 9),
+             Tile(Handed, Bamboo, 1),
+             Tile(Handed, Special, 7)});
+    ASSERT_EQ(h5.getData(), h6.getData());
+
+    Hand h7("7z");
+    Hand h8({Tile(Handed, Special, 7)});
+    ASSERT_EQ(h7.getData(), h8.getData());
+}
+
 TEST(TestHand, Sorting) {
     Hand h({Tile(Handed, Bamboo, 1),
             Tile(Handed, Bamboo, 1),
