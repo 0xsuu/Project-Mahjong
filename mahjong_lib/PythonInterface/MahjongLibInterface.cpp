@@ -88,7 +88,9 @@ BOOST_PYTHON_MODULE(libmahjong) {
     /**
      * Expose Hand Class.
      */
-     class_<Hand>("Hand",init<>())
+     class_<Hand>("Hand",
+                  init<>())
+             .def(init<std::string>())
              .def("testWin", &Hand::testWin)
              .def("getData", &Hand::getData);
 
