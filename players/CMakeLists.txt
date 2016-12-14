@@ -38,6 +38,11 @@ set(MAHJONG_LIB_INCLUDE_PATH "${PROJECT_MAHJONG}/mahjong_lib/include")
 
 include_directories(${MAHJONG_LIB_INCLUDE_PATH}/)
 
+IF (NOT DEFINED GAME_TYPE)
+    SET(GAME_TYPE SIMPLE_MAHJONG)
+ENDIF()
+ADD_DEFINITIONS(-D${GAME_TYPE}=YES)
+
 #
 # Build targets
 #

@@ -42,6 +42,7 @@ Action AlwaysDiscardFirstPlayer::onTurn(int playerID, Tile tile) {
 }
 
 Action AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
+#ifdef SIMPLE_MAHJONG
     Hand copyHand(getHand().getData());
     copyHand.pickTile(action.getTile());
     if (copyHand.testWin()) {
@@ -49,4 +50,7 @@ Action AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction(int playerID, std::stri
     } else {
         return Action();
     }
+#else
+    throw std::runtime_error("No games are defined for this player.");
+#endif
 }
