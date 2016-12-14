@@ -41,5 +41,15 @@ Action RandomPlayer::onTurn(int playerID, Tile tile) {
 }
 
 Action RandomPlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
-    return Action();
+#ifdef SIMPLE_MAHJONG
+    Hand copyHand(getHand().getData());
+    copyHand.pickTile(action.getTile());
+    if (copyHand.testWin()) {
+        return Action(Win, action.getTile());
+    } else {
+        return Action();
+    }
+#else
+    throw std::runtime_error("No games are defined for this player.");
+#endif
 }

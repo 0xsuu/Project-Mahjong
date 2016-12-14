@@ -49,6 +49,7 @@ Action GreedyPlayer::onTurn(int playerID, Tile tile) {
 }
 
 Action GreedyPlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
+#ifdef SIMPLE_MAHJONG
     Hand copyHand(getHand().getData());
     copyHand.pickTile(action.getTile());
     if (copyHand.testWin()) {
@@ -56,6 +57,9 @@ Action GreedyPlayer::onOtherPlayerMakeAction(int playerID, std::string playerNam
     } else {
         return Action();
     }
+#else
+    throw std::runtime_error("No games are defined for this player.");
+#endif
 }
 
 int GreedyPlayer::getHeuristic(Hand hand) {
