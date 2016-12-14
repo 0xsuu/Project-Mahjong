@@ -176,7 +176,11 @@ if [ "$1" == "--player" ]; then
     fi
 
     echo "Building all players..."
-        cmake ../"$PROJECT_MAHJONG"/players/ "$3"
+        if [ "$3" != "" ]; then
+            cmake ../"$PROJECT_MAHJONG"/players/ "$3"
+        else
+            cmake ../"$PROJECT_MAHJONG"/players/
+        fi
         make AllPlayers
     exit 0
 fi
