@@ -86,7 +86,6 @@ fi
 
 if [ "$1" == "--game" ]; then
     ./"$PROJECT_MAHJONG"/build_mahjong.sh --lib
-    ./"$PROJECT_MAHJONG"/build_mahjong.sh --player all
 
     if [ ! -f ./build_mahjong/libmahjong.a ]; then
         echo "Mahjong lib not found!"
@@ -107,6 +106,8 @@ if [ "$1" == "--game" ]; then
 
     if [ "$2" == "simple" ]; then
         echo "Building SimpleMahjong..."
+        ../"$PROJECT_MAHJONG"/build_mahjong.sh --player all "-DGAME_TYPE=SIMPLE_MAHJONG"
+
         cmake ../"$PROJECT_MAHJONG"/games/
         make SimpleMahjong
         if [ ! "$3" == "norun" ]; then
@@ -117,6 +118,7 @@ if [ "$1" == "--game" ]; then
 
     # Build dynamic lib for Python interface.
     if [ "$2" == "python" ]; then
+        ../"$PROJECT_MAHJONG"/build_mahjong.sh --player all "-DGAME_TYPE=SIMPLE_MAHJONG"
         cmake ../"$PROJECT_MAHJONG"/games/
         make dGames
         exit 0
@@ -174,7 +176,7 @@ if [ "$1" == "--player" ]; then
     fi
 
     echo "Building all players..."
-        cmake ../"$PROJECT_MAHJONG"/players/
+        cmake ../"$PROJECT_MAHJONG"/players/ "$3"
         make AllPlayers
     exit 0
 fi

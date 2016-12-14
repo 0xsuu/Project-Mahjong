@@ -40,6 +40,7 @@ set(MAHJONG_LIB_INCLUDE_PATH "${PROJECT_MAHJONG}/mahjong_lib/include")
 set(USER_INPUT_PLAYER_INCLUDE_PATH "${PROJECT_MAHJONG}/players/UserInputPlayer/include")
 set(DUMB_PLAYERS_INCLUDE_PATH "${PROJECT_MAHJONG}/players/DumbPlayers/include")
 set(NON_LEARNING_PLAYERS_INCLUDE_PATH "${PROJECT_MAHJONG}/players/NonLearningPlayers/include")
+set(PLAYERS_SRC_PATH "${PROJECT_MAHJONG}/players/")
 
 set(PLAYERS_LIB_PATH "${PROJECT_MAHJONG}/../build_players/libplayers.a")
 

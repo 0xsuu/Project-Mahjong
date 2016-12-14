@@ -25,6 +25,7 @@ using mahjong::TileGroup;
 using mahjong::AlwaysDiscardFirstPlayer;
 
 Action AlwaysDiscardFirstPlayer::onTurn(int playerID, Tile tile) {
+#ifdef SIMPLE_MAHJONG
     if (playerID == getID()) {
         if (getHand().testWin()) {
             return Action(Win, Tile());
@@ -39,6 +40,9 @@ Action AlwaysDiscardFirstPlayer::onTurn(int playerID, Tile tile) {
     } else {
         return Action();
     }
+#else
+    throw std::runtime_error("No games are defined for this player.");
+#endif
 }
 
 Action AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) {
