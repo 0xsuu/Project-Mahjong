@@ -35,6 +35,8 @@ class Hand : public TileGroup {
      */
     Hand(std::vector<Tile> hand) : TileGroup(hand) {}
 
+    Hand(const std::string tileString) : TileGroup(tileString) {}
+
     //
     // Game Actions.
     //
