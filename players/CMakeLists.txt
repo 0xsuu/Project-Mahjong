@@ -106,4 +106,11 @@ add_library(dPlayers SHARED
         ${PROJECT_ROOT_DIRECTORY}/PythonInterface/PlayersInterface.cpp)
 set_target_properties(dPlayers PROPERTIES OUTPUT_NAME players)
 set_property(TARGET dPlayers PROPERTY POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(dPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" -lpython -lboost_python)
+if( PYTHON_VERSION STREQUAL "" )
+    target_link_libraries(dPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" -lpython -lboost_python)
+else()
+    set(PYTHON_VERSION_SHORT "")
+    string(REPLACE "." "" PYTHON_VERSION_SHORT ${PYTHON_VERSION})
+    target_link_libraries(dPlayers "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a"
+            -lpython${PYTHON_VERSION}m -lboost_python-py${PYTHON_VERSION_SHORT})
+endif()

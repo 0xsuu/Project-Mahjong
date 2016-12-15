@@ -74,6 +74,7 @@ if( CMAKE_BUILD_TYPE STREQUAL "Coverage" )
     set(CMAKE_EXE_LINKER_FLAGS ${TEMP_CMAKE_EXE_LINKER_FLAGS})
 else()
     add_library(mahjong ${SOURCE_FILES} ${HEADER_FILES})
+    set_property(TARGET mahjong PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif()
 
 # Dynamic lib, uses the same name as the static one.
@@ -85,8 +86,13 @@ endif(APPLE)
 add_library(dmahjong SHARED ${SOURCE_FILES} ${PROJECT_ROOT_DIRECTORY}/PythonInterface/MahjongLibInterface.cpp)
 set_target_properties(dmahjong PROPERTIES OUTPUT_NAME mahjong)
 set_property(TARGET dmahjong PROPERTY POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(dmahjong -lpython -lboost_python)
-
+if( PYTHON_VERSION STREQUAL "" )
+    target_link_libraries(dmahjong -lpython -lboost_python)
+else()
+    set(PYTHON_VERSION_SHORT "")
+    string(REPLACE "." "" PYTHON_VERSION_SHORT ${PYTHON_VERSION})
+    target_link_libraries(dmahjong -lpython${PYTHON_VERSION}m -lboost_python-py${PYTHON_VERSION_SHORT})
+endif()
 #
 # Build gtest (Require installation gtest)
 #

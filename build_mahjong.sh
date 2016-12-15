@@ -30,7 +30,8 @@ fi
 cd ../
 
 # Set python include path.
-export CPLUS_INCLUDE_PATH=/usr/include/python2.7
+PYTHON_VERSION=3.4 # Set the variable to empty and modify the next line to use default python version.
+export CPLUS_INCLUDE_PATH="/usr/include/python$PYTHON_VERSION"
 
 if [ "$1" == "--coverage" ]; then
     mkdir -p ./build_mahjong
@@ -74,7 +75,7 @@ if [ "$1" == "--lib" ]; then
 
     # Build dynamic lib for Python interface.
     if [ "$2" == "python" ]; then
-        cmake ../"$PROJECT_MAHJONG"/mahjong_lib/
+        cmake ../"$PROJECT_MAHJONG"/mahjong_lib/ -DPYTHON_VERSION=$PYTHON_VERSION
         make dmahjong
         exit 0
     fi
@@ -120,7 +121,7 @@ if [ "$1" == "--game" ]; then
     if [ "$2" == "python" ]; then
         ../"$PROJECT_MAHJONG"/build_mahjong.sh --player all "-DGAME_TYPE=SIMPLE_MAHJONG"
 
-        cmake ../"$PROJECT_MAHJONG"/games/
+        cmake ../"$PROJECT_MAHJONG"/games/ -DPYTHON_VERSION=$PYTHON_VERSION
         make dGames
         exit 0
     fi
@@ -171,7 +172,7 @@ if [ "$1" == "--player" ]; then
     fi
 
     if [ "$2" == "python" ]; then
-        cmake ../"$PROJECT_MAHJONG"/players/
+        cmake ../"$PROJECT_MAHJONG"/players/ -DPYTHON_VERSION=$PYTHON_VERSION
         make dPlayers
         exit 0
     fi
