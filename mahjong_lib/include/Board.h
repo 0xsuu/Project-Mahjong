@@ -46,8 +46,9 @@ class Board {
     Board(Game *game, Player *p1, Player *p2, Player *p3, Player *p4, bool enableDora, int doraStackSize);
     Board() {}
     ~Board() {
-        assert(mPlayerCount != 0 && "Board not initialised.");
-        delete mPlayers;
+        if (mPlayers != nullptr) {
+            delete mPlayers;
+        }
     }
 
     /**

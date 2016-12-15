@@ -37,6 +37,7 @@ BOOST_PYTHON_MODULE(libmahjong) {
     using boost::python::class_;
     using boost::python::enum_;
     using boost::python::init;
+    using boost::python::def;
 
     /**
      * Expose enums.
@@ -60,6 +61,11 @@ BOOST_PYTHON_MODULE(libmahjong) {
             .value("Kang", mahjong::Kang)
             .value("ConcealedKang", mahjong::ConcealedKang)
             .value("Win", mahjong::Win);
+    enum_<Wind >("Wind")
+            .value("East", mahjong::East)
+            .value("South", mahjong::South)
+            .value("West", mahjong::West)
+            .value("North", mahjong::North);
 
     /**
      * Expose Tile class.
@@ -103,7 +109,8 @@ BOOST_PYTHON_MODULE(libmahjong) {
             .def("onOtherPlayerMakeAction", &PlayerWrapper::onOtherPlayerMakeAction)
             .def("getPlayerName", &PlayerWrapper::getPlayerName)
             .def("getHand", &PlayerWrapper::getHand)
-            .def("getID", &PlayerWrapper::getID);
+            .def("getID", &PlayerWrapper::getID)
+            .def("setupPlayer", &PlayerWrapper::setupPlayer);
 
     /**
      * Expose Action class.
@@ -114,4 +121,10 @@ BOOST_PYTHON_MODULE(libmahjong) {
             .def("getActionState", &Action::getActionState)
             .def("getTile", &Action::getTile)
             .def("__lt__", &Action::operator<);
+
+    /**
+     * Expose Board class.
+     */
+    class_<Board>("Board",
+                  init<>());
 }
