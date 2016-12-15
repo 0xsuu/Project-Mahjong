@@ -73,7 +73,7 @@ add_library(dGames SHARED
 set_target_properties(dGames PROPERTIES OUTPUT_NAME games)
 target_link_libraries(dGames "${PROJECT_MAHJONG}/../build_mahjong/libmahjong.a" ${PLAYERS_LIB_PATH})
 set_property(TARGET dGames PROPERTY POSITION_INDEPENDENT_CODE ON)
-if( PYTHON_VERSION STREQUAL "" )
+if( NOT DEFINED PYTHON_VERSION OR PYTHON_VERSION STREQUAL "" )
     target_link_libraries(dGames -lpython -lboost_python)
 else()
     set(PYTHON_VERSION_SHORT "")
