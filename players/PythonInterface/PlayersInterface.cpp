@@ -83,10 +83,11 @@ BOOST_PYTHON_MODULE(libplayers) {
             .def("onTurn", &UserInputPlayer::onTurn)
             .def("onOtherPlayerMakeAction", &UserInputPlayer::onOtherPlayerMakeAction);
 
-    class_<GreedyPlayer>("GreedyPlayer",
+    class_<GreedyPlayer, bases<PlayerWrapper>>("GreedyPlayer",
                             init<std::string>())
             .def("onTurn", &GreedyPlayer::onTurn)
-            .def("onOtherPlayerMakeAction", &GreedyPlayer::onOtherPlayerMakeAction);
+            .def("onOtherPlayerMakeAction", &GreedyPlayer::onOtherPlayerMakeAction)
+            .def("selectBestTile", &GreedyPlayer::selectBestTile);
     class_<mahjong::PythonPlayer>("PythonPlayer",
                          init<std::string, PyObject *>())
             .def("onTurn", &mahjong::PythonPlayer::onTurn)

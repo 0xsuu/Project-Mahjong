@@ -18,31 +18,15 @@
 
 using mahjong::Action;
 using mahjong::GreedyPlayer;
+using mahjong::Tile;
 
 Action GreedyPlayer::onTurn(int playerID, Tile tile) {
     if (playerID == getID()) {
         if (getHand().testWin()) {
             return Action(Win, Tile());
         }
-        auto handData = getHand().getData();
-        auto it = handData.begin();
-        while ((*it).getFlag() != mahjong::Handed) {
-            it++;
-        }
 
-        auto maxIt = it;
-        auto maxHeu = -1;
-        for (; it < handData.end(); it ++) {
-            auto handDataWithoutIt(handData);
-            handDataWithoutIt.erase(handDataWithoutIt.begin() + std::distance(handData.begin(), it));
-            int heu = getHeuristic(handDataWithoutIt);
-            if (heu > maxHeu) {
-                maxHeu = heu;
-                maxIt = it;
-            }
-        }
-
-        return Action(Discard, *maxIt);
+        return Action(Discard, selectBestTile(getHand()));
     } else {
         return Action();
     }
@@ -60,6 +44,28 @@ Action GreedyPlayer::onOtherPlayerMakeAction(int playerID, std::string playerNam
 #else
     throw std::runtime_error("No games are defined for this player.");
 #endif
+}
+
+const Tile GreedyPlayer::selectBestTile(Hand hand) {
+    auto handData = hand.getData();
+    auto it = handData.begin();
+    while ((*it).getFlag() != mahjong::Handed) {
+        it++;
+    }
+
+    auto maxIt = it;
+    auto maxHeu = -1;
+    for (; it < handData.end(); it ++) {
+        auto handDataWithoutIt(handData);
+        handDataWithoutIt.erase(handDataWithoutIt.begin() + std::distance(handData.begin(), it));
+        int heu = getHeuristic(handDataWithoutIt);
+        if (heu > maxHeu) {
+            maxHeu = heu;
+            maxIt = it;
+        }
+    }
+
+    return *maxIt;
 }
 
 int GreedyPlayer::getHeuristic(Hand hand) {

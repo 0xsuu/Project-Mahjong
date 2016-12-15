@@ -27,6 +27,8 @@ class GreedyPlayer : public Player {
     Action onTurn(int playerID, Tile tile) override;
     Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override;
 
+    const Tile selectBestTile(Hand hand);
+
  private:
     int getHeuristic(Hand hand);
 };
