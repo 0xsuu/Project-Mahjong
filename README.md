@@ -16,8 +16,7 @@ git clone https://github.com/al1enSuu/Project-Mahjong.git
 ### Linux
 + Supporting CMake 2.8+
 + Supporting Clang++ 3.7+
-+ Supporting Python 2.7 (Set version in build_mahjong.sh)
-+ Supporting Python 3.4 
++ Supporting Python 2.7/3.4 (Set version in build_mahjong.sh)
 + Supporting boost::python 1.54
 
 ### Mac
@@ -30,7 +29,8 @@ git clone https://github.com/al1enSuu/Project-Mahjong.git
 
 ## Prerequisites
 * Build library tests: gtest
-* Build python interface: boost
+* Build python interface: boost-python
+* Build for coverage info: lcov-1.12+, clang++3.8(on linux)
 
 ## Build Instructions
 [Build Instructions](https://github.com/al1enSuu/Project-Mahjong/wiki/Compile-Instructions)
