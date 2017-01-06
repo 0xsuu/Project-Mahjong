@@ -33,7 +33,7 @@ git clone https://github.com/al1enSuu/Project-Mahjong.git
 * Build for coverage info: lcov-1.12+, clang++3.8(on linux)
 
 ## Build Instructions
-[Build Instructions](https://github.com/al1enSuu/Project-Mahjong/wiki/Compile-Instructions)
+[Build Instructions](https://github.com/al1enSuu/Project-Mahjong/wiki/Build-Instructions)
 
 ## GTest Install Instructions
 Run sudo first(to cache the authentication).
