@@ -2,4 +2,5 @@
 doc/html
 doc/latex
 cmake-build-debug
+.DS_Store
 
