@@ -6,4 +6,5 @@ cmake-build-debug
 mjlog_pf4-20_n*
 __pycache__
 *.swp
+n*.csv
 
