@@ -365,70 +365,108 @@ if __name__=='__main__':
     import yaml
     import sys
     for path in sys.argv[1:]:
-        game = Game()
-        try:
-            game.decode(open(path))
-        except:
-            print("Error file: " + path)
-            quit(0)
-        saveFeaturePath = path + "-f-p.csv"
-        saveFeatureString = ""
-        saveClassPath = path + "-c-p.csv"
-        saveClassString = ""
-        playerNO = int(path[-1])
-        resultDict = game.asdata()
-        #yaml.dump(game.asdata(), sys.stdout, default_flow_style=False, allow_unicode=True)
-        for round in resultDict["rounds"]:
-            playerHand = round["hands"][playerNO]
-            lastEvent = round["events"][0] # This is for identifying chi tile.
-            for event in round["events"]:
-                if event["type"] == "Dora":
-                    lastEvent = event
+        if path.isdigit():
+            import os
+            fullPath = os.path.dirname(os.path.abspath("__file__")) + "/mjlog_pf4-20_n" + path + "/"
+            logs = os.listdir(fullPath)
+            saveFeatureString = ""
+            saveClassString = ""
+            totalCount = len(logs)
+            current = 0
+            for log in logs:
+                current += 1
+                if current % 50 == 0:
+                    print("Processed: " + str(current * 1.0 / totalCount * 100.0) + "%")
+                fullLogPath = fullPath + log
+                game = Game()
+                try:
+                    fo = open(fullLogPath)
+                    game.decode(fo)
+                    fo.close()
+                except:
+                    print("Error file: " + fullLogPath)
                     continue
-                if event["player"] == playerNO:
-                    if event["type"] == "Draw":
-                        playerHand.append(event["tile"])
-                        if len(playerHand) != 14:
-                            raise ValueError("Player Hand length error: ", len(playerHand), playerHand)
-                        playerHandInBytes = toMahjongHand(playerHand)
-                        playerHandSplit = expandHandToCSV(playerHandInBytes)
-                        saveFeatureString += ', '.join(playerHandSplit) + '\n'
-                    elif event["type"] == "Discard":
-                        playerHand.remove(event["tile"])
-                        saveClassString += ', '.join(list(bin(tileToByte(event["tile"]))[2:].zfill(8))) + '\n'
-                    elif event["type"] == "Call":
-                        meld = event["meld"]
-                        if meld["type"] == "pon":
-                            playerHand.remove(meld["tiles"][0])
-                            playerHand.remove(meld["tiles"][0])
-                            playerHand.append(meld["tiles"][0] + "1")
-                            playerHand.append(meld["tiles"][0] + "1")
-                            playerHand.append(meld["tiles"][0] + "1")
-                        elif meld["type"] == "kan" or meld["type"] == "chakan":
-                            if meld["tiles"][0]+"1" in playerHand:
-                                playerHand.remove(meld["tiles"][0]+"1")
-                                playerHand.remove(meld["tiles"][0]+"1")
-                                playerHand.remove(meld["tiles"][0]+"1")
+                playerNO = int(fullLogPath[-1])
+                resultDict = game.asdata()
+                #yaml.dump(game.asdata(), sys.stdout, default_flow_style=False, allow_unicode=True)
+                for round in resultDict["rounds"]:
+                    playerHand = round["hands"][playerNO]
+                    lastEvent = round["events"][0] # This is for identifying chi tile.
+                    eventIndex = -1;
+                    eventLength = len(round["events"]) - 1
+                    validateEventIndex = 0
+                    for event in round["events"]:
+                        eventIndex += 1
+                        if event["type"] == "Dora":
+                            lastEvent = event
+                            continue
+                        if event["player"] == playerNO:
+                            if event["type"] == "Draw":
+                                playerHand.append(event["tile"])
+                                if len(playerHand) != 14:
+                                    raise ValueError("Player Hand length error: ", len(playerHand), playerHand)
+                                playerHandInBytes = toMahjongHand(playerHand)
+                                playerHandSplit = expandHandToCSV(playerHandInBytes)
+                                if eventIndex != eventLength:
+                                    saveFeatureString += ','.join(playerHandSplit) + '\n'
+                                    validateEventIndex = eventIndex
+                                    #print(eventIndex, ": Draw", event["tile"])
+                            elif event["type"] == "Discard":
+                                playerHand.remove(event["tile"])
+                                if lastEvent["type"] == "Draw" or lastEvent["type"] == "Dora":
+                                    saveClassString += ','.join(list(bin(tileToByte(event["tile"]))[2:].zfill(8))) + '\n'
+                                    if lastEvent["type"] == "Dora":
+                                        validateEventIndex += 1
+                                    if validateEventIndex != eventIndex - 1:
+                                        raise ValueError("Event index not match,", fullLogPath)
+                                    #print(eventIndex - 1, ":Discard", event["tile"], "\n")
+                            elif event["type"] == "Call":
+                                meld = event["meld"]
+                                if meld["type"] == "pon":
+                                    playerHand.remove(meld["tiles"][0])
+                                    playerHand.remove(meld["tiles"][0])
+                                    playerHand.append(meld["tiles"][0] + "1")
+                                    playerHand.append(meld["tiles"][0] + "1")
+                                    playerHand.append(meld["tiles"][0] + "1")
+                                elif meld["type"] == "kan" or meld["type"] == "chakan":
+                                    if meld["tiles"][0]+"1" in playerHand:
+                                        playerHand.remove(meld["tiles"][0]+"1")
+                                        playerHand.remove(meld["tiles"][0]+"1")
+                                        playerHand.remove(meld["tiles"][0]+"1")
+                                    else:
+                                        playerHand.remove(meld["tiles"][0])
+                                        playerHand.remove(meld["tiles"][0])
+                                        playerHand.remove(meld["tiles"][0])
+                                    if meld["tiles"][0] in playerHand:
+                                        playerHand.remove(meld["tiles"][0])
+                                    playerHand.append(meld["tiles"][0] + "2")
+                                    playerHand.append(meld["tiles"][0] + "2")
+                                    playerHand.append(meld["tiles"][0] + "2")
+
+                                    if lastEvent["player"] == playerNO and lastEvent["type"] == "Draw":
+                                        saveFeatureString = saveFeatureString[:saveFeatureString.rfind('\n')]
+                                        saveFeatureString = saveFeatureString[:saveFeatureString.rfind('\n')+1]
+                                        #print("Removed Draw above.")
+                                elif meld["type"] == "chi":
+                                    for i in range(3):
+                                        if meld["tiles"][i] != lastEvent["tile"]:
+                                            playerHand.remove(meld["tiles"][i])
+                                    playerHand.append(meld["tiles"][0] + "1")
+                                    playerHand.append(meld["tiles"][1] + "1")
+                                    playerHand.append(meld["tiles"][2] + "1")
+                                else:
+                                    raise ValueError("Unrecognised meld type: " + meld["type"])
+                                #playerHandInBytes = toMahjongHand(playerHand)
+                                #playerHandSplit = expandHandToCSV(playerHandInBytes)
+                                #saveFeatureString += ','.join(playerHandSplit) + '\n'
                             else:
-                                playerHand.remove(meld["tiles"][0])
-                                playerHand.remove(meld["tiles"][0])
-                                playerHand.remove(meld["tiles"][0])
-                            if meld["tiles"][0] in playerHand:
-                                playerHand.remove(meld["tiles"][0])
-                            playerHand.append(meld["tiles"][0] + "2")
-                            playerHand.append(meld["tiles"][0] + "2")
-                            playerHand.append(meld["tiles"][0] + "2")
-                        elif meld["type"] == "chi":
-                            for i in range(3):
-                                if meld["tiles"][i] != lastEvent["tile"]:
-                                    playerHand.remove(meld["tiles"][i])
-                            playerHand.append(meld["tiles"][0] + "1")
-                            playerHand.append(meld["tiles"][1] + "1")
-                            playerHand.append(meld["tiles"][2] + "1")
-                        else:
-                            raise ValueError("Unrecognised meld type: " + meld["type"])
-                    else:
-                        raise ValueError("Unrecognised event type!")
-                lastEvent = event
-        print(saveFeatureString, end="")
+                                raise ValueError("Unrecognised event type!")
+                        lastEvent = event
+        featureFile = open(fullPath + "n" + path + "X.csv", "w+")
+        featureFile.write(saveFeatureString)
+        featureFile.close()
+        classFile = open(fullPath + "n" + path + "y.csv", "w+")
+        classFile.write(saveClassString)
+        classFile.close()
+
 
