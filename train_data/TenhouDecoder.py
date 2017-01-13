@@ -395,7 +395,7 @@ if __name__=='__main__':
                         saveFeatureString += ', '.join(playerHandSplit) + '\n'
                     elif event["type"] == "Discard":
                         playerHand.remove(event["tile"])
-                        saveClassString += event["tile"] + '\n'
+                        saveClassString += ', '.join(list(bin(tileToByte(event["tile"]))[2:].zfill(8))) + '\n'
                     elif event["type"] == "Call":
                         meld = event["meld"]
                         if meld["type"] == "pon":
