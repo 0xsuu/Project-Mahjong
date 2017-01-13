@@ -2,6 +2,9 @@
 
 set -e
 
+BASEDIR=$(dirname "$0")
+cd "$BASEDIR"/
+
 wget http://tenhou.net/0/log/mjlog_pf4-20_n1.zip
 wget http://tenhou.net/0/log/mjlog_pf4-20_n2.zip
 wget http://tenhou.net/0/log/mjlog_pf4-20_n3.zip
