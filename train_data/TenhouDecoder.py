@@ -412,14 +412,18 @@ if __name__=='__main__':
                                     validateEventIndex = eventIndex
                                     #print(eventIndex, ": Draw", event["tile"])
                             elif event["type"] == "Discard":
-                                playerHand.remove(event["tile"])
                                 if lastEvent["type"] == "Draw" or lastEvent["type"] == "Dora":
-                                    saveClassString += ','.join(list(bin(tileToByte(event["tile"]))[2:].zfill(8))) + '\n'
+                                    playerHandInBytes = toMahjongHand(playerHand)
+                                    resList = ['0'] * 14
+                                    resList[playerHandInBytes.index(tileToByte(event["tile"]))] = '1'
+                                    saveClassString += ','.join(resList) + '\n'
+                                    #saveClassString += ','.join(list(bin(tileToByte(event["tile"]))[2:].zfill(8))) + '\n'
                                     if lastEvent["type"] == "Dora":
                                         validateEventIndex += 1
                                     if validateEventIndex != eventIndex - 1:
                                         raise ValueError("Event index not match,", fullLogPath)
                                     #print(eventIndex - 1, ":Discard", event["tile"], "\n")
+                                playerHand.remove(event["tile"])
                             elif event["type"] == "Call":
                                 meld = event["meld"]
                                 if meld["type"] == "pon":
