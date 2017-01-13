@@ -351,43 +351,67 @@ if __name__=='__main__':
     import sys
     for path in sys.argv[1:]:
         game = Game()
-        game.decode(open(path))
+        try:
+            game.decode(open(path))
+        except:
+            print("Error file: " + path)
+            quit(0)
         saveFeaturePath = path + "-f-p.csv"
         saveFeatureString = ""
         saveClassPath = path + "-c-p.csv"
         saveClassString = ""
         playerNO = int(path[-1])
         resultDict = game.asdata()
+        #yaml.dump(game.asdata(), sys.stdout, default_flow_style=False, allow_unicode=True)
         for round in resultDict["rounds"]:
             playerHand = round["hands"][playerNO]
+            lastEvent = round["events"][0] # This is for identifying chi tile.
             for event in round["events"]:
                 if event["type"] == "Dora":
+                    lastEvent = event
                     continue
                 if event["player"] == playerNO:
                     if event["type"] == "Draw":
                         playerHand.append(event["tile"])
+                        if len(playerHand) != 14:
+                            raise ValueError("Player Hand length error: ", len(playerHand), playerHand)
                         saveFeatureString += ', '.join(playerHand) + '\n'
                     elif event["type"] == "Discard":
                         playerHand.remove(event["tile"])
                         saveClassString += event["tile"] + '\n'
                     elif event["type"] == "Call":
                         meld = event["meld"]
-                        if meld["type"] == "pon" or meld["type"] == "kan":
+                        if meld["type"] == "pon":
                             playerHand.remove(meld["tiles"][0])
                             playerHand.remove(meld["tiles"][0])
+                            playerHand.append(meld["tiles"][0] + "1")
+                            playerHand.append(meld["tiles"][0] + "1")
+                            playerHand.append(meld["tiles"][0] + "1")
+                        elif meld["type"] == "kan" or meld["type"] == "chakan":
+                            if meld["tiles"][0]+"1" in playerHand:
+                                playerHand.remove(meld["tiles"][0]+"1")
+                                playerHand.remove(meld["tiles"][0]+"1")
+                                playerHand.remove(meld["tiles"][0]+"1")
+                            else:
+                                playerHand.remove(meld["tiles"][0])
+                                playerHand.remove(meld["tiles"][0])
+                                playerHand.remove(meld["tiles"][0])
+                            if meld["tiles"][0] in playerHand:
+                                playerHand.remove(meld["tiles"][0])
                             playerHand.append(meld["tiles"][0] + "2")
                             playerHand.append(meld["tiles"][0] + "2")
                             playerHand.append(meld["tiles"][0] + "2")
                         elif meld["type"] == "chi":
                             for i in range(3):
-                                if meld["tiles"][i] in playerHand:
+                                if meld["tiles"][i] != lastEvent["tile"]:
                                     playerHand.remove(meld["tiles"][i])
                             playerHand.append(meld["tiles"][0] + "1")
                             playerHand.append(meld["tiles"][1] + "1")
                             playerHand.append(meld["tiles"][2] + "1")
                         else:
-                            raise ValueError("Unrecognised meld type!")
+                            raise ValueError("Unrecognised meld type: " + meld["type"])
                     else:
                         raise ValueError("Unrecognised event type!")
-        print(saveFeatureString)
-#yaml.dump(game.asdata(), sys.stdout, default_flow_style=False, allow_unicode=True)
+                lastEvent = event
+        #print(saveFeatureString)
+
