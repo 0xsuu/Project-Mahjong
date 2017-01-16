@@ -12,9 +12,9 @@ from sklearn.utils import shuffle
 
 def train():
     model = Sequential()
-    model.add(Convolution2D(32, 1, 3, border_mode='valid', input_shape=(1, 14, 8)))
+    model.add(Convolution2D(128, 1, 3, border_mode='valid', input_shape=(1, 14, 8)))
     model.add(Activation('relu'))
-    model.add(Convolution2D(32, 1, 3))
+    model.add(Convolution2D(128, 1, 3))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2), dim_ordering="th"))
     model.add(Dropout(0.25))
@@ -42,7 +42,7 @@ def train():
     X_train = X_train.reshape(X_train.shape[0], 1, 14, 8)
     X_cv = X_cv.reshape(X_cv.shape[0], 1, 14, 8)
 
-    model.fit(X_train, y_train, validation_data=(X_cv, y_cv), batch_size=128, nb_epoch=15)
+    model.fit(X_train, y_train, validation_data=(X_cv, y_cv), batch_size=128, nb_epoch=30)
 
     print(model.evaluate(X_cv, y_cv))
 

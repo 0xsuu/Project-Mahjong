@@ -33,7 +33,7 @@ class SLCNNPlayer(Player):
                 return Action(ActionState.Win, Tile())
 
             handData = this.getHand().getData()
-            it = int(self.model.predict_classes(transformCSVHandToCNNMatrix(expandHandToCSV(handData)))[0]);
+            it = int(self.model.predict_classes(transformCSVHandToCNNMatrix(expandHandToCSV(handData)), verbose = 0)[0]);
             #print("Choosing... " + handData[0].getPrintable())
 
             return Action(ActionState.Discard, handData[it])

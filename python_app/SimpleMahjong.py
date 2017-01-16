@@ -38,7 +38,7 @@ p3 = makePythonPlayer(slcnn)
 SB = StupidPlayer("SB")
 p4 = makePythonPlayer(SB)
 
-game = SimpleGame(p1, p2, p3, p4, 1000)
+game = SimpleGame(p1, p2, p3, p4, 1)
 
 game.startGame()
 
