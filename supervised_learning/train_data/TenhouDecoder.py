@@ -343,7 +343,7 @@ def tileToByte(t):
         else:
             tValue = {"e": 1, "s": 2, "w": 3, "n": 4, "r": 5, "b": 6, "g": 7}[t[0]]
     tType = {"m": 0, "p": 1, "s": 2, "w": 3, "d": 3}[t[1]]
-    tMeld = 0
+    tMeld = 2
     if len(t) > 2:
         tMeld = int(t[2])
     return tMeld << 6 | tType << 4 | tValue
@@ -443,9 +443,9 @@ if __name__=='__main__':
                                         playerHand.remove(meld["tiles"][0])
                                     if meld["tiles"][0] in playerHand:
                                         playerHand.remove(meld["tiles"][0])
-                                    playerHand.append(meld["tiles"][0] + "2")
-                                    playerHand.append(meld["tiles"][0] + "2")
-                                    playerHand.append(meld["tiles"][0] + "2")
+                                    playerHand.append(meld["tiles"][0] + "0")
+                                    playerHand.append(meld["tiles"][0] + "0")
+                                    playerHand.append(meld["tiles"][0] + "0")
 
                                     if lastEvent["player"] == playerNO and lastEvent["type"] == "Draw":
                                         saveFeatureString = saveFeatureString[:saveFeatureString.rfind('\n')]
