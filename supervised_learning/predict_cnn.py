@@ -43,6 +43,8 @@ hand = raw_input("Input your hand, split by space: ")
 
 inputs = transformCSVHandToCNNMatrix(expandHandToCSV(toMahjongHand(hand.split(" "))))
 print(inputs)
-print(model.predict_proba(inputs))
-print(model.predict_classes(inputs))
+proba = model.predict_proba(inputs)[0]
+pClass = int(model.predict_classes(inputs)[0])
+print(proba)
+print("Choose NO." + str(pClass) + " - " + hand.split(" ")[pClass] + " with probability: " + str(proba[pClass] * 100) + "%")
 
