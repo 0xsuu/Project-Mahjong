@@ -12,7 +12,7 @@ from sklearn.utils import shuffle
 
 def train():
     model = Sequential()
-    model.add(Convolution2D(128, 1, 3, border_mode='valid', input_shape=(1, 14, 8)))
+    model.add(Convolution2D(64, 1, 3, border_mode='valid', input_shape=(1, 14, 8)))
     model.add(Activation('relu'))
     model.add(Convolution2D(128, 1, 3))
     model.add(Activation('relu'))
@@ -29,20 +29,20 @@ def train():
                   optimizer='adam',
                   metrics=['accuracy'])
 
-    X = genfromtxt('./train_data/n100X.csv', delimiter=',')
-    y = genfromtxt('./train_data/n100y.csv', delimiter=',')
+    X = genfromtxt('./train_data/n10X.csv', delimiter=',')
+    y = genfromtxt('./train_data/n10y.csv', delimiter=',')
 
     X, y = shuffle(X, y, random_state = 0)
     
-    X_train = X[5000:]
-    y_train = y[5000:]
-    X_cv = X[0: 5000]
-    y_cv = y[0: 5000]
+    X_train = X[10000:]
+    y_train = y[10000:]
+    X_cv = X[0: 10000]
+    y_cv = y[0: 10000]
 
     X_train = X_train.reshape(X_train.shape[0], 1, 14, 8)
     X_cv = X_cv.reshape(X_cv.shape[0], 1, 14, 8)
 
-    model.fit(X_train, y_train, validation_data=(X_cv, y_cv), batch_size=128, nb_epoch=30)
+    model.fit(X_train, y_train, validation_data=(X_cv, y_cv), batch_size=128, nb_epoch=10)
 
     print(model.evaluate(X_cv, y_cv))
 
