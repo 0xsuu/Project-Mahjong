@@ -3,6 +3,7 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 from keras.optimizers import SGD
+from keras.regularizers import l2, activity_l2
 
 import numpy as np
 from numpy import genfromtxt
@@ -11,10 +12,10 @@ from sklearn.utils import shuffle
 
 def train():
     model = Sequential()
-    model.add(Dense(2000, input_dim=112))
+    model.add(Dense(2000, input_dim=112, W_regularizer=l2(0.01), activity_regularizer=activity_l2(0.01)))
     model.add(Activation('relu'))
-    model.add(Dense(4000))
-    model.add(Activation('relu'))
+#    model.add(Dense(4000))
+#    model.add(Activation('relu'))
     model.add(Dense(3000))
     model.add(Activation('relu'))
     model.add(Dense(1500))
@@ -28,7 +29,7 @@ def train():
     model.add(Dense(14, activation='sigmoid'))
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer=SGD(lr=0.1),
+                  optimizer='adam',
                   metrics=['accuracy'])
 
     X = genfromtxt('./train_data/n100X.csv', delimiter=',')
@@ -36,16 +37,17 @@ def train():
 
     X, y = shuffle(X, y, random_state = 0)
 
-    X_train = X[0: 1000]
-    y_train = y[0: 1000]
+    X_train = X[5000:]
+    y_train = y[5000:]
+    X_cv = X[0: 5000]
+    y_cv = y[0: 5000]
 
-    model.fit(X[1000:], y[1000:], batch_size=128, nb_epoch=15)
+    model.fit(X_train, y_train, validation_data=(X_cv, y_cv), batch_size=128, nb_epoch=10)
 
-    print(model.predict(X_train))
-    print(model.evaluate(X_train, y_train))
+    print(model.evaluate(X_cv, y_cv))
 
-    model.save('SLModel.h5')
-    model.save_weights('SLModelWeights.h5')
+    model.save('MLPModel.h5')
+    model.save_weights('MLPModelWeights.h5')
 
 train()
 
