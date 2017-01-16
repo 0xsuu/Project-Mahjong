@@ -3,9 +3,10 @@
 BASEDIR=$(dirname "$0")
 cd "$BASEDIR"/
 
-if [ "$1" == "" ];
+if [ "$1" == "" ]; then
     echo "Please specify a number of player to generate."
     exit -1
+fi
     
 python3 TenhouDecoder.py $1
 
