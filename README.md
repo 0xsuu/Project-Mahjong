@@ -22,7 +22,8 @@ git clone https://github.com/al1enSuu/Project-Mahjong.git
 ### Mac
 + Supporting CMake 2.8+
 + Supporting Clang++ 800
-+ Supporting Python 3.7
++ Supporting Python 3.4+
++ Python 3.6 not supported for SimpleMahjong Python version.
 
 ### Windows
 - Not tested.
