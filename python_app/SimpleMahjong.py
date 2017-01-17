@@ -34,11 +34,17 @@ p2 = makeGreedyPlayer("BOT Greedy 2")
 #p2 = makeUserInputPlayer("Smart Human")
 #p3 = makeGreedyPlayer("BOT Greedy 3")
 slcnn = SLCNNPlayer.SLCNNPlayer("Bot SLCNN")
+#slcnn2 = SLCNNPlayer.SLCNNPlayer("Bot SLCNN")
+#slcnn3 = SLCNNPlayer.SLCNNPlayer("Bot SLCNN")
+#slcnn4 = SLCNNPlayer.SLCNNPlayer("Bot SLCNN")
+#p1 = makePythonPlayer(slcnn)
+#p2 = makePythonPlayer(slcnn2)
 p3 = makePythonPlayer(slcnn)
+#p4 = makePythonPlayer(slcnn4)
 SB = StupidPlayer("SB")
 p4 = makePythonPlayer(SB)
 
-game = SimpleGame(p1, p2, p3, p4, 1)
+game = SimpleGame(p1, p2, p3, p4, 1000)
 
 game.startGame()
 
