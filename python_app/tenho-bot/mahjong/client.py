@@ -8,8 +8,8 @@ class Client(object):
     id = ''
     position = 0
 
-    def __init__(self, table, use_previous_ai_version=False):
-        self.table = table
+    def __init__(self, use_previous_ai_version=False):
+        self.table = Table(use_previous_ai_version)
         self.statistics = Statistics()
         self.player = self.table.get_main_player()
 

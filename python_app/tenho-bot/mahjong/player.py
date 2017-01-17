@@ -58,8 +58,8 @@ class Player(object):
 
         from mahjong.myAI.SLCNNPlayer import SLCNNPlayer
         from mahjong.myAI.GreedyPlayer import GreedyAII
-        #self.ai = random.choice([MainAI(table, self), SLCNNPlayer(table, self)])
-        self.ai = SLCNNPlayer(table, self)
+        self.ai = random.choice([MainAI(table, self), SLCNNPlayer(table, self)])
+        #self.ai = SLCNNPlayer(table, self)
         #self.ai = GreedyAII(table, self)
         #from time import sleep
         #sleep(4)
