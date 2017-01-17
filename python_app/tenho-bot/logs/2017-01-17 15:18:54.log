@@ -1,0 +1,5 @@
+2017-01-17 15:18:54 INFO: Bot AI enabled: True
+2017-01-17 15:18:54 DEBUG: Send: <HELO name="123" tid="f0" sx="M" />
+2017-01-17 15:18:55 DEBUG: Get: <ERR code="1002"/> 
+2017-01-17 15:18:55 DEBUG: Send: <BYE />
+2017-01-17 15:18:55 INFO: End of the game

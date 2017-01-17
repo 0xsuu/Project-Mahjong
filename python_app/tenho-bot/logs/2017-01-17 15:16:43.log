@@ -1,0 +1,5 @@
+2017-01-17 15:16:43 INFO: Bot AI enabled: True
+2017-01-17 15:16:51 DEBUG: Send: <HELO name="NoName" tid="f0" sx="M" />
+2017-01-17 15:16:51 DEBUG: Get: 
+2017-01-17 15:16:51 DEBUG: Send: <BYE />
+2017-01-17 15:16:51 INFO: End of the game
