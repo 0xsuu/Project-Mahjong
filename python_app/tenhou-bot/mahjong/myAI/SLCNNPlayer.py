@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import sys
-sys.path.append("/home/hao/mahjong/build_mahjong")
-sys.path.append("/home/hao/mahjong/build_players")
-sys.path.append("/home/hao/mahjong/build_games")
+sys.path.append("../../../build_mahjong")
+sys.path.append("../../../build_players")
+sys.path.append("../../../build_games")
 from libmahjong import *
 from libplayers import *
 from libgames import *
@@ -33,8 +33,8 @@ class SLCNNPlayer(BaseAI):
 
     def __init__(self, table, player):
         super(SLCNNPlayer, self).__init__(table, player)
-        self.model = load_model("CNNModel.h5")
-        self.model.load_weights("CNNModelWeights.h5")
+        self.model = load_model("../CNNModel.h5")
+        self.model.load_weights("../CNNModelWeights.h5")
         self.shanten = Shanten()
 
     def discard_tile(self):
