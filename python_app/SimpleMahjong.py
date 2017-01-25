@@ -41,8 +41,9 @@ slcnn = SLCNNPlayer.SLCNNPlayer("Bot SLCNN")
 #p2 = makePythonPlayer(slcnn2)
 p3 = makePythonPlayer(slcnn)
 #p4 = makePythonPlayer(slcnn4)
-SB = StupidPlayer("SB")
-p4 = makePythonPlayer(SB)
+#SB = StupidPlayer("SB")
+#p4 = makePythonPlayer(SB)
+p4 = makeUserInputPlayer("Human")
 
 game = SimpleGame(p1, p2, p3, p4, 1000)
 
