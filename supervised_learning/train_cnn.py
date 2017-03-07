@@ -6,6 +6,7 @@ from keras.layers import Convolution2D, MaxPooling2D
 from keras.optimizers import SGD
 from keras.models import load_model
 from keras import backend as K
+from keras.callbacks import TensorBoard
 
 import numpy as np
 from numpy import genfromtxt
@@ -47,8 +48,8 @@ def train():
         model.load_weights("CNNModelWeights.h5")
 
     print("Loading Data...")
-    X = genfromtxt('./train_data/n4X.csv', delimiter=',')
-    y = genfromtxt('./train_data/n4y.csv', delimiter=',')
+    X = genfromtxt('./train_data/n100X.csv', delimiter=',')
+    y = genfromtxt('./train_data/n100y.csv', delimiter=',')
     print("Finished loading data.")
 
     X, y = shuffle(X, y, random_state = 0)
@@ -64,7 +65,11 @@ def train():
     X_train = X_train.reshape(X_train.shape[0], 1, 14, 8)
     X_cv = X_cv.reshape(X_cv.shape[0], 1, 14, 8)
 
-    model.fit(X_train, y_train, validation_data=(X_cv, y_cv), batch_size=128, nb_epoch=10)
+    tf_board_callback = TensorBoard(log_dir='./logs', \
+            histogram_freq=0, write_graph=True, write_images=True)
+
+    model.fit(X_train, y_train, validation_data = (X_cv, y_cv), \
+            callbacks = [tf_board_callback], batch_size = 128, nb_epoch = 10)
 
     print(model.evaluate(X_cv, y_cv))
 
