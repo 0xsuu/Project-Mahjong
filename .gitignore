@@ -8,4 +8,5 @@ __pycache__
 *.swp
 n*.csv
 python_app/tenhou-bot/logs
+supervised_learning/logs
 
