@@ -29,7 +29,7 @@ python3 main.py
 ### Linux
 + Supporting CMake 2.8+
 + Supporting Clang++ 3.7+
-+ Supporting Python 2.7/3.4 (Set version in build_mahjong.sh)
++ Supporting Python 3.4/3.5
 + Supporting boost::python 1.54
 
 ### Mac
