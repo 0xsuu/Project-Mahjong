@@ -258,6 +258,9 @@ void Board::finishRound(Result result, Player *winner, vector<int> pointVariants
 #endif
 
     mGame->onRoundFinished(result == Ryuukyoku, winner);
+    std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *p) {
+        p->onRoundFinished(result == Ryuukyoku, winner);
+    });
 }
 
 vector<int> Board::calculatePoints(Result result, Player *player, int loserIndex) {

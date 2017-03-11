@@ -54,6 +54,10 @@ class Player {
 
     virtual Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) = 0;
 
+    void onRoundFinished(bool drained, Player *winner) {
+
+    }
+
     // Accessors.
     int getID() { return mID; }
     std::string getPlayerName() { return mPlayerName; }

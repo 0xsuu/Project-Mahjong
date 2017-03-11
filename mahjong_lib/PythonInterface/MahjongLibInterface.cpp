@@ -107,6 +107,7 @@ BOOST_PYTHON_MODULE(libmahjong) {
                           init<std::string>())
             .def("onTurn", &PlayerWrapper::onTurn)
             .def("onOtherPlayerMakeAction", &PlayerWrapper::onOtherPlayerMakeAction)
+            .def("onRoundFinished", &PlayerWrapper::onRoundFinished)
             .def("getPlayerName", &PlayerWrapper::getPlayerName)
             .def("getHand", &PlayerWrapper::getHand)
             .def("getID", &PlayerWrapper::getID)
