@@ -40,20 +40,25 @@ class Player:
         assert name != ""
         self.name = name
         self.hand = np.array([])
+        self.turn_count = 0
+        self.average_turn = 0
+        self.rounds_won = 0
 
     def initial_hand_obtained(self):
-        pass
+        self.turn_count = 0
 
     def tile_picked(self):
-        pass
+        self.turn_count += 1
 
     def game_ends(self, win, drain=False):
-        pass
+        if win:
+            self.rounds_won += 1
+            self.average_turn += 1/self.rounds_won * (self.turn_count - self.average_turn)
 
-    def test_win(self):
-        for i in range(len(self.hand)-1):
-            if self.hand[i] == self.hand[i+1]:
-                copy_hand = np.copy(self.hand)
+    def test_win(self, hand):
+        for i in range(len(hand)-1):
+            if self.hand[i] == hand[i+1]:
+                copy_hand = np.copy(hand)
                 copy_hand = np.delete(copy_hand, [i, i+1])
                 if (copy_hand[0] <= 9 and copy_hand[1] <= 9 and copy_hand[2] <= 9) or \
                         (copy_hand[0] > 9 and copy_hand[1] > 9 and copy_hand[2] > 9):
@@ -110,6 +115,8 @@ class Game:
             self.tiles = np.delete(self.tiles, 0)
             action, index = self.current_player.tile_picked()
             if action == WIN:
+                self.current_player.hand = \
+                    np.delete(self.current_player.hand, index)
                 self.current_player.game_ends(True)
                 self.next_player().game_ends(False)
                 return self.current_player.name
@@ -128,5 +135,7 @@ class Game:
             print("Current Round:", self.current_round)
             counter[self.play_round()] += 1
             self.current_round += 1
-        print(self.player1.name + "'s win rate: " + str(counter[self.player1.name] / self.round_count) + "%")
-        print(self.player2.name + "'s win rate: " + str(counter[self.player2.name] / self.round_count) + "%")
+        print(self.player1.name + "'s win rate: " + str(counter[self.player1.name] / self.round_count * 100) + "%" +
+              ", average turn to win: " + str(self.player1.average_turn))
+        print(self.player2.name + "'s win rate: " + str(counter[self.player2.name] / self.round_count * 100) + "%" +
+              ", average turn to win: " + str(self.player2.average_turn))

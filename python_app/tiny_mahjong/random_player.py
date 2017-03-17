@@ -19,7 +19,8 @@ from game import *
 
 class RandomPlayer(Player):
     def tile_picked(self):
-        if self.test_win():
-            return WIN, -1
-        else:
-            return DISCARD, random.choice([0, 1, 2, 3, 4, 5])
+        Player.tile_picked(self)
+        for i in range(5):
+            if self.test_win(np.delete(self.hand, i)):
+                return WIN, i
+        return DISCARD, random.choice([0, 1, 2, 3, 4, 5])

@@ -28,8 +28,8 @@ def get_combinations():
             for i2 in range(i1, 19):
                 for i3 in range(i2, 19):
                     for i4 in range(i3, 19):
-                        if i0 == i1 and i1==i2 and i2==i3 and i3==i4:
+                        if i0 == i1 and i1 == i2 and i2 == i3 and i3 == i4:
                             continue
                         else:
-                            combinations.append([i0,i1,i2,i3,i4])
+                            combinations.append([i0, i1, i2, i3, i4])
     return combinations
