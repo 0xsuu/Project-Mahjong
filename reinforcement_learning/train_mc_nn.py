@@ -41,7 +41,7 @@ class MCNNPlayer(Player):
 
             handData = this.getHand().getData()
             it = int(self.model.predict_classes(transformCSVHandToCNNMatrix(expandHandToCSV(handData)), verbose = 0)[0]);
-            #print("Choosing... " + handData[0].getPrintable())
+            #print("Choosing... " + handData[it].getPrintable())
 
             return Action(ActionState.Discard, handData[it])
         else:

@@ -29,6 +29,13 @@ class StupidPlayer(Player):
     def onOtherPlayerMakeAction(self, playerID, playerName, action):
         return Action()
 
+class SimpleGameTrain(SimpleGame):
+    def __init__(self, p1, p2, p3, p4, round):
+        super(SimpleGameTrain, self).__init__(p1, p2, p3, p4, round)
+    def onPlayerDiscardTile(self, player, tile):
+        print("Fuck")
+        print(player)
+
 p1 = makeGreedyPlayer("BOT Greedy 1")
 p2 = makeGreedyPlayer("BOT Greedy 2")
 #p2 = makeUserInputPlayer("Smart Human")
@@ -45,7 +52,7 @@ p4 = makePythonPlayer(mcnn)
 #p4 = makePythonPlayer(SB)
 #p4 = makeUserInputPlayer("Human")
 
-game = SimpleGame(p1, p2, p3, p4, 1)
+game = SimpleGameTrain(p1, p2, p3, p4, 1)
 
 game.startGame()
 
