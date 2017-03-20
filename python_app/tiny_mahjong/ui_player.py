@@ -26,7 +26,7 @@ class UserInputPlayer(Player):
             else:
                 print("B" + str(int(i - 9)), end="\t")
         print()
-        if self.test_win(self.hand):
+        if self.test_win():
             print("You won!")
             return WIN, -1
         print("0\t1\t2\t3\t4")

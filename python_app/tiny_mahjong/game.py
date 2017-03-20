@@ -57,10 +57,10 @@ class Player:
             self.rounds_won += 1
             self.average_turn += 1/self.rounds_won * (self.turn_count - self.average_turn)
 
-    def test_win(self, hand):
-        for i in range(len(hand)-1):
-            if self.hand[i] == hand[i+1]:
-                copy_hand = np.copy(hand)
+    def test_win(self):
+        for i in range(len(self.hand)-1):
+            if self.hand[i] == self.hand[i+1]:
+                copy_hand = np.copy(self.hand)
                 copy_hand = np.delete(copy_hand, [i, i+1])
                 if (copy_hand[0] <= 9 and copy_hand[1] <= 9 and copy_hand[2] <= 9) or \
                         (copy_hand[0] > 9 and copy_hand[1] > 9 and copy_hand[2] > 9):
@@ -78,9 +78,8 @@ class Player:
 
 
 class Game:
-    def __init__(self, round_count, player1, player2):
-        self.player1 = player1
-        self.player2 = player2
+    def __init__(self, round_count, players):
+        self.players = players
         self.round_count = round_count
         self.current_round = 0
         self.tiles = None
@@ -89,26 +88,24 @@ class Game:
 
     def setup(self):
         self.tiles = shuffle(np.copy(TILE_SET))
-        self.start_player = random.choice([self.player1, self.player2])
+        self.start_player = random.choice(self.players)
         self.current_player = self.start_player
 
-        self.player1.hand = np.array([])
-        self.player2.hand = np.array([])
+        for player in self.players:
+            player.hand = np.array([])
         for i in range(4):
-            self.player1.hand = np.append(self.player1.hand, self.tiles[0])
-            self.tiles = np.delete(self.tiles, 0)
-            self.player2.hand = np.append(self.player2.hand, self.tiles[0])
-            self.tiles = np.delete(self.tiles, 0)
-        self.player1.sort_hand()
-        self.player2.sort_hand()
-        self.player1.initial_hand_obtained()
-        self.player2.initial_hand_obtained()
+            for player in self.players:
+                player.hand = np.append(player.hand, self.tiles[0])
+                self.tiles = np.delete(self.tiles, 0)
+        for player in self.players:
+            player.sort_hand()
+            player.initial_hand_obtained()
 
     def next_player(self):
-        if self.current_player == self.player1:
-            return self.player2
-        else:
-            return self.player1
+        index = self.players.index(self.current_player)
+        if index >= len(self.players):
+            index = 0
+        return self.players[index]
 
     def play_round(self):
         self.setup()
@@ -126,18 +123,19 @@ class Game:
                 self.current_player.hand = \
                     np.delete(self.current_player.hand, index)
             if len(self.tiles) == 0:
-                self.player1.game_ends(False, drain=True)
-                self.player2.game_ends(False, drain=True)
+                for player in self.players:
+                    player.game_ends(False, drain=True)
                 return ""
             self.current_player = self.next_player()
 
     def play(self):
-        counter = {self.player1.name: 0, self.player2.name: 0, "": 0}
+        counter = {"": 0}
+        for player in self.players:
+            counter[player.name] = 0
         for i in range(self.round_count):
             print("Current Round:", self.current_round)
             counter[self.play_round()] += 1
             self.current_round += 1
-        print(self.player1.name + "'s win rate: " + str(counter[self.player1.name] / self.round_count * 100) + "%" +
-              ", average turn to win: " + str(self.player1.average_turn))
-        print(self.player2.name + "'s win rate: " + str(counter[self.player2.name] / self.round_count * 100) + "%" +
-              ", average turn to win: " + str(self.player2.average_turn))
+        for player in self.players:
+            print(player.name + "'s win rate: " + str(counter[player.name] / self.round_count * 100) + "%" +
+                  ", average turn to win: " + str(player.average_turn))

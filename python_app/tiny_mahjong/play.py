@@ -21,9 +21,11 @@ from ui_player import *
 
 def main():
     player1 = ADFTPlayer("ADFT BOT 1")
-    player2 = UserInputPlayer("Random 2")
+    player2 = RandomPlayer("Random BOT 1")
+    player3 = RandomPlayer("Random BOT 2")
+    player4 = ADFTPlayer("ADFT BOT 2")
 
-    game = Game(5, player1, player2)
+    game = Game(1000, [player1, player2, player3, player4])
     game.play()
 
 
