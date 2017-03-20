@@ -18,7 +18,7 @@
 
 
 import numpy as np
-import random
+import numpy.random as random
 from sklearn.utils import shuffle
 
 TILE_SET = np.array(
@@ -88,7 +88,7 @@ class Game:
         self.current_player = None
 
     def setup(self):
-        self.tiles = shuffle(np.copy(TILE_SET), random_state=0)
+        self.tiles = shuffle(np.copy(TILE_SET))
         self.start_player = random.choice([self.player1, self.player2])
         self.current_player = self.start_player
 
