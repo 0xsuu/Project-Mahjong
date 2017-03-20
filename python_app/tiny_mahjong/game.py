@@ -72,7 +72,7 @@ class Player:
         return False
 
     def test_win(self):
-        self.test_win_hand(self.hand)
+        return self.test_win_hand(self.hand)
 
     def insert(self, tile):
         self.hand = np.append(self.hand, tile)
@@ -103,13 +103,11 @@ class Game:
         self.round_count = round_count
         self.current_round = 0
         self.tiles = None
-        self.start_player = None
         self.current_player = None
 
     def setup(self):
         self.tiles = shuffle(np.copy(TILE_SET))
-        self.start_player = random.choice(self.players)
-        self.current_player = self.start_player
+        self.current_player = random.choice(self.players)
 
         for player in self.players:
             player.set_game(self)
@@ -123,7 +121,7 @@ class Game:
             player.initial_hand_obtained()
 
     def _next_player(self):
-        index = self.players.index(self.current_player)
+        index = self.players.index(self.current_player) + 1
         if index >= len(self.players):
             index = 0
         return self.players[index]

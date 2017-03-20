@@ -34,8 +34,7 @@ class MCPlayer(Player):
         Player.__init__(self, name)
         self.mode = mode
         if os.path.isfile(MC_VALUES_FILE):
-            self.values = \
-                np.column_stack((np.array([[0]] * COMBINATIONS_SIZE), np.loadtxt("mc_values.txt")))
+            self.values = np.loadtxt("mc_values.txt")
         else:
             self.values = np.array([[0, 0]] * COMBINATIONS_SIZE)
         self.current_episode = 0
@@ -100,5 +99,5 @@ class MCPlayer(Player):
             self.values[index][1] += occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
         if self.current_episode % 10 == 0:
             print("Finished", self.current_episode, "episodes.")
-            print("State Coverage:", str(len(np.argwhere(self.values[:, 0] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
-            np.savetxt(MC_VALUES_FILE, self.values[:, 1], fmt='%f')
+            print("State Coverage:", str(len(np.argwhere(self.values[:, 1] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
+            np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
