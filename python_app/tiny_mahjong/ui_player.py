@@ -34,6 +34,6 @@ class UserInputPlayer(Player):
         return DISCARD, choice
 
     def game_ends(self, win, drain=False):
-        Player.game_ends(self, win)
+        Player.game_ends(self, win, drain)
         if not win:
             print("Lose.")

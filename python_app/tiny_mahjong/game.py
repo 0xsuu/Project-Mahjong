@@ -43,6 +43,7 @@ class Player:
         self.turn_count = 0
         self.average_turn = 0
         self.rounds_won = 0
+        self.__game = None
 
     def initial_hand_obtained(self):
         assert len(self.hand) == 4
@@ -57,10 +58,11 @@ class Player:
             self.rounds_won += 1
             self.average_turn += 1/self.rounds_won * (self.turn_count - self.average_turn)
 
-    def test_win(self):
-        for i in range(len(self.hand)-1):
-            if self.hand[i] == self.hand[i+1]:
-                copy_hand = np.copy(self.hand)
+    @staticmethod
+    def test_win_hand(hand):
+        for i in range(len(hand)-1):
+            if hand[i] == hand[i+1]:
+                copy_hand = np.copy(hand)
                 copy_hand = np.delete(copy_hand, [i, i+1])
                 if (copy_hand[0] <= 9 and copy_hand[1] <= 9 and copy_hand[2] <= 9) or \
                         (copy_hand[0] > 9 and copy_hand[1] > 9 and copy_hand[2] > 9):
@@ -69,12 +71,30 @@ class Player:
                                 return True
         return False
 
+    def test_win(self):
+        self.test_win_hand(self.hand)
+
     def insert(self, tile):
         self.hand = np.append(self.hand, tile)
         self.sort_hand()
 
     def sort_hand(self):
         self.hand = np.sort(self.hand)
+
+    def set_game(self, game):
+        self.__game = game
+
+    def has_tile_in_stack(self, tile):
+        return len(np.argwhere(self.__game.tiles == tile))
+
+    def get_remaining_tiles(self):
+        return len(self.__game.tiles)
+
+    def get_pick_tile_probability(self, tile):
+        if self.get_remaining_tiles() != 0:
+            return self.has_tile_in_stack(tile) / self.get_remaining_tiles()
+        else:
+            return 0
 
 
 class Game:
@@ -92,6 +112,7 @@ class Game:
         self.current_player = self.start_player
 
         for player in self.players:
+            player.set_game(self)
             player.hand = np.array([])
         for i in range(4):
             for player in self.players:
@@ -101,7 +122,7 @@ class Game:
             player.sort_hand()
             player.initial_hand_obtained()
 
-    def next_player(self):
+    def _next_player(self):
         index = self.players.index(self.current_player)
         if index >= len(self.players):
             index = 0
@@ -116,17 +137,24 @@ class Game:
             if action == WIN:
                 self.current_player.hand = \
                     np.delete(self.current_player.hand, index)
-                self.current_player.game_ends(True)
-                self.next_player().game_ends(False)
+                for player in self.players:
+                    if player == self.current_player:
+                        player.game_ends(True)
+                    else:
+                        player.game_ends(False)
                 return self.current_player.name
             elif action == DISCARD:
                 self.current_player.hand = \
                     np.delete(self.current_player.hand, index)
+            else:
+                raise ValueError("Unknown action")
+
             if len(self.tiles) == 0:
                 for player in self.players:
                     player.game_ends(False, drain=True)
                 return ""
-            self.current_player = self.next_player()
+            else:
+                self.current_player = self._next_player()
 
     def play(self):
         counter = {"": 0}

@@ -13,3 +13,11 @@ test_player.hand = np.array([1, 1, 1, 2, 3])
 assert test_player.test_win()
 test_player.hand = np.array([9, 9, 9, 10, 11])
 assert not test_player.test_win()
+
+test_game = Game(1, [test_player])
+test_game.setup()
+assert test_player.get_remaining_tiles() == 72 - 4
+total_probability = 0.0
+for i in range(1, 19):
+    total_probability += test_player.get_pick_tile_probability(i)
+assert total_probability == 1.0
