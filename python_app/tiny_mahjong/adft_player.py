@@ -20,7 +20,6 @@ from game import *
 class ADFTPlayer(Player):
     def tile_picked(self):
         Player.tile_picked(self)
-        for i in range(5):
-            if self.test_win(np.delete(self.hand, i)):
-                return WIN, i
+        if self.test_win(self.hand):
+            return WIN, -1
         return DISCARD, 0

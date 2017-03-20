@@ -14,18 +14,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from adft_player import *
-from random_player import *
-from ui_player import *
+from game import *
 
 
-def main():
-    player1 = ADFTPlayer("ADFT BOT 1")
-    player2 = UserInputPlayer("Random 2")
-
-    game = Game(5, player1, player2)
-    game.play()
-
-
-if __name__ == "__main__":
-    main()
+class UserInputPlayer(Player):
+    def tile_picked(self):
+        Player.tile_picked(self)
+        for i in self.hand:
+            if i <= 9:
+                print("A" + str(int(i)), end="\t")
+            else:
+                print("B" + str(int(i - 9)), end="\t")
+        print()
+        if self.test_win(self.hand):
+            print("You won!")
+            return WIN, -1
+        print("0\t1\t2\t3\t4")
+        choice = input(":")
+        return DISCARD, choice

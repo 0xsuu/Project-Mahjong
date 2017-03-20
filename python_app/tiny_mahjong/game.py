@@ -45,9 +45,11 @@ class Player:
         self.rounds_won = 0
 
     def initial_hand_obtained(self):
+        assert len(self.hand) == 4
         self.turn_count = 0
 
     def tile_picked(self):
+        assert len(self.hand) == 5
         self.turn_count += 1
 
     def game_ends(self, win, drain=False):
@@ -92,7 +94,7 @@ class Game:
 
         self.player1.hand = np.array([])
         self.player2.hand = np.array([])
-        for i in range(5):
+        for i in range(4):
             self.player1.hand = np.append(self.player1.hand, self.tiles[0])
             self.tiles = np.delete(self.tiles, 0)
             self.player2.hand = np.append(self.player2.hand, self.tiles[0])
