@@ -32,3 +32,8 @@ class UserInputPlayer(Player):
         print("0\t1\t2\t3\t4")
         choice = input(":")
         return DISCARD, choice
+
+    def game_ends(self, win, drain=False):
+        Player.game_ends(self, win)
+        if not win:
+            print("Lose.")
