@@ -49,7 +49,7 @@ class MCPlayer(Player):
         return self.values[self._get_hand_index(hand.tolist())][1]
 
     def _epsilon_greedy_choose(self):
-        if np.random.uniform(0, 1.0, 1)[0] < EPSILON:
+        if np.random.uniform(0, 1.0, 1)[0] < EPSILON and self.mode == TRAIN:
             return int(np.random.uniform(0, 5.0, 1)[0])
         else:
             q_values = [0.0, 0.0, 0.0, 0.0, 0.0]
@@ -90,14 +90,16 @@ class MCPlayer(Player):
 
     def game_ends(self, win, drain=False):
         Player.game_ends(self, win, drain)
-        for visited_hand_tuple in self.hand_tuple_visits:
-            index = self._get_hand_index(list(visited_hand_tuple))
-            last_count = self.values[index][0]
-            last_average = self.values[index][1]
-            occurrence_count = self.hand_tuple_visits[visited_hand_tuple]
-            self.values[index][0] += occurrence_count
-            self.values[index][1] += occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
-        if self.current_episode % 10 == 0:
-            print("Finished", self.current_episode, "episodes.")
-            print("State Coverage:", str(len(np.argwhere(self.values[:, 1] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
-            np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
+        if self.mode == TRAIN:
+            for visited_hand_tuple in self.hand_tuple_visits:
+                index = self._get_hand_index(list(visited_hand_tuple))
+                last_count = self.values[index][0]
+                last_average = self.values[index][1]
+                occurrence_count = self.hand_tuple_visits[visited_hand_tuple]
+                self.values[index][0] += occurrence_count
+                self.values[index][1] += occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
+            if self.current_episode % 10 == 0:
+                print("Finished", self.current_episode, "episodes.")
+                print("State Coverage:", str(len(np.argwhere(self.values[:, 1] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
+                print("Error since last save:", sum((np.loadtxt("mc_values.txt") - self.values)[:, 1] ** 2))
+                np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')

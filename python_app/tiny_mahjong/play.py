@@ -26,7 +26,7 @@ def main():
     player3 = RandomPlayer("Random BOT 2")
     player4 = MCPlayer("MC BOT 2", TRAIN)
 
-    game = Game(1000, [player1, player2, player3, player4])
+    game = Game(5000, [player1, player2, player3, player4])
     game.play()
 
 
