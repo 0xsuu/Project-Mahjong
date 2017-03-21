@@ -14,9 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from utils.combination_calculator import get_combinations
 from game import *
 import os.path
+import pymp
+from utils.combination_calculator import get_combinations
 
 TRAIN = 100
 PLAY = 200
@@ -52,21 +53,23 @@ class MCPlayer(Player):
         if np.random.uniform(0, 1.0, 1)[0] < EPSILON and self.mode == TRAIN:
             return int(np.random.uniform(0, 5.0, 1)[0])
         else:
-            q_values = [0.0, 0.0, 0.0, 0.0, 0.0]
-            for i in range(5):
-                discarded_hand = np.delete(self.hand, i)
-                max_reward = DISCARD_REWARD
-                for picked_tile in range(1, 19):
-                    if not self.has_tile_in_stack(picked_tile):
-                        continue
-                    picked_hand = np.append(discarded_hand, picked_tile)
-                    picked_hand.sort()
-                    if self.test_win_hand(picked_hand):
-                        max_reward = WIN_REWARD
-                    q_values[i] += self.get_pick_tile_probability(picked_tile) * \
-                        self._get_hand_value(picked_hand)
-                q_values[i] += max_reward
-            # Choose the maximum Q's index as a policy.
+            q_values = pymp.shared.array((5, ), dtype="float16")
+            with pymp.Parallel(5) as p:
+                for i in p.range(5):
+                    discarded_hand = np.delete(self.hand, i)
+                    max_reward = DISCARD_REWARD
+                    for picked_tile in range(1, 19):
+                        if not self.has_tile_in_stack(picked_tile):
+                            continue
+                        picked_hand = np.append(discarded_hand, picked_tile)
+                        picked_hand.sort()
+                        if self.test_win_hand(picked_hand):
+                            max_reward = WIN_REWARD
+                        q_values[i] += self.get_pick_tile_probability(picked_tile) * \
+                            self._get_hand_value(picked_hand)
+                    q_values[i] += max_reward
+                # Choose the maximum Q's index as a policy.
+
             return np.random.choice(np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))
 
     def initial_hand_obtained(self):
