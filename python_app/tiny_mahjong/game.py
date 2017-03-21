@@ -159,7 +159,7 @@ class Game:
         for player in self.players:
             counter[player.name] = 0
         for i in range(self.round_count):
-            print("Current Round:", self.current_round)
+            # print("Current Round:", self.current_round)
             counter[self.play_round()] += 1
             self.current_round += 1
         for player in self.players:
