@@ -21,6 +21,7 @@ from utils.combination_calculator import get_combinations
 
 TRAIN = 100
 PLAY = 200
+EVAL = 300
 ALL_COMBINATIONS = get_combinations()
 COMBINATIONS_SIZE = len(ALL_COMBINATIONS)
 MC_VALUES_FILE = "mc_values.txt"
@@ -100,10 +101,20 @@ class MCPlayer(Player):
             occurrence_count = self.hand_tuple_visits[visited_hand_tuple]
             self.values[index][0] += occurrence_count
             self.values[index][1] += occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
-        if self.current_episode % 10 == 0:
-            if self.mode == TRAIN:
+        if self.mode == TRAIN:
+            if self.current_episode % 10 == 0:
                 print("Finished", self.current_episode, "episodes.")
                 print("State Coverage:",
-                      str(len(np.argwhere(self.values[:, 1] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
+                      str(len(np.argwhere(self.values[:, 0] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
                 print("Error since last save:", sum((np.loadtxt("mc_values.txt") - self.values)[:, 1] ** 2))
+                np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
+        elif self.mode == PLAY:
+            print(self.name + ":")
+            old_values = np.loadtxt("mc_values.txt")
+            state_increase = len(np.argwhere(self.values[:, 0] != 0)) - len(np.argwhere(old_values[:, 0] != 0))
+            if state_increase > 0:
+                print("New states:", state_increase)
+            print("Value adjustment error:", sum((old_values[:, 1] - self.values[:, 1]) ** 2))
             np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
+        elif self.mode == EVAL:
+            print("Win rate:", str(self.rounds_won * 100.0 / self.current_episode) + "%")
