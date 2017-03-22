@@ -22,6 +22,7 @@ from utils.combination_calculator import get_combinations
 TRAIN = 100
 PLAY = 200
 EVAL = 300
+DEBUG = 400
 ALL_COMBINATIONS = get_combinations()
 COMBINATIONS_SIZE = len(ALL_COMBINATIONS)
 MC_VALUES_FILE = "mc_values.txt"
@@ -34,7 +35,7 @@ DISCARD_REWARD = -1
 class MCPlayer(Player):
     def __init__(self, name, mode):
         Player.__init__(self, name)
-        self.mode = mode
+        self._mode = mode
         if os.path.isfile(MC_VALUES_FILE):
             self.values = np.loadtxt("mc_values.txt")
         else:
@@ -51,7 +52,7 @@ class MCPlayer(Player):
         return self.values[self._get_hand_index(hand.tolist())][1]
 
     def _epsilon_greedy_choose(self):
-        if np.random.uniform(0, 1.0, 1)[0] < EPSILON and self.mode == TRAIN:
+        if np.random.uniform(0, 1.0, 1)[0] < EPSILON and self._mode == TRAIN:
             return int(np.random.uniform(0, 5.0, 1)[0])
         else:
             q_values = pymp.shared.array((5, ), dtype="float16")
@@ -69,9 +70,21 @@ class MCPlayer(Player):
                         q_values[i] += self.get_pick_tile_probability(picked_tile) * \
                             self._get_hand_value(picked_hand)
                     q_values[i] += max_reward
-                # Choose the maximum Q's index as a policy.
-
-            return np.random.choice(np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))
+            # Choose the maximum Q's index as a policy.
+            choice = np.random.choice(np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))
+            if self._mode == DEBUG:
+                print(self.name)
+                print("Hand    : ", end="")
+                for i in self.hand:
+                    if i <= 9:
+                        print("A" + str(int(i)), end="  ")
+                    else:
+                        print("B" + str(int(i - 9)), end="  ")
+                print()
+                print("Current value:", self._get_hand_value(self.hand))
+                print("Q values:", q_values, "\ndiscarding", choice)
+                print()
+            return choice
 
     def initial_hand_obtained(self):
         Player.initial_hand_obtained(self)
@@ -101,14 +114,14 @@ class MCPlayer(Player):
             occurrence_count = self.hand_tuple_visits[visited_hand_tuple]
             self.values[index][0] += occurrence_count
             self.values[index][1] += occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
-        if self.mode == TRAIN:
+        if self._mode == TRAIN:
             if self.current_episode % 10 == 0:
                 print("Finished", self.current_episode, "episodes.")
                 print("State Coverage:",
                       str(len(np.argwhere(self.values[:, 0] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
                 print("Error since last save:", sum((np.loadtxt("mc_values.txt") - self.values)[:, 1] ** 2))
                 np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
-        elif self.mode == PLAY:
+        elif self._mode == PLAY:
             print(self.name + ":")
             old_values = np.loadtxt("mc_values.txt")
             state_increase = len(np.argwhere(self.values[:, 0] != 0)) - len(np.argwhere(old_values[:, 0] != 0))
@@ -116,5 +129,8 @@ class MCPlayer(Player):
                 print("New states:", state_increase)
             print("Value adjustment error:", sum((old_values[:, 1] - self.values[:, 1]) ** 2))
             np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
-        elif self.mode == EVAL:
+        elif self._mode == EVAL:
             print("Win rate:", str(self.rounds_won * 100.0 / self.current_episode) + "%")
+        elif self._mode == DEBUG:
+            if win:
+                print(self.name, "won!")
