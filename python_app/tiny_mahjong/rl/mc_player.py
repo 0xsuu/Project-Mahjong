@@ -130,6 +130,7 @@ class MCPlayer(Player):
             print("Value adjustment error:", sum((old_values[:, 1] - self.values[:, 1]) ** 2))
             np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
         elif self._mode == EVAL:
+            print(self.name + ":")
             print("Win rate:", str(self.rounds_won * 100.0 / self.current_episode) + "%")
         elif self._mode == DEBUG:
             if win:
