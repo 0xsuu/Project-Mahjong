@@ -20,7 +20,9 @@ import numpy as np
 
 def main():
     values = np.loadtxt("mc_values.txt")
-    plt.hist(values[:, 0], bins=range(0, len(values[:, 0]) + 1, 1))
+    figures = values[:, 0]
+    indexes = np.arange(len(figures))
+    plt.bar(indexes + 0.1, figures)
     plt.title("State Frequency Histogram")
     plt.xlabel("State NO.")
     plt.ylabel("Frequency")
