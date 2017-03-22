@@ -20,10 +20,29 @@ import numpy as np
 
 def main():
     values = np.loadtxt("mc_values.txt")
+    draw_state_frequency(values)
+
+
+def draw_state_frequency_percentage(values):
+    max_frequency = 200
+    figures = values[:, 0]
+    indexes = np.arange(max_frequency)
+    percentages = []
+    for i in range(max_frequency):
+        percentages.append(len(np.argwhere(figures > i)) / len(figures) * 100)
+    plt.bar(indexes + 0.1, percentages)
+    plt.title("State Frequency Percentage")
+    plt.xlabel("State Frequency")
+    plt.ylabel("Percentage")
+
+    plt.show()
+
+
+def draw_state_frequency(values):
     figures = values[:, 0]
     indexes = np.arange(len(figures))
     plt.bar(indexes + 0.1, figures)
-    plt.title("State Frequency Histogram")
+    plt.title("State Frequency")
     plt.xlabel("State NO.")
     plt.ylabel("Frequency")
 
