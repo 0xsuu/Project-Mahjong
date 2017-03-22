@@ -93,16 +93,17 @@ class MCPlayer(Player):
 
     def game_ends(self, win, drain=False):
         Player.game_ends(self, win, drain)
-        if self.mode == TRAIN:
-            for visited_hand_tuple in self.hand_tuple_visits:
-                index = self._get_hand_index(list(visited_hand_tuple))
-                last_count = self.values[index][0]
-                last_average = self.values[index][1]
-                occurrence_count = self.hand_tuple_visits[visited_hand_tuple]
-                self.values[index][0] += occurrence_count
-                self.values[index][1] += occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
-            if self.current_episode % 10 == 0:
+        for visited_hand_tuple in self.hand_tuple_visits:
+            index = self._get_hand_index(list(visited_hand_tuple))
+            last_count = self.values[index][0]
+            last_average = self.values[index][1]
+            occurrence_count = self.hand_tuple_visits[visited_hand_tuple]
+            self.values[index][0] += occurrence_count
+            self.values[index][1] += occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
+        if self.current_episode % 10 == 0:
+            if self.mode == TRAIN:
                 print("Finished", self.current_episode, "episodes.")
-                print("State Coverage:", str(len(np.argwhere(self.values[:, 1] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
+                print("State Coverage:",
+                      str(len(np.argwhere(self.values[:, 1] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
                 print("Error since last save:", sum((np.loadtxt("mc_values.txt") - self.values)[:, 1] ** 2))
-                np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
+            np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
