@@ -22,7 +22,6 @@ from keras.models import load_model
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
 from keras import backend as K
-from keras.callbacks import TensorBoard
 
 TRAIN = 100
 PLAY = 200
@@ -45,6 +44,7 @@ class MCNNPlayer(Player):
             self._model.load_weights(MCNN_WEIGHTS_FILE)
         else:
             self._model = self._create_keras_model()
+            self._model.save(MCNN_MODEL_FILE)
 
         self.current_episode = 0
         self.hand_tuple_visits = {}
@@ -160,7 +160,6 @@ class MCNNPlayer(Player):
                 self._model.fit(input_set, output_true_set, batch_size=2, nb_epoch=10, verbose=0)
             if self.current_episode % 10 == 0:
                 print("Finished", self.current_episode, "episodes.")
-                self._model.save(MCNN_MODEL_FILE)
                 self._model.save_weights(MCNN_WEIGHTS_FILE)
 
         elif self._mode == PLAY:
