@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import numpy as np
-
 from game import *
 
 test_player = Player("test")
