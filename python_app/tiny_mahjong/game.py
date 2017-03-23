@@ -168,3 +168,4 @@ class Game:
             print(player.name + "'s win rate: " +
                   str(counter[player.name] / self.round_count * 100) + "%" +
                   ", average turn to win: " + str(player.average_turn))
+        print("Drain rate: " + str(counter[""] * 100.0 / self.round_count) + "%")
