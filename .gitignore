@@ -9,4 +9,5 @@ __pycache__
 n*.csv
 python_app/tenhou-bot/logs
 supervised_learning/logs
+*.pyc
 
