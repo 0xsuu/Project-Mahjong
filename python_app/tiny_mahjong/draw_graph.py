@@ -20,7 +20,7 @@ import numpy as np
 
 def main():
     values = np.loadtxt("mc_values.txt")
-    draw_state_frequency(values)
+    draw_state_frequency_percentage(values)
 
 
 def draw_state_frequency_percentage(values):

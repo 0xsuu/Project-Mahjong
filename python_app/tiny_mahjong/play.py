@@ -17,16 +17,17 @@
 from adft_player import *
 from random_player import *
 from ui_player import *
+from rl.mcnn_player import *
 from rl.mc_player import *
 
 
 def main():
-    player1 = ADFTPlayer("ADFT BOT 1")
-    player2 = RandomPlayer("Random BOT 1")
-    player3 = RandomPlayer("Random BOT 2")
-    player4 = MCPlayer("MC BOT 2", TRAIN)
+    player1 = MCNNPlayer("MCNN BOT 2", DEBUG)
+    player2 = MCNNPlayer("MCNN BOT 1", DEBUG)
+    player3 = MCPlayer("MC BOT 2", DEBUG)
+    player4 = MCPlayer("MC BOT 1", DEBUG)
 
-    game = Game(5000, [player1, player2, player3, player4])
+    game = Game(1, [player1, player2, player3, player4])
     game.play()
 
 
