@@ -106,7 +106,8 @@ class MCNNPlayer(Player):
                         self._get_hand_value(picked_hand)
                 q_values[i] += max_reward
             # Choose the maximum Q's index as a policy.
-            choice = np.random.choice(np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))
+            choice = np.random.choice(
+                np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))
             if self._mode == DEBUG:
                 print(self.name)
                 print("Hand    : ", end="")

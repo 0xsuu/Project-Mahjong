@@ -71,7 +71,8 @@ class MCPlayer(Player):
                             self._get_hand_value(picked_hand)
                     q_values[i] += max_reward
             # Choose the maximum Q's index as a policy.
-            choice = np.random.choice(np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))
+            choice = np.random.choice(
+                np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))
             if self._mode == DEBUG:
                 print(self.name)
                 print("Hand    : ", end="")
@@ -113,18 +114,21 @@ class MCPlayer(Player):
             last_average = self.values[index][1]
             occurrence_count = self.hand_tuple_visits[visited_hand_tuple]
             self.values[index][0] += occurrence_count
-            self.values[index][1] += occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
+            self.values[index][1] +=\
+                occurrence_count / (last_count + occurrence_count) * (self.gain - last_average)
         if self._mode == TRAIN:
             if self.current_episode % 10 == 0:
                 print("Finished", self.current_episode, "episodes.")
-                print("State Coverage:",
-                      str(len(np.argwhere(self.values[:, 0] != 0)) * 100.0 / COMBINATIONS_SIZE) + "%")
-                print("Error since last save:", sum((np.loadtxt("mc_values.txt") - self.values)[:, 1] ** 2))
+                print("State Coverage:", str(len(np.argwhere(self.values[:, 0] != 0)) *
+                                             100.0 / COMBINATIONS_SIZE) + "%")
+                print("Error since last save:",
+                      sum((np.loadtxt("mc_values.txt") - self.values)[:, 1] ** 2))
                 np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
         elif self._mode == PLAY:
             print(self.name + ":")
             old_values = np.loadtxt("mc_values.txt")
-            state_increase = len(np.argwhere(self.values[:, 0] != 0)) - len(np.argwhere(old_values[:, 0] != 0))
+            state_increase = len(np.argwhere(self.values[:, 0] != 0)) - \
+                len(np.argwhere(old_values[:, 0] != 0))
             if state_increase > 0:
                 print("New states:", state_increase)
             print("Value adjustment error:", sum((old_values[:, 1] - self.values[:, 1]) ** 2))

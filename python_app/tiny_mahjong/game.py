@@ -165,5 +165,6 @@ class Game:
             counter[self.play_round()] += 1
             self.current_round += 1
         for player in self.players:
-            print(player.name + "'s win rate: " + str(counter[player.name] / self.round_count * 100) + "%" +
+            print(player.name + "'s win rate: " +
+                  str(counter[player.name] / self.round_count * 100) + "%" +
                   ", average turn to win: " + str(player.average_turn))
