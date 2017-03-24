@@ -120,6 +120,8 @@ class QPlayer(Player):
                 np.savetxt(Q_VALUES_FILE, self.all_q_values, fmt='%f')
         elif self._mode == PLAY:
             print(self.name + ":")
+            if win:
+                print("Won!")
             old_values = np.loadtxt(Q_VALUES_FILE)
             state_increase = len(np.argwhere(self.all_q_values[:, 0] != 0)) - \
                 len(np.argwhere(old_values[:, 0] != 0))

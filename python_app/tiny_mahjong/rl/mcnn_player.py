@@ -165,7 +165,8 @@ class MCNNPlayer(Player):
 
         elif self._mode == PLAY:
             print(self.name + ":")
-
+            if win:
+                print("Won!")
         elif self._mode == EVAL:
             print("Win rate:", str(self.rounds_won * 100.0 / self.current_episode) + "%")
         elif self._mode == DEBUG:
