@@ -16,15 +16,19 @@
 
 from game import *
 
+TERMINAL_BLUE = "\033[94m"
+TERMINAL_GREEN = "\033[92m"
+TERMINAL_END = "\033[0m"
+
 
 class UserInputPlayer(Player):
     def tile_picked(self):
         Player.tile_picked(self)
         for i in self.hand:
             if i <= 9:
-                print("A" + str(int(i)), end="\t")
+                print(TERMINAL_BLUE + "A" + str(int(i)) + TERMINAL_END, end="\t")
             else:
-                print("B" + str(int(i - 9)), end="\t")
+                print(TERMINAL_GREEN + "B" + str(int(i - 9)) + TERMINAL_END, end="\t")
         print()
         if self.test_win():
             print("You won!")
@@ -36,4 +40,4 @@ class UserInputPlayer(Player):
     def game_ends(self, win, drain=False):
         Player.game_ends(self, win, drain)
         if not win:
-            print("Lose.")
+            print("Player lose.")

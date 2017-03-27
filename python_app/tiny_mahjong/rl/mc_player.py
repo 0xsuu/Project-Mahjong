@@ -126,6 +126,8 @@ class MCPlayer(Player):
                 np.savetxt(MC_VALUES_FILE, self.values, fmt='%f')
         elif self._mode == PLAY:
             print(self.name + ":")
+            if win:
+                print("won!")
             old_values = np.loadtxt("mc_values.txt")
             state_increase = len(np.argwhere(self.values[:, 0] != 0)) - \
                 len(np.argwhere(old_values[:, 0] != 0))
