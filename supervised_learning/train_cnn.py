@@ -45,8 +45,8 @@ def train():
         model.load_weights("CNNModelWeights.h5")
 
     print("Loading Data...")
-    X = genfromtxt('./train_data/n4X.csv', delimiter=',')
-    y = genfromtxt('./train_data/n4y.csv', delimiter=',')
+    X = genfromtxt('./train_data/n2X.csv', delimiter=',')
+    y = genfromtxt('./train_data/n2y.csv', delimiter=',')
     print("Finished loading data.")
 
     X, y = shuffle(X, y)
