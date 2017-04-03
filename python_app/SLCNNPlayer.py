@@ -15,18 +15,25 @@ import numpy as np
 def expandHandToCSV(byteHand):
     retHand = []
     for i in byteHand:
-        retHand += list(bin(i.getData())[2:].zfill(8))
+        i = i.getData()
+        # Convert to onehot encoding.
+        converted_hand = 0
+        converted_hand = 1 << (2 - ((i & 0b11000000) >> 6))
+        converted_hand <<= 13
+        converted_hand |= 1 << (3 - ((i & 0b110000) >> 4) + 9)
+        converted_hand |= 1 << (9 - (i & 0b1111))
+        retHand += list(bin(converted_hand)[2:].zfill(16))
     return retHand
 
 def transformCSVHandToCNNMatrix(csvHand):
     csvHand = np.array([csvHand])
-    return csvHand.reshape(csvHand.shape[0], 1, 14, 8)
+    return csvHand.reshape(csvHand.shape[0], 14, 16, 1)
 
 class SLCNNPlayer(Player):
     def __init__(self, playerName):
         super(SLCNNPlayer, self).__init__(playerName)
-        self.model = load_model("CNNModel.h5")
-        self.model.load_weights("CNNModelWeights.h5")
+        self.model = load_model("../supervised_learning/CNNModel.h5")
+        self.model.load_weights("../supervised_learning/CNNModelWeights.h5")
     def onTurn(self, this, playerID, tile):
         if playerID == this.getID():
             if this.getHand().testWin():

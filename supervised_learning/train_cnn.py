@@ -16,9 +16,9 @@ def train():
     K.set_image_dim_ordering('tf')
 
     model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3, 3), padding='same', input_shape=(14, 8, 1)))
+    model.add(Conv2D(64, kernel_size=(3, 3), padding='same', input_shape=(14, 16, 1)))
     model.add(Activation('relu'))
-    model.add(Conv2D(32, kernel_size=(3, 3)))
+    model.add(Conv2D(64, kernel_size=(3, 3)))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
@@ -49,7 +49,7 @@ def train():
     y = genfromtxt('./train_data/n4y.csv', delimiter=',')
     print("Finished loading data.")
 
-    X, y = shuffle(X, y, random_state=0)
+    X, y = shuffle(X, y)
 
     total_size = int(len(X))
     test_set_size = int(total_size / 10)
@@ -59,8 +59,8 @@ def train():
     X_cv = X[0: test_set_size]
     y_cv = y[0: test_set_size]
 
-    X_train = X_train.reshape(X_train.shape[0], 14, 8, 1)
-    X_cv = X_cv.reshape(X_cv.shape[0], 14, 8, 1)
+    X_train = X_train.reshape(X_train.shape[0], 14, 16, 1)
+    X_cv = X_cv.reshape(X_cv.shape[0], 14, 16, 1)
 
     tf_board_callback = TensorBoard(log_dir='./logs', \
             histogram_freq=0, write_graph=True, write_images=True)
