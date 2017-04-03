@@ -20,7 +20,7 @@ import os.path
 from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Convolution2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 
 TRAIN = 100
@@ -41,10 +41,12 @@ class MCNNPlayer(Player):
         self._mode = mode
         if os.path.isfile(MCNN_MODEL_FILE):
             self._model = load_model(MCNN_MODEL_FILE)
-            self._model.load_weights(MCNN_WEIGHTS_FILE)
         else:
             self._model = self._create_keras_model()
             self._model.save(MCNN_MODEL_FILE)
+
+        if os.path.isfile(MCNN_WEIGHTS_FILE):
+            self._model.load_weights(MCNN_WEIGHTS_FILE)
 
         self.current_episode = 0
         self.hand_tuple_visits = {}
@@ -55,11 +57,11 @@ class MCNNPlayer(Player):
         K.set_image_dim_ordering('tf')
 
         model = Sequential()
-        model.add(Convolution2D(32, 3, 3, border_mode='same', input_shape=(5, 18, 1)))
+        model.add(Conv2D(32, kernel_size=(3, 3), padding='same', input_shape=(5, 18, 1)))
         model.add(Activation('relu'))
-        model.add(Convolution2D(32, 3, 3))
+        model.add(Conv2D(32, kernel_size=(3, 3)))
         model.add(Activation('relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2), dim_ordering="tf"))
+        model.add(MaxPooling2D(pool_size=(2, 2), data_format="channels_last"))
 
         model.add(Dropout(0.25))
         model.add(Flatten())
