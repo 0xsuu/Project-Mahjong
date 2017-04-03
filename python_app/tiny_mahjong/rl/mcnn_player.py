@@ -160,7 +160,7 @@ class MCNNPlayer(Player):
 
         if self._mode == TRAIN:
             if input_set.size > 0:
-                self._model.fit(input_set, output_true_set, batch_size=2, nb_epoch=10, verbose=0)
+                self._model.fit(input_set, output_true_set, batch_size=2, epochs=10, verbose=0)
             if self.current_episode % 10 == 0:
                 print("Finished", self.current_episode, "episodes.")
                 self._model.save_weights(MCNN_WEIGHTS_FILE)
