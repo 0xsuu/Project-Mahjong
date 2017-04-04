@@ -48,5 +48,5 @@ def expandHandToCSV(byteHand):
 
 def transformCSVHandToCNNMatrix(csvHand):
     csvHand = np.array([csvHand])
-    return csvHand.reshape(csvHand.shape[0], 1, 14, 8)
+    return csvHand.reshape(csvHand.shape[0], 14, 16, 1)
 
