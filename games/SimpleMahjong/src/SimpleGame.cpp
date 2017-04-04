@@ -49,7 +49,7 @@ void SimpleGame::startGame() {
 // Callback implementations.
 void SimpleGame::onRoundStart() {
     for (int i = 0; i < mRoundCount; ++i) {
-        system("clear");
+//        system("clear");
         cout << MAHJONG_SPECIAL[mBoard->getRoundWind()] << mBoard->getRoundNumber()
              <<" started.(NO. "<< mCurrentRound <<")\n";
         while (!mRoundFinished) {

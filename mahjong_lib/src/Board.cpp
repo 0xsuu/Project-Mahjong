@@ -174,11 +174,11 @@ void Board::proceedToNextPlayer() {
                             if (copyHand.testWin()) {
                                 mRoundEnded = true;
 
-                                std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *playerForReaction) {
-                                    if (currentPlayer != playerForReaction) {
-                                        playerForReaction->onOtherPlayerMakeAction(
-                                            currentPlayer->getID(),
-                                            currentPlayer->getPlayerName(),
+                                std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *reactPlayer) {
+                                    if (playerForReaction != reactPlayer) {
+                                        reactPlayer->onOtherPlayerMakeAction(
+                                            reactPlayer->getID(),
+                                            reactPlayer->getPlayerName(),
                                             Action(Win, Tile()));
                                     }
                                 });

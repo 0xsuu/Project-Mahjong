@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, os
+import sys
+import os
 sys.path.append("../../build_mahjong")
 sys.path.append("../../build_players")
 sys.path.append("../../build_games")
