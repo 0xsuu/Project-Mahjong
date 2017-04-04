@@ -32,7 +32,7 @@ class StupidPlayer(Player):
 p1 = makeGreedyPlayer("BOT Greedy 1")
 p2 = makeGreedyPlayer("BOT Greedy 2")
 #p2 = makeUserInputPlayer("Smart Human")
-#p3 = makeGreedyPlayer("BOT Greedy 3")
+p4 = makeGreedyPlayer("BOT Greedy 3")
 slcnn = SLCNNPlayer.SLCNNPlayer("Bot SLCNN")
 #slcnn2 = SLCNNPlayer.SLCNNPlayer("Bot SLCNN")
 #slcnn3 = SLCNNPlayer.SLCNNPlayer("Bot SLCNN")
@@ -43,7 +43,7 @@ p3 = makePythonPlayer(slcnn)
 #p4 = makePythonPlayer(slcnn4)
 #SB = StupidPlayer("SB")
 #p4 = makePythonPlayer(SB)
-p4 = makeUserInputPlayer("Human")
+#p4 = makeUserInputPlayer("Human")
 
 game = SimpleGame(p1, p2, p3, p4, 1000)
 
