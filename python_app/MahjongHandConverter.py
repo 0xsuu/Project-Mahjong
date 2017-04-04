@@ -37,6 +37,8 @@ def toStringHand(hand):
 def expandHandToCSV(byteHand):
     retHand = []
     for i in byteHand:
+        if type(i).__name__ == "Tile":
+            i = i.getData()
         # Convert to onehot encoding.
         converted_hand = 0
         converted_hand = 1 << (2 - ((i & 0b11000000) >> 6))

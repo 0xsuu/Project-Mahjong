@@ -129,6 +129,10 @@ void Board::proceedToNextPlayer() {
     // Check drained.
     if (mTileStack.isEmpty()) {
         mRoundEnded = true;
+        std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *playerForReaction) {
+            playerForReaction->onOtherPlayerMakeAction(
+                -1, std::string(), Action());
+        });
         finishRound(Ryuukyoku, nullptr, calculatePoints(Ryuukyoku, nullptr, -1), nullptr);
         return;
     }
@@ -170,6 +174,14 @@ void Board::proceedToNextPlayer() {
                             if (copyHand.testWin()) {
                                 mRoundEnded = true;
 
+                                std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *playerForReaction) {
+                                    if (currentPlayer != playerForReaction) {
+                                        playerForReaction->onOtherPlayerMakeAction(
+                                            currentPlayer->getID(),
+                                            currentPlayer->getPlayerName(),
+                                            Action(Win, Tile()));
+                                    }
+                                });
                                 finishRound(Ron, playerForReaction,
                                             calculatePoints(Ron, playerForReaction, playerIndex),
                                             currentPlayer);
@@ -190,6 +202,12 @@ void Board::proceedToNextPlayer() {
             if (currentPlayer->getHand().testWin()) {
                 mRoundEnded = true;
                 currentPlayer->getHand().setTsumo();
+                std::for_each(mPlayers->begin(), mPlayers->end(), [&](Player *playerForReaction) {
+                    if (currentPlayer != playerForReaction) {
+                        playerForReaction->onOtherPlayerMakeAction(
+                            currentPlayer->getID(), currentPlayer->getPlayerName(), Action(Win, Tile()));
+                    }
+                });
                 finishRound(Tsumo, currentPlayer, calculatePoints(Tsumo, currentPlayer, -1), nullptr);
                 return;
             } else {
