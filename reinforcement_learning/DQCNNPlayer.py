@@ -165,7 +165,7 @@ class DQCNNPlayer(Player):
         else:
             return Action()
 
-    def onOtherPlayerMakeAction(self, playerID, playerName, action):
+    def onOtherPlayerMakeAction(self, this, playerID, playerName, action):
         # Tile stack drained.
         if playerID == -1 and playerName == "":
             self._reward = 0.1
@@ -184,6 +184,13 @@ class DQCNNPlayer(Player):
                 self._reward = 0.1
                 self._done = True
                 self.game_ends(False, False)
+        elif action.getActionState() == ActionState.Discard:
+            if this.getHand().testWin(action.getTile()):
+                # Player win.
+                self._reward = 1.0
+                self._done = True
+                self.game_ends(True, False)
+                return Action(ActionState.Win, Tile())
         else:
             self.is_discard = False
 

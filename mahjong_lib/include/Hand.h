@@ -109,6 +109,8 @@ class Hand : public TileGroup {
      */
     bool testWin();
 
+    bool testWin(Tile pickedTile);
+
     void clear();
 
     // Set states.
@@ -124,6 +126,8 @@ class Hand : public TileGroup {
 
  private:
     bool mTsumo = false;
+
+    bool testWin(std::vector<Tile> hand);
 };
 } // namespace mahjong.
 

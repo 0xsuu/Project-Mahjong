@@ -44,7 +44,7 @@ public:
         return boost::python::call_method<Action>(mPythonClassObject, "onTurn", this, playerID, tile);
     }
     Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override {
-        return boost::python::call_method<Action>(mPythonClassObject, "onOtherPlayerMakeAction",
+        return boost::python::call_method<Action>(mPythonClassObject, "onOtherPlayerMakeAction", this,
                                                   playerID, playerName, action);
     }
 
