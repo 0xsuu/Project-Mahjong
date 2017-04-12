@@ -30,5 +30,7 @@ BOOST_PYTHON_MODULE(libgames) {
 
     class_<SimpleGame>("SimpleGame",
                        init<Player *, Player *, Player *, Player *, int>())
-            .def("startGame", &SimpleGame::startGame);
+            .def("startGame", &SimpleGame::startGame)
+            .def("onPlayerDiscardTile", boost::python::pure_virtual(&SimpleGame::onPlayerDiscardTile))
+            .def("onRoundFinished", &SimpleGame::onRoundFinished);
 }

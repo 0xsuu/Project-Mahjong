@@ -44,7 +44,7 @@ class Player {
     /**
      * This is called when each player plays.
      *
-     * Note: When it is your turn, the tile you received is added to your hand automatially,
+     * Note: When it is your turn, the tile you received is added to your hand automatically,
      * the parameter tile is just for information.
      *
      * @param tile: The tile they discarded or the tile you received.
@@ -53,6 +53,10 @@ class Player {
     virtual Action onTurn(int playerID, Tile tile) = 0;
 
     virtual Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) = 0;
+
+    void onRoundFinished(bool drained, Player *winner) {
+
+    }
 
     // Accessors.
     int getID() { return mID; }
