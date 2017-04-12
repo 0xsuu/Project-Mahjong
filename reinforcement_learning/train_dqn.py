@@ -3,9 +3,9 @@
 
 from DQCNNPlayer import *
 
-p1 = makeGreedyPlayer("BOT Greedy 1")
-p2 = makeGreedyPlayer("BOT Greedy 2")
-p3 = makeGreedyPlayer("BOT Greedy 3")
+p1 = makeRandomPlayer("BOT Random 1")
+p2 = makeRandomPlayer("BOT Random 2")
+p3 = makeRandomPlayer("BOT Random 3")
 dqcnn = DQCNNPlayer("Bot DQCNN", TRAIN)
 p4 = makePythonPlayer(dqcnn)
 
