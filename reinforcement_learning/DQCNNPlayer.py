@@ -190,7 +190,7 @@ class DQCNNPlayer(Player):
                 self._reward = 1.0
                 self._done = True
                 self.game_ends(True, False)
-                return Action(ActionState.Win, Tile())
+                return Action(ActionState.Win, action.getTile())
         else:
             self.is_discard = False
 
