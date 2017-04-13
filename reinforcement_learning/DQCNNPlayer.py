@@ -224,7 +224,7 @@ class DQCNNPlayer(Player):
                 average_max_q = 0
             summary = tf.Summary()
             summary.value.add(tag="Average Max Q", simple_value=average_max_q)
-            summary.value.add(tag="Steps per episode", simple_value=step)
+            summary.value.add(tag="Steps per episode", simple_value=self._step)
             summary.value.add(tag="Win rate",
                               simple_value=self._win_round * 1.0 / self._current_episode)
             summary.value.add(tag="Lose rate",
