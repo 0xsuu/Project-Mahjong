@@ -25,7 +25,10 @@ cd python_app/tenhou-bot
 python3 main.py
 ```
 
-## Supporting Environment
+## Quick Start: Tiny Mahjong
+[Tiny Mahjong README](https://github.com/0xsuu/Project-Mahjong/blob/master/python_app/tiny_mahjong/README.md)
+
+## Mahjong Lib Supporting Environment
 ### Linux
 + Supporting CMake 2.8+
 + Supporting Clang++ 3.7+
