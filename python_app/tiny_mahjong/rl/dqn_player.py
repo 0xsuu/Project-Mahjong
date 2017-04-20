@@ -38,12 +38,12 @@ PLAY = 200
 EVAL = 300
 DEBUG = 400
 
-EPSILON_INITIAL = 0.01
+EPSILON_INITIAL = 0.9
 EPSILON_FINAL = 0.01
 EPSILON_DECAY_STEP = 10000
 REPLAY_MEMORY_SIZE = 10000
 BATCH_SIZE = 32
-GAMMA = 0.9
+GAMMA = 0.99
 
 
 class DQNPlayer(Player):
@@ -58,6 +58,9 @@ class DQNPlayer(Player):
 
         if os.path.isfile(DQN_WEIGHTS_FILE):
             self._model.load_weights(DQN_WEIGHTS_FILE)
+
+        self._target_model = self._create_keras_model()
+        self._target_model.set_weights(self._model.get_weights())
 
         self.current_episode = 0
         self._epsilon = EPSILON_INITIAL
@@ -153,7 +156,7 @@ class DQNPlayer(Player):
             observation_next_batch = np.array([m[3] for m in mini_batch])
 
             q_values = self._model.predict(observation_batch)
-            next_q_values = self._model.predict(observation_next_batch)
+            next_q_values = self._target_model.predict(observation_next_batch)
             for i in range(BATCH_SIZE):
                 if mini_batch[i][4]:  # done.
                     q_values[i][action_batch[i]] = reward_batch[i]
@@ -161,6 +164,10 @@ class DQNPlayer(Player):
                     q_values[i][action_batch[i]] = reward_batch[i] + \
                                                    GAMMA * np.max(next_q_values[i])
             self._model.train_on_batch(observation_batch, q_values)
+
+        # Periodically update target network.
+        if self._step % 4 == 0:
+            self._target_model.set_weights(self._model.get_weights())
 
     def initial_hand_obtained(self):
         Player.initial_hand_obtained(self)
