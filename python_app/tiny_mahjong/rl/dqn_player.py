@@ -88,15 +88,12 @@ class DQNPlayer(Player):
         model = Sequential()
         model.add(Conv2D(32, kernel_size=(3, 3), padding='same', input_shape=(5, 18, 1)))
         model.add(Activation('relu'))
-        model.add(Conv2D(32, kernel_size=(3, 3)))
+        model.add(Conv2D(64, kernel_size=(3, 3)))
         model.add(Activation('relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2), data_format="channels_last"))
 
-        model.add(Dropout(0.25))
         model.add(Flatten())
-        model.add(Dense(128))
+        model.add(Dense(256))
         model.add(Activation('relu'))
-        model.add(Dropout(0.5))
 
         model.add(Dense(5, activation='linear'))
 
@@ -151,7 +148,7 @@ class DQNPlayer(Player):
             self._replay_memory.popleft()
 
         # Mini batch train.
-        if len(self._replay_memory) > BATCH_SIZE and self._total_step % 1 == 0:
+        if len(self._replay_memory) > BATCH_SIZE and self._total_step % 4 == 0:
             mini_batch = sample(list(self._replay_memory), BATCH_SIZE)
             observation_batch = np.array([m[0] for m in mini_batch])
             action_batch = [m[1] for m in mini_batch]
