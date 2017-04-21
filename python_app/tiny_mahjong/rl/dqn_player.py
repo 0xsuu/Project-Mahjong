@@ -19,6 +19,7 @@ from random import sample
 
 from game import *
 import os.path
+from datetime import datetime
 
 from keras.models import Sequential
 from keras.models import load_model
@@ -40,11 +41,12 @@ DEBUG = 400
 
 EPSILON_INITIAL = 1.0
 EPSILON_FINAL = 0.01
-EPSILON_DECAY_STEP = 1000000
-REPLAY_MEMORY_SIZE = 10000
+EPSILON_DECAY_STEP = 100000
+REPLAY_MEMORY_SIZE = 100000
 BATCH_SIZE = 32
+TARGET_UPDATE_INTERVAL = 100
 GAMMA = 0.99
-USE_DOUBLE_DQN = True
+USE_DOUBLE_DQN = False
 
 
 class DQNPlayer(Player):
@@ -70,13 +72,14 @@ class DQNPlayer(Player):
         self.prev_hand = None
         self.prev_action = None
         self._step = None
-
-        self._writer = tf.summary.FileWriter("./logs")
+        self._total_step = 0
 
         self._max_q_history = []
         self._win_round = 0
         self._drain_round = 0
         self._total_reward = 0
+
+        self._writer = tf.summary.FileWriter("./logs/" + str(datetime.now()))
 
     @staticmethod
     def _create_keras_model():
@@ -107,7 +110,7 @@ class DQNPlayer(Player):
     def _pre_process(hand):
         reshaped_input = np.array([])
         for t in hand:
-            binarized = [0]*18
+            binarized = [0] * 18
             binarized[int(t) - 1] = 1
             if reshaped_input.size == 0:
                 reshaped_input = np.array(binarized)
@@ -118,7 +121,6 @@ class DQNPlayer(Player):
 
     def _epsilon_greedy_choose(self, hand):
         q_values = self._model.predict(self._pre_process(hand))[0]
-        self._max_q_history.append(np.max(q_values))
 
         if np.random.uniform(0, 1.0, 1)[0] < self._epsilon and self._mode == TRAIN:
             return random.randint(0, 4)
@@ -149,7 +151,7 @@ class DQNPlayer(Player):
             self._replay_memory.popleft()
 
         # Mini batch train.
-        if len(self._replay_memory) > BATCH_SIZE and self._step % 4 == 0:
+        if len(self._replay_memory) > BATCH_SIZE and self._total_step % 1 == 0:
             mini_batch = sample(list(self._replay_memory), BATCH_SIZE)
             observation_batch = np.array([m[0] for m in mini_batch])
             action_batch = [m[1] for m in mini_batch]
@@ -157,6 +159,7 @@ class DQNPlayer(Player):
             observation_next_batch = np.array([m[3] for m in mini_batch])
 
             q_values = self._model.predict(observation_batch)
+            self._max_q_history.append(np.max(q_values))
             next_q_values_target = self._target_model.predict(observation_next_batch)
             next_q_values = self._model.predict(observation_next_batch)
             for i in range(BATCH_SIZE):
@@ -170,11 +173,11 @@ class DQNPlayer(Player):
                     else:
                         q_values[i][action_batch[i]] = \
                             reward_batch[i] + \
-                            GAMMA * np.max(next_q_values[i])
+                            GAMMA * np.max(next_q_values_target[i])
             self._model.train_on_batch(observation_batch, q_values)
 
         # Periodically update target network.
-        if self._step % 10000 == 0:
+        if self._total_step % TARGET_UPDATE_INTERVAL == 0:
             self._target_model.set_weights(self._model.get_weights())
 
     def initial_hand_obtained(self):
@@ -187,6 +190,7 @@ class DQNPlayer(Player):
     def tile_picked(self):
         Player.tile_picked(self)
         self._step += 1
+        self._total_step += 1
         if self.test_win():
             self.append_memory_and_train(self.prev_hand, self.prev_action, 1.0, self.hand, True)
             return WIN, -1
@@ -194,7 +198,7 @@ class DQNPlayer(Player):
             action = self._epsilon_greedy_choose(self.hand)
             if self._epsilon > EPSILON_FINAL:
                 self._epsilon -= (EPSILON_INITIAL - EPSILON_FINAL) / EPSILON_DECAY_STEP
-            self.append_memory_and_train(self.prev_hand, self.prev_action, 0.0, self.hand, False)
+            self.append_memory_and_train(self.prev_hand, self.prev_action, -0.01, self.hand, False)
             self.prev_hand = self.hand
             self.prev_action = action
             return DISCARD, action
