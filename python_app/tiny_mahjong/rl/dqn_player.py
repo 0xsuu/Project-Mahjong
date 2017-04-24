@@ -25,6 +25,7 @@ from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
+from keras.optimizers import Adam
 from keras import backend as K
 
 import numpy as np
@@ -39,7 +40,7 @@ PLAY = 200
 EVAL = 300
 DEBUG = 400
 
-EPSILON_INITIAL = 1.0
+EPSILON_INITIAL = 0.01
 EPSILON_FINAL = 0.01
 EPSILON_DECAY_STEP = 100000
 REPLAY_MEMORY_SIZE = 100000
@@ -98,7 +99,7 @@ class DQNPlayer(Player):
         model.add(Dense(5, activation='linear'))
 
         model.compile(loss='mean_squared_error',
-                      optimizer='RMSprop',
+                      optimizer=Adam(lr=0.00025),
                       metrics=['accuracy'])
 
         return model
