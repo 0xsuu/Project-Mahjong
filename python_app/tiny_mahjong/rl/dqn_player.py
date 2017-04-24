@@ -39,6 +39,7 @@ TRAIN = 100
 PLAY = 200
 EVAL = 300
 DEBUG = 400
+SELF_PLAY = 500
 
 EPSILON_INITIAL = 0.01
 EPSILON_FINAL = 0.01
@@ -226,7 +227,6 @@ class DQNPlayer(Player):
             print("Epsilon:", self._epsilon, "Average max Q:", average_max_q)
             self._max_q_history = []
 
-        if self._mode == TRAIN:
             if self.current_episode % 100 == 0:
                 print("Finished", self.current_episode, "episodes.")
                 self._model.save_weights(DQN_WEIGHTS_FILE)
@@ -240,3 +240,6 @@ class DQNPlayer(Player):
         elif self._mode == DEBUG:
             if win:
                 print(self.name, "won!")
+        elif self._mode == SELF_PLAY:
+            if self.current_episode % 1000 == 0:
+                self._model.load_weights(DQN_WEIGHTS_FILE)
