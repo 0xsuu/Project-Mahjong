@@ -224,4 +224,4 @@ class DQCNNPlayer(Player):
         if self._mode == TRAIN:
             if self._current_episode % 100 == 0:
                 print("Finished", self._current_episode, "episodes.")
-                self.model.save_weights(DQCNN_WEIGHTS_FILE)
+                self._model.save_weights(DQCNN_WEIGHTS_FILE)
