@@ -23,7 +23,6 @@ def expandHandToCSV(byteHand):
     for i in byteHand:
         i = i.getData()
         # Convert to onehot encoding.
-        converted_hand = 0
         converted_hand = 1 << (2 - ((i & 0b11000000) >> 6))
         converted_hand <<= 13
         converted_hand |= 1 << (3 - ((i & 0b110000) >> 4) + 9)
@@ -44,8 +43,8 @@ class SLCNNPlayer(BaseAI):
 
     def __init__(self, table, player):
         super(SLCNNPlayer, self).__init__(table, player)
-        self.model = load_model("../../supervised_learning/CNNModel.h5")
-        self.model.load_weights("../../supervised_learning/CNNModelWeights.h5")
+        self.model = load_model("../supervised_learning/cnn_model.h5")
+        self.model.load_weights("../supervised_learning/cnn_weights.h5")
         self.shanten = Shanten()
 
     def mahjongTileToDiscardTile(self, t):
