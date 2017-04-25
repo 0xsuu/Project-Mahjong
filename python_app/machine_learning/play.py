@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from DQCNNPlayer import *
+from players.DQCNNPlayer import *
 
 p1 = makeGreedyPlayer("BOT Greedy 1")
 p2 = makeGreedyPlayer("BOT Greedy 2")

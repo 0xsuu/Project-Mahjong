@@ -1,15 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import random
-import sys
 import os
 from datetime import datetime
 from collections import deque
 
-sys.path.append("../../build_mahjong")
-sys.path.append("../../build_players")
-sys.path.append("../../build_games")
-sys.path.append("../python_app")
 from libmahjong import *
 from libplayers import *
 from libgames import *

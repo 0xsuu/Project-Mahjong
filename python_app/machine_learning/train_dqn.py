@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from DQCNNPlayer import *
+from players.DQCNNPlayer import *
 
 p1 = makeRandomPlayer("BOT Random 1")
 p2 = makeRandomPlayer("BOT Random 2")
