@@ -3,6 +3,7 @@
 import random
 import sys
 import os
+from datetime import datetime
 from collections import deque
 
 sys.path.append("../../build_mahjong")
@@ -18,6 +19,7 @@ from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
+from keras.optimizers import Adam
 from keras import backend as K
 
 import numpy as np
@@ -31,9 +33,11 @@ DEBUG = 400
 EPSILON_INITIAL = 1.0
 EPSILON_FINAL = 0.01
 EPSILON_DECAY_STEP = 10000
-REPLAY_MEMORY_SIZE = 10000
+REPLAY_MEMORY_SIZE = 100000
 BATCH_SIZE = 32
-GAMMA = 0.9
+TARGET_UPDATE_INTERVAL = 100
+GAMMA = 0.99
+LEARNING_RATE = 0.00025
 DQCNN_MODEL_FILE = "dqcnn_model.h5"
 DQCNN_WEIGHTS_FILE = "dqcnn_weights.h5"
 
@@ -52,6 +56,9 @@ class DQCNNPlayer(Player):
         if os.path.isfile(DQCNN_WEIGHTS_FILE):
             self._model.load_weights(DQCNN_WEIGHTS_FILE)
 
+        self._target_model = self.make_model()
+        self._target_model.set_weights(self._model.get_weights())
+
         self._current_episode = 0
         self._epsilon = EPSILON_INITIAL
         self._last_hand = None
@@ -62,8 +69,9 @@ class DQCNNPlayer(Player):
         self.is_discard = False
         self._replay_memory = deque()
         self._step = 0
+        self._total_step = 0
 
-        self._writer = tf.summary.FileWriter("./logs")
+        self._writer = tf.summary.FileWriter("./logs/" + str(datetime.now()))
 
         self._max_q_history = []
         self._win_round = 0
@@ -90,7 +98,7 @@ class DQCNNPlayer(Player):
         model.add(Dense(14, activation='linear'))
 
         model.compile(loss='mse',
-                      optimizer='rmsprop',
+                      optimizer=Adam(lr=LEARNING_RATE),
                       metrics=['accuracy'])
         return model
 
@@ -116,7 +124,7 @@ class DQCNNPlayer(Player):
             self._replay_memory.popleft()
 
         # Mini batch train.
-        if len(self._replay_memory) > BATCH_SIZE and self._step % 2 == 0:
+        if len(self._replay_memory) > BATCH_SIZE and self._total_step % 4 == 0:
             mini_batch = random.sample(list(self._replay_memory), BATCH_SIZE)
             observation_batch = np.array([m[0] for m in mini_batch])
             action_batch = [m[1] for m in mini_batch]
@@ -125,13 +133,20 @@ class DQCNNPlayer(Player):
 
             q_values = self._model.predict(observation_batch)
             next_q_values = self._model.predict(observation_next_batch)
+            next_q_values_target = self._target_model.predict(observation_next_batch)
             for i in range(BATCH_SIZE):
                 if mini_batch[i][4]:  # done.
                     q_values[i][action_batch[i]] = reward_batch[i]
                 else:
-                    q_values[i][action_batch[i]] = reward_batch[i] + \
-                                                   GAMMA * np.max(next_q_values[i])
+                    q_values[i][action_batch[i]] = \
+                            reward_batch[i] + \
+                            GAMMA * np.max(next_q_values_target[i])
             self._model.train_on_batch(observation_batch, q_values)
+
+        # Periodically update target network.
+        if self._total_step % TARGET_UPDATE_INTERVAL == 0:
+            self._target_model.set_weights(self._model.get_weights())
+
 
     def onTurn(self, this, playerID, tile):
         if playerID == this.getID():
@@ -159,6 +174,7 @@ class DQCNNPlayer(Player):
                 if self._epsilon > EPSILON_FINAL:
                     self._epsilon -= (EPSILON_INITIAL - EPSILON_FINAL) / EPSILON_DECAY_STEP
                 self.is_discard = True
+                self._total_step += 1
                 self._last_hand = self._this_hand
                 self._last_discard = it
                 return Action(ActionState.Discard, self._this_hand[it])
