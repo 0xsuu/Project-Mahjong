@@ -1,44 +1,44 @@
 #!/usr/bin/env python3
 
-from TenhouDecoder import tileToByte
+from TenhouDecoder import tileToByte, expandHandToCSV
 
-assert tileToByte("1m") == 0b00000001
-assert tileToByte("2m") == 0b00000010
-assert tileToByte("3m") == 0b00000011
-assert tileToByte("4m") == 0b00000100
-assert tileToByte("5m") == 0b00000101
-assert tileToByte("6m") == 0b00000110
-assert tileToByte("7m") == 0b00000111
-assert tileToByte("8m") == 0b00001000
-assert tileToByte("9m") == 0b00001001
+assert tileToByte("1m") == 0b10000001
+assert tileToByte("2m") == 0b10000010
+assert tileToByte("3m") == 0b10000011
+assert tileToByte("4m") == 0b10000100
+assert tileToByte("5m") == 0b10000101
+assert tileToByte("6m") == 0b10000110
+assert tileToByte("7m") == 0b10000111
+assert tileToByte("8m") == 0b10001000
+assert tileToByte("9m") == 0b10001001
 
-assert tileToByte("1p") == 0b00010001
-assert tileToByte("2p") == 0b00010010
-assert tileToByte("3p") == 0b00010011
-assert tileToByte("4p") == 0b00010100
-assert tileToByte("5p") == 0b00010101
-assert tileToByte("6p") == 0b00010110
-assert tileToByte("7p") == 0b00010111
-assert tileToByte("8p") == 0b00011000
-assert tileToByte("9p") == 0b00011001
+assert tileToByte("1p") == 0b10010001
+assert tileToByte("2p") == 0b10010010
+assert tileToByte("3p") == 0b10010011
+assert tileToByte("4p") == 0b10010100
+assert tileToByte("5p") == 0b10010101
+assert tileToByte("6p") == 0b10010110
+assert tileToByte("7p") == 0b10010111
+assert tileToByte("8p") == 0b10011000
+assert tileToByte("9p") == 0b10011001
 
-assert tileToByte("1s") == 0b00100001
-assert tileToByte("2s") == 0b00100010
-assert tileToByte("3s") == 0b00100011
-assert tileToByte("4s") == 0b00100100
-assert tileToByte("5s") == 0b00100101
-assert tileToByte("6s") == 0b00100110
-assert tileToByte("7s") == 0b00100111
-assert tileToByte("8s") == 0b00101000
-assert tileToByte("9s") == 0b00101001
+assert tileToByte("1s") == 0b10100001
+assert tileToByte("2s") == 0b10100010
+assert tileToByte("3s") == 0b10100011
+assert tileToByte("4s") == 0b10100100
+assert tileToByte("5s") == 0b10100101
+assert tileToByte("6s") == 0b10100110
+assert tileToByte("7s") == 0b10100111
+assert tileToByte("8s") == 0b10101000
+assert tileToByte("9s") == 0b10101001
 
-assert tileToByte("ew") == 0b00110001
-assert tileToByte("sw") == 0b00110010
-assert tileToByte("ww") == 0b00110011
-assert tileToByte("nw") == 0b00110100
-assert tileToByte("rd") == 0b00110101
-assert tileToByte("wd") == 0b00110110
-assert tileToByte("gd") == 0b00110111
+assert tileToByte("ew") == 0b10110001
+assert tileToByte("sw") == 0b10110010
+assert tileToByte("ww") == 0b10110011
+assert tileToByte("nw") == 0b10110100
+assert tileToByte("rd") == 0b10110101
+assert tileToByte("wd") == 0b10110110
+assert tileToByte("gd") == 0b10110111
 
 assert tileToByte("1m1") == 0b01000001
 assert tileToByte("2m1") == 0b01000010
@@ -74,6 +74,15 @@ assert tileToByte("nw1") == 0b01110100
 assert tileToByte("rd1") == 0b01110101
 assert tileToByte("wd1") == 0b01110110
 assert tileToByte("gd1") == 0b01110111
+
+
+assert expandHandToCSV([0b10000001]) == ["0", "0", "1", "1", "0", "0", "0", "1", "0", "0", "0", "0", "0", "0", "0", "0"]
+assert expandHandToCSV([0b10000011]) == ["0", "0", "1", "1", "0", "0", "0", "0", "0", "1", "0", "0", "0", "0", "0", "0"]
+assert expandHandToCSV([0b10001001]) == ["0", "0", "1", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "1"]
+assert expandHandToCSV([0b00000001]) == ["1", "0", "0", "1", "0", "0", "0", "1", "0", "0", "0", "0", "0", "0", "0", "0"]
+assert expandHandToCSV([0b10110001]) == ["0", "0", "1", "0", "0", "0", "1", "1", "0", "0", "0", "0", "0", "0", "0", "0"]
+assert expandHandToCSV([0b10100001]) == ["0", "0", "1", "0", "0", "1", "0", "1", "0", "0", "0", "0", "0", "0", "0", "0"]
+
 
 print("Pass!")
 
