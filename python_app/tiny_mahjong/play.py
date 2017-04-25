@@ -20,13 +20,14 @@ from ui_player import *
 from rl.mcnn_player import *
 from rl.mc_player import *
 from rl.q_player import *
+from rl.dqn_player import *
 
 
 def main():
-    player1 = MCNNPlayer("MCNN BOT 2", PLAY)
-    player2 = MCPlayer("MC BOT 1", PLAY)
-    player3 = UserInputPlayer("Smart Human")
-    player4 = QPlayer("Q BOT 1", PLAY)
+    player1 = UserInputPlayer("Smart Human")
+    player2 = QPlayer("Q BOT 1", EVAL)
+    player3 = QPlayer("Q BOT 2", EVAL)
+    player4 = DQNPlayer("DQN BOT 1", EVAL)
 
     game = Game(1, [player1, player2, player3, player4])
     game.play()
@@ -34,3 +35,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

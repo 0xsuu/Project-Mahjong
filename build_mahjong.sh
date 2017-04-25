@@ -30,8 +30,9 @@ fi
 cd ../
 
 # Set python include path.
-PYTHON_VERSION=3.6 # Set the variable to empty and modify the next line to use default python version.
-export CPLUS_INCLUDE_PATH="/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/include/python3.6m" # "/usr/include/python$PYTHON_VERSION"
+PYTHON_VERSION=3.4 # Set the variable to empty and modify the next line to use default python version.
+#export CPLUS_INCLUDE_PATH="/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/include/python3.6m" # 
+export CPLUS_INCLUDE_PATH="/usr/include/python$PYTHON_VERSION"
 
 if [ "$1" == "--coverage" ]; then
     mkdir -p ./build_mahjong

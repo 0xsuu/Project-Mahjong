@@ -94,10 +94,13 @@ BOOST_PYTHON_MODULE(libmahjong) {
     /**
      * Expose Hand Class.
      */
+    bool (Hand::*testSelfWin)() = &Hand::testWin;
+    bool (Hand::*testDiscardWin)(Tile) = &Hand::testWin;
      class_<Hand>("Hand",
                   init<>())
              .def(init<std::string>())
-             .def("testWin", &Hand::testWin)
+             .def("testWin", testSelfWin)
+             .def("testWin", testDiscardWin)
              .def("getData", &Hand::getData);
 
     /**

@@ -94,8 +94,16 @@ inline void winningHandSimple(bool &found, vector <Tile> *hand) {
 }
 
 bool Hand::testWin() {
-    vector<Tile> hand(mTilesData);
+    return testWin(vector<Tile>(mTilesData));
+}
 
+bool Hand::testWin(Tile pickedTile) {
+    Hand hand(mTilesData);
+    hand.pickTile(pickedTile);
+    return testWin(vector<Tile>(hand.getData()));
+}
+
+bool Hand::testWin(vector<Tile> hand) {
     // Removing all melded & concealed tiles.
     auto it = hand.begin();
     while ((*it).getFlag() == Melded || (*it).getFlag() == Concealed) {
