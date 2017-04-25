@@ -1,25 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import random
-import os
-from datetime import datetime
+
 from collections import deque
+from datetime import datetime
+import os
+import random
 
 from libmahjong import *
 from libplayers import *
 from libgames import *
-from MahjongHandConverter import *
-
-from keras.models import Sequential
-from keras.models import load_model
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras.optimizers import Adam
-from keras import backend as K
 
 import numpy as np
-
 import tensorflow as tf
+
+from MahjongHandConverter import *
+from helper import *
+from model_generator import simple_mahjong_dqn_model
 
 TRAIN = 100
 PLAY = 200
@@ -33,25 +29,19 @@ BATCH_SIZE = 32
 TARGET_UPDATE_INTERVAL = 100
 GAMMA = 0.99
 LEARNING_RATE = 0.00025
-DQCNN_MODEL_FILE = "dqcnn_model.h5"
-DQCNN_WEIGHTS_FILE = "dqcnn_weights.h5"
+DQCNN_WEIGHTS_FILE = "sm_dqcnn_weights.h5"
 
 
 class DQCNNPlayer(Player):
     def __init__(self, name, mode):
         super(DQCNNPlayer, self).__init__(name)
         self._mode = mode
-        self.model = self.make_model()
-        if os.path.isfile(DQCNN_MODEL_FILE):
-            self._model = load_model(DQCNN_MODEL_FILE)
-        else:
-            self._model = self.make_model()
-            self._model.save(DQCNN_MODEL_FILE)
+        self._model = load_keras_model(SM_DQN_MODEL_NAME, simple_mahjong_dqn_model)
 
         if os.path.isfile(DQCNN_WEIGHTS_FILE):
             self._model.load_weights(DQCNN_WEIGHTS_FILE)
 
-        self._target_model = self.make_model()
+        self._target_model = simple_mahjong_dqn_model()
         self._target_model.set_weights(self._model.get_weights())
 
         self._current_episode = 0
@@ -75,29 +65,6 @@ class DQCNNPlayer(Player):
         self._total_reward = 0
 
     @staticmethod
-    def make_model():
-        K.set_image_dim_ordering('tf')
-
-        model = Sequential()
-        model.add(Conv2D(64, kernel_size=(3, 3), padding='same', input_shape=(14, 16, 1)))
-        model.add(Activation('relu'))
-        model.add(Conv2D(64, kernel_size=(3, 3)))
-        model.add(Activation('relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.25))
-
-        model.add(Flatten())
-        model.add(Dense(512))
-        model.add(Activation('relu'))
-        model.add(Dropout(0.5))
-        model.add(Dense(14, activation='linear'))
-
-        model.compile(loss='mse',
-                      optimizer=Adam(lr=LEARNING_RATE),
-                      metrics=['accuracy'])
-        return model
-
-    @staticmethod
     def get_q_values(model, hand):
         return model.predict(transformCSVHandToCNNMatrix(expandHandToCSV(hand)))[0]
 
@@ -105,7 +72,7 @@ class DQCNNPlayer(Player):
         if random.uniform(0, 1) < self._epsilon and self._mode == TRAIN:
             return random.randint(0, 13)
         else:
-            q_values = self.get_q_values(self.model, hand)
+            q_values = self.get_q_values(self._model, hand)
             self._max_q_history.append(np.max(q_values))
             choice = np.random.choice(
                 np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))

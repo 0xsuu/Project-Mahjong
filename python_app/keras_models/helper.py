@@ -23,6 +23,7 @@ import os
 from keras.models import load_model
 
 TM_DQN_MODEL_NAME = "tm_dqn_model.h5"  # Tiny Mahjong DQN model file name.
+SM_DQN_MODEL_NAME = "sm_dqn_model.h5"  # Simple Mahjong DQN model file name.
 
 
 def _full_path_of(model_name):
@@ -33,8 +34,9 @@ def load_keras_model(model_name, model_generating_function=None):
     if os.path.isfile(TM_DQN_MODEL_NAME):
         return load_model(_full_path_of(model_name))
     elif model_generating_function is not None:
-        model_generating_function()
-        return load_model(_full_path_of(model_name))
+        model = model_generating_function()
+        save_keras_model(model_name, model)
+        return model
     else:
         raise AttributeError("No saved models or model generating function provided!")
 
