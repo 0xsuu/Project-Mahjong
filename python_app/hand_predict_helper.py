@@ -1,35 +1,34 @@
 #!/usr/bin/env python3
 
-import numpy as np
-
-import MahjongHandConverter as converter
-
 import gc
-
 from keras.models import load_model
+
+import mahjong_hand_converter as converter
 
 model = load_model("CNNModel.h5")
 model.load_weights("CNNModelWeights.h5")
 
-handString = input("Input your initial hand, split by space: ")
-initialHand = converter.toMahjongHand(handString.split(" "))
+hand_string = input("Input your initial hand, split by space: ")
+initial_hand = converter.to_mahjong_hand(hand_string.split(" "))
 
 while 1:
-    print("Current Hand:", converter.toStringHand(initialHand))
+    print("Current Hand:", converter.to_string_hand(initial_hand))
+    picked_tile = None
     try:
-        pickedTile = input("Input the tile you picked: ")
-    except:
+        picked_tile = input("Input the tile you picked: ")
+    except KeyboardInterrupt:
+        gc.collect()
         print("\nBye!")
         quit(0)
-    initialHand.append(converter.tileToByte(pickedTile))
-    initialHand.sort()
+    initial_hand.append(converter.tile_to_byte(picked_tile))
+    initial_hand.sort()
 
-    print("Current Hand:", converter.toStringHand(initialHand))
-    inputs = converter.transformCSVHandToCNNMatrix(converter.expandHandToCSV(initialHand))
-    proba = model.predict_proba(inputs)[0]
-    pClass = int(model.predict_classes(inputs)[0])
-    print(proba)
-    print("Choose NO." + str(pClass) + " - " + converter.byteToTile(initialHand[pClass]) + " with probability: " + str(proba[pClass] * 100) + "%")
-    initialHand.pop(pClass)
-
-gc.collect()
+    print("Current Hand:", converter.to_string_hand(initial_hand))
+    inputs = converter.transform_one_hot_to_cnn_matrix(
+        converter.transform_hand_to_one_hot(initial_hand))
+    probabilities = model.predict_proba(inputs)[0]
+    p_class = int(model.predict_classes(inputs)[0])
+    print(probabilities)
+    print("Choose NO." + str(p_class) + " - " + converter.byte_to_tile(initial_hand[p_class]) +
+          " with probabilities: " + str(probabilities[p_class] * 100) + "%")
+    initial_hand.pop(p_class)
