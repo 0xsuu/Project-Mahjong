@@ -42,7 +42,8 @@ python3 main.py
 + Python 3.6 not supported for SimpleMahjong Python version.
 
 ### Windows
-- Not tested.
+- Supporting Python 3.5+
+- boost::python not tested.
 
 ## Prerequisites
 * Build library tests: gtest
