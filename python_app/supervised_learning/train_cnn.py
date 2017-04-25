@@ -70,7 +70,8 @@ def train():
 
     print(model.evaluate(X_cv, y_cv))
 
-    model.save('CNNModel.h5')
-    model.save_weights('CNNModelWeights.h5')
+    model.save('cnn_model.h5')
+    model.save_weights('cnn_weights.h5')
 
 train()
+

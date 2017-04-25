@@ -9,11 +9,10 @@ from libmahjong import *
 from libplayers import *
 from libgames import *
 
-import numpy as np
 import tensorflow as tf
 
-from mahjong_hand_converter import *
 from helper import *
+from mahjong_hand_converter import *
 from model_generator import simple_mahjong_dqn_model
 
 TRAIN = 100

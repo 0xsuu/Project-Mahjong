@@ -5,8 +5,8 @@ from keras.models import load_model
 
 import mahjong_hand_converter as converter
 
-model = load_model("CNNModel.h5")
-model.load_weights("CNNModelWeights.h5")
+model = load_model("cnn_model.h5")
+model.load_weights("cnn_weights.h5")
 
 hand_string = input("Input your initial hand, split by space: ")
 initial_hand = converter.to_mahjong_hand(hand_string.split(" "))
@@ -32,3 +32,4 @@ while 1:
     print("Choose NO." + str(p_class) + " - " + converter.byte_to_tile(initial_hand[p_class]) +
           " with probabilities: " + str(probabilities[p_class] * 100) + "%")
     initial_hand.pop(p_class)
+

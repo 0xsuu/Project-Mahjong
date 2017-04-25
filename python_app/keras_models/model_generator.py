@@ -19,8 +19,6 @@ from keras.layers import Conv2D, Dense, Activation, Flatten
 from keras.optimizers import Adam
 from keras import backend
 
-from helper import *
-
 NETWORK_TYPE_REGRESSION = 100
 NETWORK_TYPE_CLASSIFICATION = 200
 
