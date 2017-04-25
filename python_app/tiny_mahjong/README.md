@@ -1,10 +1,12 @@
 ## Tiny Mahjong
 
+This is a pure Python project.
+
 ### Requirements
-* Python3 (tested on Python 3.4)
+* Python 3 (Python 3.4+ for macOS/Ubuntu, Python 3.5+ for Windows)
 * Numpy
 * sklearn
-* pymp
+* pymp (not required by Windows)
   * install by:
     ```
     python3 -m pip install pymp-pypi
@@ -45,3 +47,4 @@ You need to have a pair(2 tiles) AND a combo(3 tiles) to achieve a winning hand.
 * NOT winning hands:
   * A1, A2, A3, A4, A5
   * B2, B2, B2, B2, B3
+
