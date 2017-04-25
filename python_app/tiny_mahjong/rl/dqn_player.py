@@ -15,25 +15,17 @@
 #  limitations under the License.
 
 from collections import deque
+from datetime import datetime
 from random import sample
 
-from game import *
-import os.path
-from datetime import datetime
-
-from keras.models import Sequential
-from keras.models import load_model
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras.optimizers import Adam
-from keras import backend as K
-
-import numpy as np
+from helper import *
+from model_generator import tiny_mahjong_dqn_model
 
 import tensorflow as tf
 
-DQN_MODEL_FILE = "dqn_model.h5"
-DQN_WEIGHTS_FILE = "dqn_weights.h5"
+from game import *
+
+DQN_WEIGHTS_FILE = "tm_dqn_weights.h5"
 
 TRAIN = 100
 PLAY = 200
@@ -55,16 +47,10 @@ class DQNPlayer(Player):
     def __init__(self, name, mode):
         Player.__init__(self, name)
         self._mode = mode
-        if os.path.isfile(DQN_MODEL_FILE):
-            self._model = load_model(DQN_MODEL_FILE)
-        else:
-            self._model = self._create_keras_model()
-            self._model.save(DQN_MODEL_FILE)
-
-        if os.path.isfile(DQN_WEIGHTS_FILE):
-            self._model.load_weights(DQN_WEIGHTS_FILE)
-
-        self._target_model = self._create_keras_model()
+        self._model = load_keras_model(TM_DQN_MODEL_NAME,
+                                       model_generating_function=tiny_mahjong_dqn_model)
+        self._target_model = load_keras_model(TM_DQN_MODEL_NAME,
+                                              model_generating_function=tiny_mahjong_dqn_model)
         self._target_model.set_weights(self._model.get_weights())
 
         self.current_episode = 0
@@ -82,28 +68,6 @@ class DQNPlayer(Player):
         self._total_reward = 0
 
         self._writer = tf.summary.FileWriter("./logs/" + str(datetime.now()))
-
-    @staticmethod
-    def _create_keras_model():
-        K.set_image_dim_ordering('tf')
-
-        model = Sequential()
-        model.add(Conv2D(32, kernel_size=(3, 3), padding='same', input_shape=(5, 18, 1)))
-        model.add(Activation('relu'))
-        model.add(Conv2D(64, kernel_size=(3, 3)))
-        model.add(Activation('relu'))
-
-        model.add(Flatten())
-        model.add(Dense(256))
-        model.add(Activation('relu'))
-
-        model.add(Dense(5, activation='linear'))
-
-        model.compile(loss='mean_squared_error',
-                      optimizer=Adam(lr=0.00025),
-                      metrics=['accuracy'])
-
-        return model
 
     @staticmethod
     def _pre_process(hand):
