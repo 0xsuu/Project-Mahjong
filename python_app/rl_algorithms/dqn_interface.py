@@ -1,0 +1,241 @@
+#!/usr/bin/env python3
+
+#  Copyright 2017 Project Mahjong. All rights reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+from abc import ABCMeta, abstractmethod, abstractstaticmethod
+from datetime import datetime
+
+import numpy as np
+import tensorflow as tf
+
+# Mode definitions.
+TRAIN = 100
+PLAY = 200
+EVAL = 300
+DEBUG = 400
+SELF_PLAY = 500
+
+EPSILON_LOWER_BOUND = 0.0
+EPSILON_UPPER_BOUND = 1.0
+
+REPLAY_MEMORY_SIZE_DEFAULT = 1000000
+REPLAY_MEMORY_BATCH_SIZE_DEFAULT = 32
+
+TRAIN_STEP_INTERVAL_DEFAULT = 4
+TARGET_UPDATE_INTERVAL_DEFAULT = 100
+SAVE_WEIGHTS_INTERVAL_DEFAULT = 1000
+SELF_PLAY_UPDATE_INTERVAL_DEFAULT = 1000
+PRINT_SUMMARY_INTERVAL_DEFAULT = 100
+
+GAMMA_DEFAULT = 0.99  # Reward discount factor.
+
+
+class DQNInterface:
+    __metaclass__ = ABCMeta
+
+    def __init__(self, action_count, weights_file_path,
+                 mode=TRAIN, load_previous=False,
+                 replay_memory_size=REPLAY_MEMORY_SIZE_DEFAULT,
+                 replay_memory_batch_size=REPLAY_MEMORY_BATCH_SIZE_DEFAULT,
+                 train_step_interval=TRAIN_STEP_INTERVAL_DEFAULT,
+                 target_update_interval=TARGET_UPDATE_INTERVAL_DEFAULT,
+                 gamma=GAMMA_DEFAULT,
+                 initial_epsilon=1.0, final_epsilon=0.01, epsilon_decay_steps=10000):
+        self._mode = mode
+        self._action_count = action_count
+        self._weights_file_path = weights_file_path
+
+        # Initialising Q functions.
+        self._model = self._create_model()  # Online model.
+        self._target_model = self._create_model()  # Target model.
+        self._target_model.set_weights(self._model.get_weights())  # Copy weights.
+        self._target_update_interval = target_update_interval
+
+        self._replay_memory = self._create_replay_memory()
+        self._replay_memory_size = replay_memory_size
+        self._replay_memory_batch_size = replay_memory_batch_size
+        self._train_step_interval = train_step_interval
+
+        # Setup epsilon.
+        self._final_epsilon = final_epsilon
+        self._epsilon_decay_value = (initial_epsilon - final_epsilon) / epsilon_decay_steps
+        self._epsilon = initial_epsilon
+
+        # Setup gamma.
+        self._gamma = gamma
+
+        # Milestone variables.
+        self._timestamp = 0
+        self._timestamp_in_episode = 0
+        self._episode = 0
+
+        # Episode-wised status variables.
+        self._max_q_history = []
+        self._total_reward = 0
+
+        # Period-wised status variables.
+        self._period_max_q_histories = []
+        self._period_total_rewards = []
+
+        # Load.
+        if load_previous:
+            self.load_previous_run()
+            self._writer = self.setup_tensorboard_writer()
+        else:
+            self._writer = self.setup_tensorboard_writer()
+
+    @staticmethod
+    @abstractstaticmethod
+    def _create_replay_memory():
+        raise Exception("Do not call abstract method.")
+
+    @abstractmethod
+    def _train_on_memory(self, mini_batch):
+        raise Exception("Do not call abstract method.")
+
+    @abstractmethod
+    def _discard_overflow_memory(self):
+        raise Exception("Do not call abstract method.")
+
+    @abstractmethod
+    def _sample_replay_memory(self):
+        raise Exception("Do not call abstract method.")
+
+    @staticmethod
+    @abstractstaticmethod
+    def _create_model():
+        raise Exception("Do not call abstract method.")
+
+    @staticmethod
+    @abstractstaticmethod
+    def _pre_process(input_data):
+        raise Exception("Do not call abstract method.")
+
+    def append_memory_and_train(self, observation, action, reward, observation_next, done):
+        self._replay_memory.append((self._pre_process(observation),
+                                    action,
+                                    reward,
+                                    self._pre_process(observation_next),
+                                    done))
+
+        if len(self._replay_memory) > self._replay_memory_size:
+            self._discard_overflow_memory()
+
+        if len(self._replay_memory) > self._replay_memory_batch_size and \
+           self._timestamp % self._train_step_interval == 0:
+            self._train_on_memory(self._sample_replay_memory())
+
+    def make_action(self, observation, mode=None):
+        if mode is None:
+            mode = self._mode
+        if mode == TRAIN:
+            choice = self._epsilon_greedy_choose(self._pre_process(observation))
+            if self._epsilon > self._final_epsilon:
+                self._epsilon -= self._epsilon_decay_value
+            return choice
+        else:
+            return self._max_q_choose(self._pre_process(observation))
+
+    def notify_reward(self, reward):
+        self._total_reward += reward
+
+    def _epsilon_greedy_choose(self, input_data):
+        """
+        This function should ideally be used only under TRAIN mode.
+
+        :param input_data: the pre-processed data to feed into the neural network.
+        :return: The index(action) selected following epsilon greedy strategy.
+        """
+        self._timestamp += 1
+        q_values = self._model.predict(input_data)[0]
+        self._max_q_history.append(np.max(q_values))
+
+        if np.random.uniform(EPSILON_LOWER_BOUND, EPSILON_UPPER_BOUND) < self._epsilon:
+            return np.random.randint(0, self._action_count)  # Range is [0, self._action_count).
+        else:
+            # Choose the maximum Q's index as a policy.
+            return np.argmax(q_values)
+
+    def _max_q_choose(self, input_data):
+        q_values = self._model.predict(input_data)[0]
+        choice = np.argmax(q_values)
+        if self._mode == DEBUG:
+            print("Input:", input_data)
+            print("Q values:", q_values)
+            print("Choice:", choice)
+            print()
+        return choice
+
+    def load_previous_run(self):
+        self._model.load_weights(self._weights_file_path)
+        self._target_model.set_weights(self._model.get_weights())  # Copy weights.
+
+    @staticmethod
+    def setup_tensorboard_writer(title=str(datetime.now())):
+        return tf.summary.FileWriter("./logs/" + title)
+
+    def episode_finished(self, additional_logs):
+        self._episode += 1
+        if self._mode == TRAIN:
+            if len(self._max_q_history) > 0:
+                average_max_q = sum(self._max_q_history) / len(self._max_q_history)
+            else:
+                average_max_q = 0
+            summary = tf.Summary()
+            summary.value.add(tag="Average Max Q", simple_value=average_max_q)
+            summary.value.add(tag="Total Reward", simple_value=self._total_reward)
+            for tag in additional_logs:
+                summary.value.add(tag=tag, simple_value=additional_logs[tag])
+
+            # Append periodical data.
+            self._period_max_q_histories += self._max_q_history
+            self._period_total_rewards.append(self._total_reward)
+
+            # Periodical report.
+            if self._episode % PRINT_SUMMARY_INTERVAL_DEFAULT == 0:
+                if len(self._period_max_q_histories) > 0:
+                    period_average_max_q = \
+                        sum(self._period_max_q_histories) / len(self._period_max_q_histories)
+                else:
+                    period_average_max_q = 0
+                tag_max_qs = "Average max Q over " + \
+                             str(PRINT_SUMMARY_INTERVAL_DEFAULT) + " episodes"
+                tag_rewards = "Total reward over " + \
+                              str(PRINT_SUMMARY_INTERVAL_DEFAULT) + " episodes"
+                print("Epsilon:", self._epsilon, "\t",
+                      tag_max_qs + ":",
+                      period_average_max_q, "\t",
+                      tag_rewards + ":",
+                      sum(self._period_total_rewards) / len(self._period_total_rewards))
+                summary.value.add(tag=tag_max_qs, simple_value=average_max_q)
+                summary.value.add(tag=tag_rewards, simple_value=self._total_reward)
+                self._period_max_q_histories = []
+                self._period_total_rewards = []
+
+            # Reset status variables.
+            self._max_q_history = []
+            self._total_reward = 0
+
+            self._writer.add_summary(summary, self._episode)
+            self._writer.flush()
+
+            # Save weights.
+            if self._episode % SAVE_WEIGHTS_INTERVAL_DEFAULT == 0:
+                print("Finished", self._episode, "episodes.")
+                self._model.save_weights(self._weights_file_path)
+        elif self._mode == SELF_PLAY:
+            if self._episode % SELF_PLAY_UPDATE_INTERVAL_DEFAULT == 0:
+                print("Updated to the newest model.")
+                self._model.load_weights(self._weights_file_path)
