@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, Activation, Flatten
+from keras.layers import Conv2D, Dense, Activation, Flatten, Dropout, MaxPooling2D
 from keras.optimizers import Adam
 from keras import backend
 
@@ -63,10 +63,13 @@ def _two_layer_cnn_model(input_shape, output_number, layer_configurations, optim
     model.add(Activation('relu'))
     model.add(Conv2D(layer_configurations[1], kernel_size=(3, 3)))
     model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
 
     model.add(Flatten())
     model.add(Dense(layer_configurations[2]))
     model.add(Activation('relu'))
+    model.add(Dropout(0.5))
 
     if network_type == NETWORK_TYPE_REGRESSION:
         model.add(Dense(output_number, activation='linear'))
