@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import random
 from collections import deque
 from datetime import datetime
-import random
-
-from libmahjong import *
-from libplayers import *
-from libgames import *
 
 import tensorflow as tf
-
 from helper import *
-from mahjong_hand_converter import *
+from libgames import *
+from libmahjong import *
+from libplayers import *
 from model_generator import simple_mahjong_dqn_model
+
+from mahjong_hand_converter import *
 
 TRAIN = 100
 PLAY = 200
@@ -106,7 +105,6 @@ class DQCNNPlayer(Player):
         # Periodically update target network.
         if self._total_step % TARGET_UPDATE_INTERVAL == 0:
             self._target_model.set_weights(self._model.get_weights())
-
 
     def onTurn(self, this, playerID, tile):
         if playerID == this.getID():

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import gc
+
 from keras.models import load_model
 
-import mahjong_hand_converter as converter
+from utils import mahjong_hand_converter as converter
 
 model = load_model("cnn_model.h5")
 model.load_weights("cnn_weights.h5")

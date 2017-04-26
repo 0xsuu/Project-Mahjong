@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
 from keras.models import load_model
-
-import numpy as np
-
+from libgames import *
 from libmahjong import *
 from libplayers import *
-from libgames import *
 
 from mahjong_hand_converter import *
+
 
 class SLCNNPlayer(Player):
     def __init__(self, playerName):
@@ -24,7 +22,7 @@ class SLCNNPlayer(Player):
             handData = this.getHand().getData()
             it = int(self.model.predict_classes(
                 transform_one_hot_to_cnn_matrix(
-                    transform_hand_to_one_hot(handData)), verbose = 0)[0])
+                    transform_hand_to_one_hot(handData)), verbose=0)[0])
 
             return Action(ActionState.Discard, handData[it])
         else:
