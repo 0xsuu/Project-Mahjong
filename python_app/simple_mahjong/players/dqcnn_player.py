@@ -6,13 +6,16 @@ from collections import deque
 from datetime import datetime
 
 import tensorflow as tf
-from helper import *
+
+# Mahjong lib imports.
 from libgames import *
 from libmahjong import *
 from libplayers import *
+
+from helper import *
+from mahjong_hand_converter import *
 from model_generator import simple_mahjong_dqn_model
 
-from mahjong_hand_converter import *
 
 TRAIN = 100
 PLAY = 200
