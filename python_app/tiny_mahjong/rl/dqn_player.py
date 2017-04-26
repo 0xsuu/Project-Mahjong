@@ -16,10 +16,11 @@
 
 from collections import deque
 from datetime import datetime
+import os
 from random import sample
 
-from helper import *
 from model_generator import tiny_mahjong_dqn_model
+# from model_generator import tiny_mahjong_dqn_model
 
 import tensorflow as tf
 
@@ -33,7 +34,7 @@ EVAL = 300
 DEBUG = 400
 SELF_PLAY = 500
 
-EPSILON_INITIAL = 0.01
+EPSILON_INITIAL = 1.0
 EPSILON_FINAL = 0.01
 EPSILON_DECAY_STEP = 100000
 REPLAY_MEMORY_SIZE = 100000
@@ -47,10 +48,10 @@ class DQNPlayer(Player):
     def __init__(self, name, mode):
         Player.__init__(self, name)
         self._mode = mode
-        self._model = load_keras_model(TM_DQN_MODEL_NAME,
-                                       model_generating_function=tiny_mahjong_dqn_model)
-        self._target_model = load_keras_model(TM_DQN_MODEL_NAME,
-                                              model_generating_function=tiny_mahjong_dqn_model)
+        self._model = tiny_mahjong_dqn_model()
+        if os.path.isfile(DQN_WEIGHTS_FILE):
+            self._model.load_weights(DQN_WEIGHTS_FILE)
+        self._target_model = tiny_mahjong_dqn_model()
         self._target_model.set_weights(self._model.get_weights())
 
         self.current_episode = 0
