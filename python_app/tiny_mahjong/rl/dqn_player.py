@@ -20,7 +20,6 @@ import os
 from random import sample
 
 from model_generator import tiny_mahjong_dqn_model
-# from model_generator import tiny_mahjong_dqn_model
 
 import tensorflow as tf
 
