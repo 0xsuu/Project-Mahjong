@@ -18,25 +18,28 @@ from mahjong.ai.defence import Defence
 from mahjong.ai.shanten import Shanten
 from mahjong.tile import TilesConverter
 
-def expandHandToCSV(byteHand):
-    retHand = []
-    for i in byteHand:
-        i = i.getData()
-        # Convert to onehot encoding.
+
+def expandHandToCSV(byte_hand):
+    ret_hand = []
+    for i in byte_hand:
+        i = i.get_data()
+        # Convert to one hot encoding.
         converted_hand = 1 << (2 - ((i & 0b11000000) >> 6))
         converted_hand <<= 13
         converted_hand |= 1 << (3 - ((i & 0b110000) >> 4) + 9)
         converted_hand |= 1 << (9 - (i & 0b1111))
-        retHand += list(bin(converted_hand)[2:].zfill(16))
-    return retHand
+        ret_hand += list(bin(converted_hand)[2:].zfill(16))
+    return ret_hand
 
-def transformCSVHandToCNNMatrix(csvHand):
+
+def transformCSVHandToCNNMatrix(csv_hand):
     try:
-        csvHand = np.array([csvHand])
-        return csvHand.reshape(csvHand.shape[0], 14, 16, 1)
+        csv_hand = np.array([csv_hand])
+        return csv_hand.reshape(csv_hand.shape[0], 14, 16, 1)
     except ValueError:
         print("Temporary fix.")
-        return csvHand[0][:224].reshape(csvHand.shape[0], 14, 16, 1)
+        return csv_hand[0][:224].reshape(csv_hand.shape[0], 14, 16, 1)
+
 
 class SLCNNPlayer(BaseAI):
     version = '0.0.2'
@@ -47,8 +50,9 @@ class SLCNNPlayer(BaseAI):
         self.model.load_weights("../supervised_learning/cnn_weights.h5")
         self.shanten = Shanten()
 
-    def mahjongTileToDiscardTile(self, t):
-        return TilesConverter.find_34_tile_in_136_array(t.getNumber() + (t.getType() >> 4) * 9 - 1, self.player.tiles)
+    def mahjong_tile_to_discard_tile(self, t):
+        return TilesConverter.find_34_tile_in_136_array(
+            t.get_number() + (t.get_type() >> 4) * 9 - 1, self.player.tiles)
 
     def discard_tile(self):
         h = Hand(TilesConverter.to_one_line_string(self.player.tiles))
@@ -58,19 +62,19 @@ class SLCNNPlayer(BaseAI):
         if shanten == 0:
             self.player.in_tempai = True
 
-        types = ['m', 'p', 's', 'z']
         if h.testWin():
             return Shanten.AGARI_STATE
-        elif self.player.in_tempai == True:
+        elif self.player.in_tempai:
             results, st = self.calculate_outs()
             tile34 = results[0]['discard']
             tile_in_hand = TilesConverter.find_34_tile_in_136_array(tile34, self.player.tiles)
             return tile_in_hand
         else:
-            handData = h.getData()
-            it = int(self.model.predict_classes(transformCSVHandToCNNMatrix(expandHandToCSV(handData)), verbose = 0)[0]);
-            t = handData[it]
-            tile_in_hand = self.mahjongTileToDiscardTile(t)
+            hand_data = h.get_data()
+            it = int(self.model.predict_classes(
+                transformCSVHandToCNNMatrix(expandHandToCSV(hand_data)), verbose=0)[0])
+            t = hand_data[it]
+            tile_in_hand = self.mahjong_tile_to_discard_tile(t)
             return tile_in_hand
 
     '''
@@ -104,7 +108,9 @@ class SLCNNPlayer(BaseAI):
             tiles[i] += 1
 
             if raw_data[i]:
-                raw_data[i] = {'tile': i, 'tiles_count': self.count_tiles(raw_data[i], tiles), 'waiting': raw_data[i]}
+                raw_data[i] = {'tile': i,
+                               'tiles_count': self.count_tiles(raw_data[i], tiles),
+                               'waiting': raw_data[i]}
 
         results = []
         tiles = TilesConverter.to_34_array(self.player.tiles)

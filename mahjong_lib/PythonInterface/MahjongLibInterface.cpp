@@ -75,15 +75,15 @@ BOOST_PYTHON_MODULE(libmahjong) {
             .def(init<const TileFlag, const TileType, const int, bool>())
             .def(init<const TileFlag, const TileType, const int>())
             .def(init<const uint8_t, bool>())
-            .def("getFlag", &Tile::getFlag)
-            .def("getType", &Tile::getType)
-            .def("getNumber", &Tile::getNumber)
-            .def("isDora", &Tile::isDora)
-            .def("isNull", &Tile::isNull)
-            .def("getData", &Tile::getData)
-            .def("getPrintable", &Tile::getPrintable)
-            .def("setMeld", &Tile::setMeld)
-            .def("setConceal", &Tile::setConceal)
+            .def("get_flag", &Tile::getFlag)
+            .def("get_type", &Tile::getType)
+            .def("get_umber", &Tile::getNumber)
+            .def("is_dora", &Tile::isDora)
+            .def("is_null", &Tile::isNull)
+            .def("get_data", &Tile::getData)
+            .def("get_printable", &Tile::getPrintable)
+            .def("set_meld", &Tile::setMeld)
+            .def("set_conceal", &Tile::setConceal)
             .def("__eq__", &Tile::operator==)
             .def("__ne__", &Tile::operator!=)
             .def("__lt__", &Tile::operator<)
@@ -99,21 +99,21 @@ BOOST_PYTHON_MODULE(libmahjong) {
      class_<Hand>("Hand",
                   init<>())
              .def(init<std::string>())
-             .def("testWin", testSelfWin)
-             .def("testWin", testDiscardWin)
-             .def("getData", &Hand::getData);
+             .def("test_win", testSelfWin)
+             .def("test_win", testDiscardWin)
+             .def("get_data", &Hand::getData);
 
     /**
      * Expose Player class.
      */
     class_<PlayerWrapper>("Player",
                           init<std::string>())
-            .def("onTurn", &PlayerWrapper::onTurn)
-            .def("onOtherPlayerMakeAction", &PlayerWrapper::onOtherPlayerMakeAction)
-            .def("getPlayerName", &PlayerWrapper::getPlayerName)
-            .def("getHand", &PlayerWrapper::getHand)
-            .def("getID", &PlayerWrapper::getID)
-            .def("setupPlayer", &PlayerWrapper::setupPlayer);
+            .def("on_turn", &PlayerWrapper::onTurn)
+            .def("on_other_player_make_action", &PlayerWrapper::onOtherPlayerMakeAction)
+            .def("get_player_name", &PlayerWrapper::getPlayerName)
+            .def("get_hand", &PlayerWrapper::getHand)
+            .def("get_id", &PlayerWrapper::getID)
+            .def("setup_player", &PlayerWrapper::setupPlayer);
 
     /**
      * Expose Action class.
@@ -121,8 +121,8 @@ BOOST_PYTHON_MODULE(libmahjong) {
     class_<Action>("Action",
                    init<>())
             .def(init<ActionState, Tile>())
-            .def("getActionState", &Action::getActionState)
-            .def("getTile", &Action::getTile)
+            .def("get_action_state", &Action::getActionState)
+            .def("get_tile", &Action::getTile)
             .def("__lt__", &Action::operator<);
 
     /**

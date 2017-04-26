@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import random
 from collections import deque
 from datetime import datetime
+import os
+import random
 
 import tensorflow as tf
 
@@ -12,7 +13,6 @@ from libgames import *
 from libmahjong import *
 from libplayers import *
 
-from helper import *
 from mahjong_hand_converter import *
 from model_generator import simple_mahjong_dqn_model
 
@@ -36,8 +36,7 @@ class DQCNNPlayer(Player):
     def __init__(self, name, mode):
         super(DQCNNPlayer, self).__init__(name)
         self._mode = mode
-        self._model = load_keras_model(SM_DQN_MODEL_NAME, simple_mahjong_dqn_model)
-
+        self._model = simple_mahjong_dqn_model()
         if os.path.isfile(DQCNN_WEIGHTS_FILE):
             self._model.load_weights(DQCNN_WEIGHTS_FILE)
 
@@ -79,8 +78,10 @@ class DQCNNPlayer(Player):
             return choice
 
     def append_memory_and_train(self, observation, action, reward, observation_next, done):
-        observation = transform_one_hot_to_cnn_matrix(transform_hand_to_one_hot(observation))[0]
-        observation_next = transform_one_hot_to_cnn_matrix(transform_hand_to_one_hot(observation_next))[0]
+        observation = transform_one_hot_to_cnn_matrix(
+            transform_hand_to_one_hot(observation))[0]
+        observation_next = transform_one_hot_to_cnn_matrix(
+            transform_hand_to_one_hot(observation_next))[0]
         self._replay_memory.append((observation, action, reward, observation_next, done))
         if len(self._replay_memory) > REPLAY_MEMORY_SIZE:
             self._replay_memory.popleft()
@@ -109,9 +110,9 @@ class DQCNNPlayer(Player):
         if self._total_step % TARGET_UPDATE_INTERVAL == 0:
             self._target_model.set_weights(self._model.get_weights())
 
-    def onTurn(self, this, playerID, tile):
-        if playerID == this.getID():
-            self._this_hand = list(this.getHand().getData())
+    def on_turn(self, this, player_id, tile):
+        if player_id == this.get_id():
+            self._this_hand = list(this.get_hand().get_data())
             # Process result of last discard.
             if self._last_hand is not None and self._mode == TRAIN:
                 self._reward = 0
@@ -123,7 +124,7 @@ class DQCNNPlayer(Player):
                                              self._done)
             self._step += 1
             # Test if hand can win.
-            if this.getHand().testWin():
+            if this.get_hand().test_win():
                 # Player win.
                 self._reward = 1.0
                 self._done = True
@@ -131,7 +132,7 @@ class DQCNNPlayer(Player):
                 return Action(ActionState.Win, Tile())
             else:
                 it = self.make_epsilon_greedy_choice(
-                    this.getHand().getData())
+                    this.get_hand().get_data())
                 if self._epsilon > EPSILON_FINAL:
                     self._epsilon -= (EPSILON_INITIAL - EPSILON_FINAL) / EPSILON_DECAY_STEP
                 self.is_discard = True
@@ -142,15 +143,15 @@ class DQCNNPlayer(Player):
         else:
             return Action()
 
-    def onOtherPlayerMakeAction(self, this, playerID, playerName, action):
+    def on_other_player_make_action(self, this, player_id, player_name, action):
         # Tile stack drained.
-        if playerID == -1 and playerName == "":
-            self._reward = 0.1
+        if player_id == -1 and player_name == "":
+            self._reward = 0
             self._done = True
             self.game_ends(False, False, True)
             return Action()
 
-        if action.getActionState() == ActionState.Win:
+        if action.get_action_state() == ActionState.Win:
             if self.is_discard:
                 # Player lost.
                 self._reward = -1.0
@@ -161,13 +162,13 @@ class DQCNNPlayer(Player):
                 self._reward = 0.1
                 self._done = True
                 self.game_ends(False, False)
-        elif action.getActionState() == ActionState.Discard:
-            if this.getHand().testWin(action.getTile()):
+        elif action.get_action_state() == ActionState.Discard:
+            if this.get_hand().test_win(action.get_tile()):
                 # Player win.
                 self._reward = 1.0
                 self._done = True
                 self.game_ends(True, False)
-                return Action(ActionState.Win, action.getTile())
+                return Action(ActionState.Win, action.get_tile())
         else:
             self.is_discard = False
 

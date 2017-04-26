@@ -17,14 +17,15 @@ from mahjong.tile import TilesConverter
 
 class GreedyAII(BaseAI):
     version = '0.0.1'
+
     def __init__(self, table, player):
         super(GreedyAII, self).__init__(table, player)
         self.shanten = Shanten()
 
     def discard_tile(self):
-        gdPlayer = GreedyPlayer("Me")
+        gd_player = GreedyPlayer("Me")
         h = Hand(TilesConverter.to_one_line_string(self.player.tiles))
-        t = gdPlayer.selectBestTile(h)
+        t = gd_player.select_best_tile(h)
 
         tiles = TilesConverter.to_34_array(self.player.tiles)
         shanten = self.shanten.calculate_shanten(tiles)
@@ -32,9 +33,10 @@ class GreedyAII(BaseAI):
             self.player.in_tempai = True
 
         types = ['m', 'p', 's', 'z']
-        if h.testWin():
+        if h.test_win():
             return Shanten.AGARI_STATE
         else:
-            tile_in_hand = TilesConverter.find_34_tile_in_136_array(t.getNumber() + (t.getType() >> 4) * 9 - 1, self.player.tiles)
+            tile_in_hand = TilesConverter.find_34_tile_in_136_array(
+                t.get_number() + (t.get_type() >> 4) * 9 - 1, self.player.tiles)
             return tile_in_hand
 

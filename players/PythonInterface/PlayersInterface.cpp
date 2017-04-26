@@ -41,10 +41,10 @@ public:
     }
 
     Action onTurn(int playerID, Tile tile) override {
-        return boost::python::call_method<Action>(mPythonClassObject, "onTurn", this, playerID, tile);
+        return boost::python::call_method<Action>(mPythonClassObject, "on_turn", this, playerID, tile);
     }
     Action onOtherPlayerMakeAction(int playerID, std::string playerName, Action action) override {
-        return boost::python::call_method<Action>(mPythonClassObject, "onOtherPlayerMakeAction", this,
+        return boost::python::call_method<Action>(mPythonClassObject, "on_other_player_make_action", this,
                                                   playerID, playerName, action);
     }
 
@@ -62,7 +62,7 @@ Player *makeUserInputPlayer(std::string playerName) {
     return new UserInputPlayer(playerName);
 }
 Player *makePythonPlayer(PyObject *classObject) {
-    return new PythonPlayer(boost::python::call_method<std::string>(classObject, "getPlayerName"),
+    return new PythonPlayer(boost::python::call_method<std::string>(classObject, "get_player_name"),
                             classObject);
 }
 } // namespace mahjong.
@@ -74,35 +74,35 @@ BOOST_PYTHON_MODULE(libplayers) {
     using boost::python::enum_;
     using boost::python::init;
 
-    def("makeRandomPlayer", mahjong::makeRandomPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
-    def("makeGreedyPlayer", mahjong::makeGreedyPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
-    def("makeUserInputPlayer", mahjong::makeUserInputPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
-    def("makePythonPlayer", mahjong::makePythonPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
+    def("make_random_player", mahjong::makeRandomPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
+    def("make_greedy_player", mahjong::makeGreedyPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
+    def("make_user_input_player", mahjong::makeUserInputPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
+    def("make_python_player", mahjong::makePythonPlayer, boost::python::return_value_policy<boost::python::manage_new_object>());
 
     class_<AlwaysDiscardFirstPlayer>("AlwaysDiscardFirstPlayer",
                                      init<std::string>())
-            .def("onTurn", &AlwaysDiscardFirstPlayer::onTurn)
-            .def("onOtherPlayerMakeAction", &AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction);
+            .def("on_turn", &AlwaysDiscardFirstPlayer::onTurn)
+            .def("on_other_player_make_action", &AlwaysDiscardFirstPlayer::onOtherPlayerMakeAction);
     class_<RandomPlayer>("RandomPlayer",
                                      init<std::string>())
-            .def("onTurn", &RandomPlayer::onTurn)
-            .def("onOtherPlayerMakeAction", &RandomPlayer::onOtherPlayerMakeAction);
+            .def("on_turn", &RandomPlayer::onTurn)
+            .def("on_other_player_make_action", &RandomPlayer::onOtherPlayerMakeAction);
     class_<GreedyPlayer, bases<PlayerWrapper>>("GreedyPlayer",
                             init<std::string>())
-            .def("onTurn", &GreedyPlayer::onTurn)
-            .def("onOtherPlayerMakeAction", &GreedyPlayer::onOtherPlayerMakeAction)
-            .def("selectBestTile", &GreedyPlayer::selectBestTile);
+            .def("on_turn", &GreedyPlayer::onTurn)
+            .def("on_other_player_make_action", &GreedyPlayer::onOtherPlayerMakeAction)
+            .def("select_best_tile", &GreedyPlayer::selectBestTile);
     class_<UserInputPlayer>("UserInputPlayer",
                                      init<std::string>())
-            .def("onTurn", &UserInputPlayer::onTurn)
-            .def("onOtherPlayerMakeAction", &UserInputPlayer::onOtherPlayerMakeAction);
+            .def("on_turn", &UserInputPlayer::onTurn)
+            .def("on_other_player_make_action", &UserInputPlayer::onOtherPlayerMakeAction);
 
     class_<mahjong::PythonPlayer>("PythonPlayer",
                          init<std::string, PyObject *>())
-            .def("onTurn", &mahjong::PythonPlayer::onTurn)
-            .def("onOtherPlayerMakeAction", &mahjong::PythonPlayer::onOtherPlayerMakeAction)
-            .def("getID", &PlayerWrapper::getID)
-            .def("getHand", &PlayerWrapper::getHand);
+            .def("on_turn", &mahjong::PythonPlayer::onTurn)
+            .def("on_other_player_make_action", &mahjong::PythonPlayer::onOtherPlayerMakeAction)
+            .def("get_id", &PlayerWrapper::getID)
+            .def("get_hand", &PlayerWrapper::getHand);
     class_<std::vector<Tile> >("TileVec")
             .def(boost::python::vector_indexing_suite<std::vector<Tile>>());
 }

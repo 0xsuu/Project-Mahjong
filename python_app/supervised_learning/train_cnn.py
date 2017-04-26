@@ -12,6 +12,7 @@ from numpy import genfromtxt
 
 from sklearn.utils import shuffle
 
+
 def train():
     K.set_image_dim_ordering('tf')
 

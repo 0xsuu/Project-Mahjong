@@ -30,5 +30,6 @@ BOOST_PYTHON_MODULE(libgames) {
 
     class_<SimpleGame>("SimpleGame",
                        init<Player *, Player *, Player *, Player *, int>())
-            .def("startGame", &SimpleGame::startGame);
+            .def("start_game", &SimpleGame::startGame);
 }
+

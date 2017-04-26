@@ -43,7 +43,7 @@ def transform_hand_to_one_hot(byte_hand):
     ret_hand = []
     for i in byte_hand:
         if type(i).__name__ == "Tile":
-            i = i.getData()
+            i = i.get_data()
         # Convert to one-hot encoding.
         converted_hand = 1 << (2 - ((i & 0b11000000) >> 6))
         converted_hand <<= 13
@@ -56,4 +56,3 @@ def transform_hand_to_one_hot(byte_hand):
 def transform_one_hot_to_cnn_matrix(csv_hand):
     csv_hand = np.array([csv_hand])
     return csv_hand.reshape(csv_hand.shape[0], 14, 16, 1)
-
