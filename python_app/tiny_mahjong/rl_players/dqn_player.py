@@ -59,8 +59,8 @@ class DQNPlayer(Player):
         self._prev_hand = None
         self._prev_action = None
 
-        self._win_round = 0
-        self._drain_round = 0
+        self._win_rounds = 0
+        self._drain_rounds = 0
 
         self._total_rounds = 0
 
@@ -102,14 +102,14 @@ class DQNPlayer(Player):
 
         # Summary.
         if win:
-            self._win_round += 1
+            self._win_rounds += 1
         if drain:
-            self._drain_round += 1
+            self._drain_rounds += 1
 
         self._dqn_model.episode_finished({"Win rate":
-                                          self._win_round * 1.0 / self._total_rounds,
+                                              self._win_rounds * 1.0 / self._total_rounds,
                                           "Drain rate":
-                                          self._drain_round * 1.0 / self._total_rounds})
+                                              self._drain_rounds * 1.0 / self._total_rounds})
 
         if self._mode == PLAY:
             print(self.name + ":")
