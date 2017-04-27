@@ -27,7 +27,7 @@ def main():
     env = gym.make("CartPole-v0")
     agent = DQNCartpole()
 
-    for episode in range(10000):
+    for episode in range(1000):
         observation = env.reset()
         for step in range(300):
             action = agent.make_action(observation)

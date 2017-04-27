@@ -36,7 +36,6 @@ class DQNNatureInterface(DQNQueueMemoryInterface):
                          observation_next_batch,
                          done_batch):
         q_values = self._model.predict(observation_batch)
-        self._max_q_history.append(np.max(q_values))
         next_q_values = self._model.predict(observation_next_batch)
         for i in range(self._replay_memory_batch_size):
             if done_batch[i]:
