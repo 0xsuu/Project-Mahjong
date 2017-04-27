@@ -30,17 +30,16 @@ class DQNNatureInterface(DQNQueueMemoryInterface):
     def _create_model():
         raise Exception("Do not call abstract method.")
 
-    def _train_on_memory(self, mini_batch):
-        observation_batch = np.array([m[0][0] for m in mini_batch])
-        action_batch = [m[1] for m in mini_batch]
-        reward_batch = [m[2] for m in mini_batch]
-        observation_next_batch = np.array([m[3][0] for m in mini_batch])
-
+    def _train_on_memory(self, observation_batch,
+                         action_batch,
+                         reward_batch,
+                         observation_next_batch,
+                         done_batch):
         q_values = self._model.predict(observation_batch)
         self._max_q_history.append(np.max(q_values))
         next_q_values = self._model.predict(observation_next_batch)
         for i in range(self._replay_memory_batch_size):
-            if mini_batch[i][4]:  # done.
+            if done_batch[i]:
                 q_values[i][action_batch[i]] = reward_batch[i]
             else:
                 q_values[i][action_batch[i]] = \

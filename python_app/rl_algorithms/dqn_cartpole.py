@@ -30,7 +30,7 @@ class DQNCartpole(DQNNatureInterface):
         model = Sequential()
         model.add(Dense(20, input_shape=(4,), activation="relu"))
         model.add(Dense(2, activation='linear'))
-        model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.00025), metrics=['accuracy'])
+        model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
 
         return model
 

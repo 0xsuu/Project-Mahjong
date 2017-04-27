@@ -102,7 +102,11 @@ class DQNInterface:
         raise Exception("Do not call abstract method.")
 
     @abstractmethod
-    def _train_on_memory(self, mini_batch):
+    def _train_on_memory(self, observation_batch,
+                         action_batch,
+                         reward_batch,
+                         observation_next_batch,
+                         done_batch):
         raise Exception("Do not call abstract method.")
 
     @abstractmethod
@@ -135,7 +139,18 @@ class DQNInterface:
 
         if len(self._replay_memory) > self._replay_memory_batch_size and \
            self._timestamp % self._train_step_interval == 0:
-            self._train_on_memory(self._sample_replay_memory())
+            # Sample the mini batch and expand.
+            mini_batch = self._sample_replay_memory()
+            observation_batch = np.array([m[0][0] for m in mini_batch])
+            action_batch = [m[1] for m in mini_batch]
+            reward_batch = [m[2] for m in mini_batch]
+            observation_next_batch = np.array([m[3][0] for m in mini_batch])
+            done_batch = [m[4] for m in mini_batch]
+            self._train_on_memory(observation_batch,
+                                  action_batch,
+                                  reward_batch,
+                                  observation_next_batch,
+                                  done_batch)
 
     def make_action(self, observation, mode=None):
         if mode is None:

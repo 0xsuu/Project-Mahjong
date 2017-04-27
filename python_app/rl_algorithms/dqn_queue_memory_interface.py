@@ -34,7 +34,11 @@ class DQNQueueMemoryInterface(DQNInterface):
         return sample(list(self._replay_memory), self._replay_memory_batch_size)
 
     @abstractmethod
-    def _train_on_memory(self, mini_batch):
+    def _train_on_memory(self, observation_batch,
+                         action_batch,
+                         reward_batch,
+                         observation_next_batch,
+                         done_batch):
         raise Exception("Do not call abstract method.")
 
     @staticmethod
