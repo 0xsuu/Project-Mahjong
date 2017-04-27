@@ -16,6 +16,7 @@
 
 from abc import ABCMeta, abstractmethod, abstractstaticmethod
 from datetime import datetime
+import os
 
 import numpy as np
 import tensorflow as tf
@@ -46,7 +47,7 @@ class DQNInterface:
     __metaclass__ = ABCMeta
 
     def __init__(self, action_count, weights_file_path,
-                 mode=TRAIN, load_previous=False,
+                 mode=TRAIN, load_previous_model=False,
                  replay_memory_size=REPLAY_MEMORY_SIZE_DEFAULT,
                  replay_memory_batch_size=REPLAY_MEMORY_BATCH_SIZE_DEFAULT,
                  train_step_interval=TRAIN_STEP_INTERVAL_DEFAULT,
@@ -90,11 +91,10 @@ class DQNInterface:
         self._period_total_rewards = []
 
         # Load.
-        if load_previous:
+        if load_previous_model:
             self.load_previous_run()
-            self._writer = self.setup_tensorboard_writer()
-        else:
-            self._writer = self.setup_tensorboard_writer()
+
+        self._writer = self.setup_tensorboard_writer()
 
     @staticmethod
     @abstractstaticmethod
@@ -141,7 +141,7 @@ class DQNInterface:
            self._timestamp % self._train_step_interval == 0:
             # Sample the mini batch and expand.
             mini_batch = self._sample_replay_memory()
-            # Observations must be in the shape of (1, ...) to confine with tf style.
+            # Observations must be in the shape of (1, ...).
             # This should be handled in _pre_process function.
             observation_batch = np.array([m[0][0] for m in mini_batch])
             action_batch = [m[1] for m in mini_batch]
@@ -198,8 +198,9 @@ class DQNInterface:
         return choice
 
     def load_previous_run(self):
-        self._model.load_weights(self._weights_file_path)
-        self._target_model.set_weights(self._model.get_weights())  # Copy weights.
+        if os.path.isfile(self._weights_file_path):
+            self._model.load_weights(self._weights_file_path)
+            self._target_model.set_weights(self._model.get_weights())  # Copy weights.
 
     @staticmethod
     def setup_tensorboard_writer(title=str(datetime.now())):
@@ -229,17 +230,21 @@ class DQNInterface:
                         sum(self._period_max_q_histories) / len(self._period_max_q_histories)
                 else:
                     period_average_max_q = 0
+                period_average_total_reward = \
+                    sum(self._period_total_rewards) / len(self._period_total_rewards)
                 tag_max_qs = "Average max Q over " + \
                              str(PRINT_SUMMARY_INTERVAL_DEFAULT) + " episodes"
-                tag_rewards = "Total reward over " + \
+                tag_rewards = "Average Total reward over " + \
                               str(PRINT_SUMMARY_INTERVAL_DEFAULT) + " episodes"
                 print("Epsilon:", self._epsilon, "\t",
                       tag_max_qs + ":",
                       period_average_max_q, "\t",
                       tag_rewards + ":",
-                      sum(self._period_total_rewards) / len(self._period_total_rewards))
+                      period_average_total_reward)
                 summary.value.add(tag=tag_max_qs, simple_value=average_max_q)
-                summary.value.add(tag=tag_rewards, simple_value=self._total_reward)
+                summary.value.add(
+                    tag=tag_rewards,
+                    simple_value=period_average_total_reward)
                 self._period_max_q_histories = []
                 self._period_total_rewards = []
 

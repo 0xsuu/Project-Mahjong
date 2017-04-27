@@ -18,17 +18,17 @@ import sys
 
 sys.path.append("../")
 
-from dqn_nature_target_interface import *
+from double_dqn import *
 
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 
 
-class DQNCartpole(DQNNatureTargetInterface):
+class DQNCartpole(DoubleDQN):
     def __init__(self, action_count=2, weights_file_path="cartpole_weights.h5"):
-        DQNNatureTargetInterface.__init__(self, action_count, weights_file_path,
-                                          target_update_interval=1000)
+        DoubleDQN.__init__(self, action_count, weights_file_path,
+                           target_update_interval=1000)
 
     @staticmethod
     def _create_model():
