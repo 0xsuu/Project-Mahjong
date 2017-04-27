@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
 
+#  Copyright 2017 Project Mahjong. All rights reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 import sys
 
 from keras.models import Sequential
@@ -63,11 +77,11 @@ def train():
     X_train = X_train.reshape(X_train.shape[0], 14, 16, 1)
     X_cv = X_cv.reshape(X_cv.shape[0], 14, 16, 1)
 
-    tf_board_callback = TensorBoard(log_dir='./logs', \
-            histogram_freq=0, write_graph=True, write_images=True)
+    tf_board_callback = TensorBoard(log_dir='./logs',
+                                    histogram_freq=0, write_graph=True, write_images=True)
 
-    model.fit(X_train, y_train, validation_data=(X_cv, y_cv), \
-            callbacks=[tf_board_callback], batch_size=128, epochs=10)
+    model.fit(X_train, y_train, validation_data=(X_cv, y_cv),
+              callbacks=[tf_board_callback], batch_size=128, epochs=10)
 
     print(model.evaluate(X_cv, y_cv))
 
