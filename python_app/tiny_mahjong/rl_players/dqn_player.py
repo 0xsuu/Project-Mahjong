@@ -14,67 +14,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import deque
-from datetime import datetime
-import os
-from random import sample
-
 from model_generator import tiny_mahjong_dqn_model
-
-import tensorflow as tf
+from double_dqn import DoubleDQN
+from dqn_interface import *
 
 from game import *
 
 DQN_WEIGHTS_FILE = "tm_dqn_weights.h5"
 
-TRAIN = 100
-PLAY = 200
-EVAL = 300
-DEBUG = 400
-SELF_PLAY = 500
-
-EPSILON_INITIAL = 1.0
-EPSILON_FINAL = 0.01
-EPSILON_DECAY_STEP = 100000
-REPLAY_MEMORY_SIZE = 100000
-BATCH_SIZE = 32
-TARGET_UPDATE_INTERVAL = 100
-GAMMA = 0.99
-USE_DOUBLE_DQN = False
+WIN_REWARD = 1.0
+DISCARD_REWARD = 0.0
 
 
-class DQNPlayer(Player):
-    def __init__(self, name, mode):
-        Player.__init__(self, name)
-        self._mode = mode
-        self._model = tiny_mahjong_dqn_model()
-        if os.path.isfile(DQN_WEIGHTS_FILE):
-            self._model.load_weights(DQN_WEIGHTS_FILE)
-        self._target_model = tiny_mahjong_dqn_model()
-        self._target_model.set_weights(self._model.get_weights())
-
-        self.current_episode = 0
-        self._epsilon = EPSILON_INITIAL
-        self._replay_memory = deque()
-
-        self.prev_hand = None
-        self.prev_action = None
-        self._step = None
-        self._total_step = 0
-
-        self._max_q_history = []
-        self._win_round = 0
-        self._drain_round = 0
-        self._total_reward = 0
-
-        self._writer = tf.summary.FileWriter("./logs/" + str(datetime.now()))
+class DDQNTinyMahjong(DoubleDQN):
+    def __init__(self, mode, load=True):
+        DoubleDQN.__init__(self, action_count=5, weights_file_path=DQN_WEIGHTS_FILE,
+                           mode=mode, load_previous_model=load)
 
     @staticmethod
-    def _pre_process(hand):
+    def _pre_process(input_data):
         reshaped_input = np.array([])
-        for t in hand:
+        for tile in input_data:
             binarized = [0] * 18
-            binarized[int(t) - 1] = 1
+            binarized[int(tile) - 1] = 1
             if reshaped_input.size == 0:
                 reshaped_input = np.array(binarized)
             else:
@@ -82,88 +44,57 @@ class DQNPlayer(Player):
         reshaped_input = reshaped_input.reshape(1, 5, 18, 1)
         return reshaped_input
 
-    def _epsilon_greedy_choose(self, hand):
-        q_values = self._model.predict(self._pre_process(hand))[0]
+    @staticmethod
+    def _create_model():
+        return tiny_mahjong_dqn_model()
 
-        if np.random.uniform(0, 1.0, 1)[0] < self._epsilon and self._mode == TRAIN:
-            return random.randint(0, 4)
-        else:
-            # Choose the maximum Q's index as a policy.
-            choice = np.random.choice(
-                np.array([i for i, j in enumerate(q_values) if j == max(q_values)]))
-            if self._mode == DEBUG:
-                print(self.name)
-                print("Hand    : ", end="")
-                for i in self.hand:
-                    if i <= 9:
-                        print("A" + str(int(i)), end="  ")
-                    else:
-                        print("B" + str(int(i - 9)), end="  ")
-                print()
-                print("Q values:", q_values, "\ndiscarding", choice)
-                print()
-            return choice
 
-    def append_memory_and_train(self, observation, action, reward, observation_next, done):
-        if observation is None or observation_next is None:
-            return
-        observation = self._pre_process(observation)[0]
-        observation_next = self._pre_process(observation_next)[0]
-        self._replay_memory.append((observation, action, reward, observation_next, done))
-        if len(self._replay_memory) > REPLAY_MEMORY_SIZE:
-            self._replay_memory.popleft()
+class DQNPlayer(Player):
+    def __init__(self, name, mode):
+        Player.__init__(self, name)
+        self._mode = mode
 
-        # Mini batch train.
-        if len(self._replay_memory) > BATCH_SIZE and self._total_step % 4 == 0:
-            mini_batch = sample(list(self._replay_memory), BATCH_SIZE)
-            observation_batch = np.array([m[0] for m in mini_batch])
-            action_batch = [m[1] for m in mini_batch]
-            reward_batch = [m[2] for m in mini_batch]
-            observation_next_batch = np.array([m[3] for m in mini_batch])
+        self._dqn_model = DDQNTinyMahjong(mode)
 
-            q_values = self._model.predict(observation_batch)
-            self._max_q_history.append(np.max(q_values))
-            next_q_values_target = self._target_model.predict(observation_next_batch)
-            next_q_values = self._model.predict(observation_next_batch)
-            for i in range(BATCH_SIZE):
-                if mini_batch[i][4]:  # done.
-                    q_values[i][action_batch[i]] = reward_batch[i]
-                else:
-                    if USE_DOUBLE_DQN:
-                        q_values[i][action_batch[i]] = \
-                            reward_batch[i] + \
-                            GAMMA * next_q_values_target[i][np.argmax(next_q_values[i])]
-                    else:
-                        q_values[i][action_batch[i]] = \
-                            reward_batch[i] + \
-                            GAMMA * np.max(next_q_values_target[i])
-            self._model.train_on_batch(observation_batch, q_values)
+        self._prev_hand = None
+        self._prev_action = None
 
-        # Periodically update target network.
-        if self._total_step % TARGET_UPDATE_INTERVAL == 0:
-            self._target_model.set_weights(self._model.get_weights())
+        self._win_round = 0
+        self._drain_round = 0
+
+        self._total_rounds = 0
 
     def initial_hand_obtained(self):
         Player.initial_hand_obtained(self)
-        self.current_episode += 1
-        self.prev_hand = None
-        self.prev_action = None
-        self._step = 0
+        self._prev_hand = None
+        self._prev_action = None
+
+        self._total_rounds += 1
 
     def tile_picked(self):
         Player.tile_picked(self)
-        self._step += 1
-        self._total_step += 1
+        is_first_round = self._prev_hand is None
         if self.test_win():
-            self.append_memory_and_train(self.prev_hand, self.prev_action, 1.0, self.hand, True)
+            if not is_first_round:
+                self._dqn_model.notify_reward(WIN_REWARD)
+                self._dqn_model.append_memory_and_train(self._prev_hand,
+                                                        self._prev_action,
+                                                        WIN_REWARD,
+                                                        self.hand,
+                                                        True)
             return WIN, -1
         else:
-            action = self._epsilon_greedy_choose(self.hand)
-            if self._epsilon > EPSILON_FINAL:
-                self._epsilon -= (EPSILON_INITIAL - EPSILON_FINAL) / EPSILON_DECAY_STEP
-            self.append_memory_and_train(self.prev_hand, self.prev_action, -0.01, self.hand, False)
-            self.prev_hand = self.hand
-            self.prev_action = action
+            if not is_first_round:
+                self._dqn_model.notify_reward(DISCARD_REWARD)
+            action = self._dqn_model.make_action(self.hand)
+            if not is_first_round:
+                self._dqn_model.append_memory_and_train(self._prev_hand,
+                                                        self._prev_action,
+                                                        DISCARD_REWARD,
+                                                        self.hand,
+                                                        False)
+            self._prev_hand = self.hand
+            self._prev_action = action
             return DISCARD, action
 
     def game_ends(self, win, drain=False):
@@ -174,36 +105,18 @@ class DQNPlayer(Player):
             self._win_round += 1
         if drain:
             self._drain_round += 1
-        if self._mode == TRAIN:
-            if len(self._max_q_history) > 0:
-                average_max_q = sum(self._max_q_history) / len(self._max_q_history)
-            else:
-                average_max_q = 0
-            summary = tf.Summary()
-            summary.value.add(tag="Average Max Q", simple_value=average_max_q)
-            summary.value.add(tag="Steps per episode", simple_value=self._step)
-            summary.value.add(tag="Win rate",
-                              simple_value=self._win_round * 1.0 / self.current_episode)
-            summary.value.add(tag="Drain rate",
-                              simple_value=self._drain_round * 1.0 / self.current_episode)
-            self._writer.add_summary(summary, self.current_episode)
-            self._writer.flush()
-            print("Epsilon:", self._epsilon, "Average max Q:", average_max_q)
-            self._max_q_history = []
 
-            if self.current_episode % 100 == 0:
-                print("Finished", self.current_episode, "episodes.")
-                self._model.save_weights(DQN_WEIGHTS_FILE)
+        self._dqn_model.episode_finished({"Win rate":
+                                          self._win_round * 1.0 / self._total_rounds,
+                                          "Drain rate":
+                                          self._drain_round * 1.0 / self._total_rounds})
 
-        elif self._mode == PLAY:
+        if self._mode == PLAY:
             print(self.name + ":")
             if win:
                 print("Won!")
         elif self._mode == EVAL:
-            print("Win rate:", str(self.rounds_won * 100.0 / self.current_episode) + "%")
+            print("Win rate:", str(self.rounds_won * 100.0 / self._total_rounds) + "%")
         elif self._mode == DEBUG:
             if win:
                 print(self.name, "won!")
-        elif self._mode == SELF_PLAY:
-            if self.current_episode % 1000 == 0:
-                self._model.load_weights(DQN_WEIGHTS_FILE)
