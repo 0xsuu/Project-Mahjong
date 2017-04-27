@@ -129,6 +129,8 @@ class DQNInterface:
         raise Exception("Do not call abstract method.")
 
     def append_memory_and_train(self, observation, action, reward, observation_next, done):
+        assert self._mode == TRAIN
+
         self._replay_memory.append((self._pre_process(observation),
                                     action,
                                     reward,
