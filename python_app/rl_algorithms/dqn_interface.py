@@ -141,6 +141,8 @@ class DQNInterface:
            self._timestamp % self._train_step_interval == 0:
             # Sample the mini batch and expand.
             mini_batch = self._sample_replay_memory()
+            # Observations must be in the shape of (1, ...) to confine with tf style.
+            # This should be handled in _pre_process function.
             observation_batch = np.array([m[0][0] for m in mini_batch])
             action_batch = [m[1] for m in mini_batch]
             reward_batch = [m[2] for m in mini_batch]
@@ -151,6 +153,8 @@ class DQNInterface:
                                   reward_batch,
                                   observation_next_batch,
                                   done_batch)
+            if self._timestamp % self._target_update_interval == 0:
+                self._target_model.set_weights(self._model.get_weights())
 
     def make_action(self, observation, mode=None):
         if mode is None:

@@ -14,21 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from dqn_nature_interface import *
+from dqn_nature_target_interface import *
 
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 
 
-class DQNCartpole(DQNNatureInterface):
+class DQNCartpole(DQNNatureTargetInterface):
     def __init__(self, action_count=2, weights_file_path="cartpole_weights.h5"):
-        DQNNatureInterface.__init__(self, action_count, weights_file_path)
+        DQNNatureTargetInterface.__init__(self, action_count, weights_file_path,
+                                          target_update_interval=1000)
 
     @staticmethod
     def _create_model():
         model = Sequential()
-        model.add(Dense(20, input_shape=(4,), activation="relu"))
+        model.add(Dense(20, input_shape=(4, ), activation="relu"))
         model.add(Dense(2, activation='linear'))
         model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
 
@@ -36,4 +37,4 @@ class DQNCartpole(DQNNatureInterface):
 
     @staticmethod
     def _pre_process(input_data):
-        return input_data.reshape(1,4)
+        return input_data.reshape(1, 4)
