@@ -94,7 +94,8 @@ class DQNInterface:
         if load_previous_model:
             self.load_previous_run()
 
-        self._writer = self.setup_tensorboard_writer()
+        if self._mode == TRAIN:
+            self._writer = self.setup_tensorboard_writer()
 
     @staticmethod
     @abstractstaticmethod

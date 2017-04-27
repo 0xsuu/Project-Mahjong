@@ -73,9 +73,9 @@ class DQNPlayer(Player):
 
     def tile_picked(self):
         Player.tile_picked(self)
-        is_first_round = self._prev_hand is None
+        training = self._prev_hand is not None and self._mode == TRAIN
         if self.test_win():
-            if not is_first_round:
+            if training:
                 self._dqn_model.notify_reward(WIN_REWARD)
                 self._dqn_model.append_memory_and_train(self._prev_hand,
                                                         self._prev_action,
@@ -84,10 +84,10 @@ class DQNPlayer(Player):
                                                         True)
             return WIN, -1
         else:
-            if not is_first_round:
+            if training:
                 self._dqn_model.notify_reward(DISCARD_REWARD)
             action = self._dqn_model.make_action(self.hand)
-            if not is_first_round:
+            if training:
                 self._dqn_model.append_memory_and_train(self._prev_hand,
                                                         self._prev_action,
                                                         DISCARD_REWARD,
