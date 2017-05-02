@@ -35,7 +35,7 @@ RAW_HEIGHT = 84
 
 
 class DQNBreakout(DoubleDQN):
-    def __init__(self, action_count=2, weights_file_path="cartpole_weights.h5"):
+    def __init__(self, action_count=2, weights_file_path="breakout_weights.h5"):
         DoubleDQN.__init__(self, action_count, weights_file_path,
                            target_update_interval=1000, gamma=0.9)
 

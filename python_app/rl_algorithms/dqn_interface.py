@@ -202,6 +202,7 @@ class DQNInterface:
 
     def load_previous_run(self):
         if os.path.isfile(self._weights_file_path):
+            print(self._weights_file_path, "loaded.")
             self._model.load_weights(self._weights_file_path)
             self._target_model.set_weights(self._model.get_weights())  # Copy weights.
 

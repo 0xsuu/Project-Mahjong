@@ -28,7 +28,7 @@ from keras.optimizers import Adam
 class DQNCartpole(DoubleDQN):
     def __init__(self, action_count=2, weights_file_path="cartpole_weights.h5"):
         DoubleDQN.__init__(self, action_count, weights_file_path,
-                           target_update_interval=1000)
+                           target_update_interval=1000, gamma=0.9)
 
     @staticmethod
     def _create_model():
