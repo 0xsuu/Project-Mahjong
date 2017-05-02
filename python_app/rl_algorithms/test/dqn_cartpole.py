@@ -26,15 +26,15 @@ from keras.optimizers import Adam
 
 
 class DQNCartpole(DoubleDQN):
-    def __init__(self, action_count=2, weights_file_path="cartpole_weights.h5"):
+    def __init__(self, action_count, weights_file_path="cartpole_weights.h5"):
         DoubleDQN.__init__(self, action_count, weights_file_path,
                            target_update_interval=1000, gamma=0.9)
 
     @staticmethod
-    def _create_model():
+    def _create_model(input_shape=None, action_count=None):
         model = Sequential()
         model.add(Dense(20, input_shape=(4, ), activation="relu"))
-        model.add(Dense(2, activation='linear'))
+        model.add(Dense(action_count, activation='linear'))
         model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
 
         return model

@@ -35,12 +35,12 @@ RAW_HEIGHT = 84
 
 
 class DQNBreakout(DoubleDQN):
-    def __init__(self, action_count=2, weights_file_path="breakout_weights.h5"):
+    def __init__(self, action_count, weights_file_path="breakout_weights.h5"):
         DoubleDQN.__init__(self, action_count, weights_file_path,
                            target_update_interval=1000, gamma=0.9)
 
     @staticmethod
-    def _create_model():
+    def _create_model(input_shape=None, action_count=None):
         model = Sequential()
         model.add(Conv2D(32, kernel_size=(8, 8), padding="same", strides=(4, 4),
                          input_shape=(RAW_WIDTH, RAW_HEIGHT, 1),
@@ -54,7 +54,7 @@ class DQNBreakout(DoubleDQN):
         model.add(Flatten())
         model.add(Dense(512, activation="relu"))
 
-        model.add(Dense(6, activation='linear'))
+        model.add(Dense(action_count, activation='linear'))
 
         model.compile(loss='mean_squared_error',
                       optimizer=Adam(lr=0.001),
@@ -78,7 +78,7 @@ def combine_two_observations(observation, observation_next):
 
 def main():
     env = gym.make("Breakout-v0")
-    agent = DQNBreakout()
+    agent = DQNBreakout(env.action_space.n)
 
     for episode in range(1000000):
         observation_queue = deque(maxlen=2)

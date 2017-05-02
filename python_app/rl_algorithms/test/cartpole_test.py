@@ -21,7 +21,7 @@ import gym
 
 def main():
     env = gym.make("CartPole-v0")
-    agent = DQNCartpole()
+    agent = DQNCartpole(env.action_space.n)
 
     for episode in range(1000):
         observation = env.reset()

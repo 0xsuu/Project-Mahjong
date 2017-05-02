@@ -47,6 +47,7 @@ class DQNInterface:
     __metaclass__ = ABCMeta
 
     def __init__(self, action_count, weights_file_path,
+                 model_input_shape=None,
                  mode=TRAIN, load_previous_model=False,
                  replay_memory_size=REPLAY_MEMORY_SIZE_DEFAULT,
                  replay_memory_batch_size=REPLAY_MEMORY_BATCH_SIZE_DEFAULT,
@@ -59,13 +60,14 @@ class DQNInterface:
         self._weights_file_path = weights_file_path
 
         # Initialising Q functions.
-        self._model = self._create_model()  # Online model.
-        self._target_model = self._create_model()  # Target model.
+        # Online model.
+        self._model = self._create_model(model_input_shape, action_count)
+        # Target model.
+        self._target_model = self._create_model(model_input_shape, action_count)
         self._target_model.set_weights(self._model.get_weights())  # Copy weights.
         self._target_update_interval = target_update_interval
 
-        self._replay_memory = self._create_replay_memory()
-        self._replay_memory_size = replay_memory_size
+        self._replay_memory = self._create_replay_memory(replay_memory_size)
         self._replay_memory_batch_size = replay_memory_batch_size
         self._train_step_interval = train_step_interval
 
@@ -99,7 +101,7 @@ class DQNInterface:
 
     @staticmethod
     @abstractstaticmethod
-    def _create_replay_memory():
+    def _create_replay_memory(max_size=None):
         raise Exception("Do not call abstract method.")
 
     @abstractmethod
@@ -111,16 +113,12 @@ class DQNInterface:
         raise Exception("Do not call abstract method.")
 
     @abstractmethod
-    def _discard_overflow_memory(self):
-        raise Exception("Do not call abstract method.")
-
-    @abstractmethod
     def _sample_replay_memory(self):
         raise Exception("Do not call abstract method.")
 
     @staticmethod
     @abstractstaticmethod
-    def _create_model():
+    def _create_model(input_shape=None, action_count=None):
         raise Exception("Do not call abstract method.")
 
     @staticmethod
@@ -136,9 +134,6 @@ class DQNInterface:
                                     reward,
                                     self._pre_process(observation_next),
                                     done))
-
-        if len(self._replay_memory) > self._replay_memory_size:
-            self._discard_overflow_memory()
 
         if len(self._replay_memory) > self._replay_memory_batch_size and \
            self._timestamp % self._train_step_interval == 0:
