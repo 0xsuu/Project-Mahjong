@@ -28,7 +28,7 @@ class DQNQueueMemoryInterface(DQNInterface):
         return deque()
 
     def _discard_overflow_memory(self):
-        self._replay_memory = self._replay_memory.popleft()
+        self._replay_memory.popleft()
 
     def _sample_replay_memory(self):
         return sample(list(self._replay_memory), self._replay_memory_batch_size)
