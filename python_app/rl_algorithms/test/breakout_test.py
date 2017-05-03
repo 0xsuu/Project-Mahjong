@@ -15,11 +15,10 @@
 #  limitations under the License.
 
 import sys
-from collections import deque
 
 sys.path.append("../")
 
-from double_dqn import DoubleDQN
+from double_dqn import *
 
 from keras.models import Sequential
 from keras.layers import Conv2D, Dense, Flatten, MaxPooling2D
@@ -35,9 +34,11 @@ RAW_HEIGHT = 84
 
 
 class DQNBreakout(DoubleDQN):
-    def __init__(self, action_count, weights_file_path="breakout_weights.h5"):
+    def __init__(self, action_count, weights_file_path="breakout_weights.h5",
+                 mode=TRAIN, load=True):
         DoubleDQN.__init__(self, action_count, weights_file_path,
-                           target_update_interval=1000, gamma=0.9)
+                           target_update_interval=1000, gamma=0.9, mode=mode,
+                           load_previous_model=load)
 
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
