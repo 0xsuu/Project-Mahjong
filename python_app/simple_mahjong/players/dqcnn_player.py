@@ -43,7 +43,7 @@ class DQNSimpleMahjong(DoubleDQN):
         return transform_one_hot_to_cnn_matrix(transform_hand_to_one_hot(input_data))
 
     @staticmethod
-    def _create_model():
+    def _create_model(input_shape=None, action_count=None):
         return simple_mahjong_dqn_model()
 
 

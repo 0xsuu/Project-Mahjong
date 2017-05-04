@@ -26,8 +26,8 @@ class DQNNatureInterface(DQNQueueMemoryInterface):
     __metaclass__ = ABCMeta
 
     @staticmethod
-    @abstractmethod
-    def _create_model():
+    @abstractstaticmethod
+    def _create_model(input_shape=None, action_count=None):
         raise Exception("Do not call abstract method.")
 
     def _train_on_memory(self, observation_batch,
@@ -47,6 +47,6 @@ class DQNNatureInterface(DQNQueueMemoryInterface):
         self._model.train_on_batch(observation_batch, q_values)
 
     @staticmethod
-    @abstractmethod
+    @abstractstaticmethod
     def _pre_process(input_data):
         raise Exception("Do not call abstract method.")

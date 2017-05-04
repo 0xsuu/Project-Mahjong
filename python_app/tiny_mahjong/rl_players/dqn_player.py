@@ -45,7 +45,7 @@ class DDQNTinyMahjong(DoubleDQN):
         return reshaped_input
 
     @staticmethod
-    def _create_model():
+    def _create_model(input_shape=None, action_count=None):
         return tiny_mahjong_dqn_model()
 
 
@@ -107,9 +107,9 @@ class DQNPlayer(Player):
             self._drain_rounds += 1
 
         self._dqn_model.episode_finished({"Win rate":
-                                              self._win_rounds * 1.0 / self._total_rounds,
+                                          self._win_rounds * 1.0 / self._total_rounds,
                                           "Drain rate":
-                                              self._drain_rounds * 1.0 / self._total_rounds})
+                                          self._drain_rounds * 1.0 / self._total_rounds})
 
         if self._mode == PLAY:
             print(self.name + ":")

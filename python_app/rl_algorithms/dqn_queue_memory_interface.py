@@ -24,11 +24,8 @@ class DQNQueueMemoryInterface(DQNInterface):
     __metaclass__ = ABCMeta
 
     @staticmethod
-    def _create_replay_memory():
-        return deque()
-
-    def _discard_overflow_memory(self):
-        self._replay_memory.popleft()
+    def _create_replay_memory(max_size=None):
+        return deque(maxlen=max_size)
 
     def _sample_replay_memory(self):
         return sample(list(self._replay_memory), self._replay_memory_batch_size)
@@ -43,7 +40,7 @@ class DQNQueueMemoryInterface(DQNInterface):
 
     @staticmethod
     @abstractstaticmethod
-    def _create_model():
+    def _create_model(input_shape=None, action_count=None):
         raise Exception("Do not call abstract method.")
 
     @staticmethod
