@@ -34,7 +34,7 @@ RAW_HEIGHT = 9
 class DQNGomoku(DoubleDQN):
     def __init__(self, action_count, weights_file_path="gomoku_weights.h5"):
         DoubleDQN.__init__(self, action_count, weights_file_path,
-                           target_update_interval=1000, gamma=0.9, load_previous_model=True)
+                           target_update_interval=1000, gamma=0.99, load_previous_model=True)
 
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
@@ -53,7 +53,7 @@ class DQNGomoku(DoubleDQN):
         model.add(Dense(action_count, activation='linear'))
 
         model.compile(loss='mean_squared_error',
-                      optimizer=Adam(lr=0.001),
+                      optimizer=Adam(lr=0.00025),
                       metrics=['accuracy'])
 
         return model
@@ -67,6 +67,7 @@ def main():
     env = GomokuEnv("black", "random", 9)
     agent = DQNGomoku(env.action_space.n)
 
+    win_rate = 0.0
     for episode in range(1000000):
         observation = env.reset()
         successful_moves = 0
@@ -80,6 +81,11 @@ def main():
             successful_moves += 1
             if not done:
                 reward = 0.01
+            else:
+                if reward > 0:
+                    win_rate = (win_rate * float(episode) + 1) / (episode + 1)
+                else:
+                    win_rate = (win_rate * float(episode)) / (episode + 1)
             agent.notify_reward(reward)
 
             agent.append_memory_and_train(observation, action, reward, next_observation, done)
@@ -88,7 +94,7 @@ def main():
 
             if done:
                 break
-        agent.episode_finished({"Successful moves": successful_moves})
+        agent.episode_finished({"Successful moves": successful_moves, "Win rate": win_rate})
 
 if __name__ == "__main__":
     main()
