@@ -18,6 +18,13 @@ cd Project-Mahjong
 ./build_mahjong.sh --game simple
 ```
 
+## Quick Start: Simple Mahjong Game Python
+```bash
+./build_mahjong.sh --python
+cd python_app/simple_mahjong
+python3 play.py
+```
+
 ## Quick Start: Tenhou bot
 ```bash
 ./build_mahjong.sh --python
