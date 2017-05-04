@@ -22,7 +22,7 @@ from double_dqn import *
 
 from keras.models import Sequential
 from keras.layers import Conv2D, Dense, Flatten, MaxPooling2D
-from keras.optimizers import Adam
+from keras.optimizers import RMSprop
 
 import numpy as np
 from skimage import color, transform
@@ -31,26 +31,26 @@ import gym
 
 RAW_WIDTH = 84
 RAW_HEIGHT = 84
+STATE_LENGTH = 4
 
 
 class DQNBreakout(DoubleDQN):
     def __init__(self, action_count, weights_file_path="breakout_weights.h5",
                  mode=TRAIN, load=True):
         DoubleDQN.__init__(self, action_count, weights_file_path,
-                           target_update_interval=1000, gamma=0.9, mode=mode,
-                           load_previous_model=load)
+                           target_update_interval=10000, gamma=0.99, mode=mode,
+                           epsilon_decay_steps=1000000, load_previous_model=load, )
 
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
         model = Sequential()
         model.add(Conv2D(32, kernel_size=(8, 8), padding="same", strides=(4, 4),
-                         input_shape=(RAW_WIDTH, RAW_HEIGHT, 1),
+                         input_shape=(RAW_WIDTH, RAW_HEIGHT, STATE_LENGTH),
                          activation="relu", kernel_initializer="random_normal"))
-        model.add(Conv2D(64, kernel_size=(4, 4), strides=(4, 4),
+        model.add(Conv2D(64, kernel_size=(4, 4), strides=(2, 2),
                          activation="relu"))
-        model.add(Conv2D(64, kernel_size=(2, 2),
+        model.add(Conv2D(64, kernel_size=(3, 3), strides=(2, 2),
                          activation="relu"))
-        model.add(MaxPooling2D(pool_size=(2, 2), data_format="channels_last"))
 
         model.add(Flatten())
         model.add(Dense(512, activation="relu"))
@@ -58,23 +58,30 @@ class DQNBreakout(DoubleDQN):
         model.add(Dense(action_count, activation='linear'))
 
         model.compile(loss='mean_squared_error',
-                      optimizer=Adam(lr=0.001),
+                      optimizer=RMSprop(lr=0.00025, rho=0.95),
                       metrics=['accuracy'])
 
         return model
 
     @staticmethod
     def _pre_process(input_data):
-        return input_data.reshape(1, RAW_WIDTH, RAW_HEIGHT, 1)
+        input_data = list(input_data)
+        final_input = transform.resize(color.rgb2gray(input_data[0]), (RAW_WIDTH, RAW_HEIGHT))
+        final_input = final_input.reshape(RAW_WIDTH, RAW_HEIGHT, 1)
+        for i in input_data[1:]:
+            i = transform.resize(color.rgb2gray(i), (RAW_WIDTH, RAW_HEIGHT))
+            i = i.reshape(RAW_WIDTH, RAW_HEIGHT, 1)
+            final_input = np.append(final_input, i, axis=2)
+        return final_input.reshape(1, RAW_WIDTH, RAW_HEIGHT, STATE_LENGTH)
 
 
-def combine_two_observations(observation, observation_next):
-    grey_matrix = color.rgb2gray(observation)
-    grey_matrix = transform.resize(grey_matrix, (RAW_WIDTH, RAW_HEIGHT))
-    grey_matrix_next = color.rgb2gray(observation_next)
-    grey_matrix_next = transform.resize(grey_matrix_next, (RAW_WIDTH, RAW_HEIGHT))
-    processed_matrix = np.maximum(grey_matrix, grey_matrix_next)
-    return processed_matrix
+# def combine_two_observations(observation, observation_next):
+#     grey_matrix = color.rgb2gray(observation)
+#     grey_matrix = transform.resize(grey_matrix, (RAW_WIDTH, RAW_HEIGHT))
+#     grey_matrix_next = color.rgb2gray(observation_next)
+#     grey_matrix_next = transform.resize(grey_matrix_next, (RAW_WIDTH, RAW_HEIGHT))
+#     processed_matrix = np.maximum(grey_matrix, grey_matrix_next)
+#     return processed_matrix
 
 
 def main():
@@ -82,29 +89,22 @@ def main():
     agent = DQNBreakout(env.action_space.n)
 
     for episode in range(1000000):
-        observation_queue = deque(maxlen=2)
+        observation_queue = deque(maxlen=STATE_LENGTH)
         observation = env.reset()
-        observation_queue.append(observation)
+        for i in range(STATE_LENGTH):
+            observation_queue.append(observation)
         for step in range(3000):
-            if len(observation_queue) >= 2:
-                observation = combine_two_observations(observation_queue[0], observation_queue[1])
-            else:
-                observation = transform.resize(color.rgb2gray(observation), (RAW_WIDTH, RAW_HEIGHT))
-            action = agent.make_action(observation)
-            next_observation, reward, done, _ = env.step(action)
+            observation_queue_prev = deque(observation_queue)
+
+            action = agent.make_action(observation_queue)
+            observation, reward, done, _ = env.step(action)
             agent.notify_reward(reward)
-            observation_queue.append(next_observation)
 
-            if len(observation_queue) >= 2:
-                next_observation = \
-                    combine_two_observations(observation_queue[0], observation_queue[1])
-            else:
-                next_observation = \
-                    transform.resize(color.rgb2gray(observation), (RAW_WIDTH, RAW_HEIGHT))
+            observation_queue.append(observation)
 
-            agent.append_memory_and_train(observation, action, reward, next_observation, done)
-
-            observation = next_observation
+            agent.append_memory_and_train(observation_queue_prev,
+                                          action, reward,
+                                          observation_queue, done)
 
             if done:
                 break
