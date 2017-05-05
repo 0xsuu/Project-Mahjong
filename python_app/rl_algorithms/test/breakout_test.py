@@ -21,7 +21,7 @@ sys.path.append("../")
 from double_dqn import *
 
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, Flatten, MaxPooling2D
+from keras.layers import Conv2D, Dense, Flatten
 from keras.optimizers import RMSprop
 
 import numpy as np
