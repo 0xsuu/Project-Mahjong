@@ -156,14 +156,20 @@ class DQNInterface:
 
     def make_action(self, observation, mode=None):
         if mode is None:
+            backup_mode = None
             mode = self._mode
+        else:
+            backup_mode = self._mode
+            self._mode = mode
         if mode == TRAIN:
             choice = self._epsilon_greedy_choose(self._pre_process(observation))
             if self._epsilon > self._final_epsilon:
                 self._epsilon -= self._epsilon_decay_value
-            return choice
         else:
-            return self._max_q_choose(self._pre_process(observation))
+            choice = self._max_q_choose(self._pre_process(observation))
+        if backup_mode:
+            self._mode = backup_mode
+        return choice
 
     def notify_reward(self, reward):
         self._total_reward += reward
@@ -189,7 +195,6 @@ class DQNInterface:
         q_values = self._model.predict(input_data)[0]
         choice = np.argmax(q_values)
         if self._mode == DEBUG:
-            print("Input:", input_data)
             print("Q values:", q_values)
             print("Choice:", choice)
             print()

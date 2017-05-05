@@ -29,8 +29,8 @@ def main():
     for i in range(STATE_LENGTH):
         observation_queue.append(observation)
     for step in range(3000):
-        env.render()
-        action = agent.make_action(observation_queue)
+        # env.render()
+        action = agent.make_action(observation_queue, mode=DEBUG)
         observation, reward, done, _ = env.step(action)
         total_reward += reward
         observation_queue.append(observation)
