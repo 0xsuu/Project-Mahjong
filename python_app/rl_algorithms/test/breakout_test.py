@@ -21,7 +21,7 @@ sys.path.append("../")
 from double_dqn import *
 
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, Flatten, MaxPooling2D
+from keras.layers import Conv2D, Dense, Flatten
 from keras.optimizers import RMSprop
 
 import numpy as np
@@ -66,10 +66,10 @@ class DQNBreakout(DoubleDQN):
     @staticmethod
     def _pre_process(input_data):
         input_data = list(input_data)
-        final_input = transform.resize(color.rgb2gray(input_data[0]), (RAW_WIDTH, RAW_HEIGHT))
+        final_input = color.rgb2gray(transform.resize(input_data[0], (RAW_WIDTH, RAW_HEIGHT)))
         final_input = final_input.reshape(RAW_WIDTH, RAW_HEIGHT, 1)
         for i in input_data[1:]:
-            i = transform.resize(color.rgb2gray(i), (RAW_WIDTH, RAW_HEIGHT))
+            i = color.rgb2gray(transform.resize(i, (RAW_WIDTH, RAW_HEIGHT)))
             i = i.reshape(RAW_WIDTH, RAW_HEIGHT, 1)
             final_input = np.append(final_input, i, axis=2)
         return final_input.reshape(1, RAW_WIDTH, RAW_HEIGHT, STATE_LENGTH)

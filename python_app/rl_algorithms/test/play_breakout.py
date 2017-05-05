@@ -19,42 +19,21 @@ from breakout_test import *
 import gym
 
 
-def combine_two_observations(observation, observation_next):
-    grey_matrix = color.rgb2gray(observation)
-    grey_matrix = transform.resize(grey_matrix, (RAW_WIDTH, RAW_HEIGHT))
-    grey_matrix_next = color.rgb2gray(observation_next)
-    grey_matrix_next = transform.resize(grey_matrix_next, (RAW_WIDTH, RAW_HEIGHT))
-    processed_matrix = np.maximum(grey_matrix, grey_matrix_next)
-    return processed_matrix
-
-
 def main():
     env = gym.make("Breakout-v0")
     agent = DQNBreakout(env.action_space.n, mode=PLAY, load=True)
 
     total_reward = 0
-    observation_queue = deque(maxlen=2)
+    observation_queue = deque(maxlen=STATE_LENGTH)
     observation = env.reset()
-    observation_queue.append(observation)
+    for i in range(STATE_LENGTH):
+        observation_queue.append(observation)
     for step in range(3000):
         # env.render()
-        if len(observation_queue) >= 2:
-            observation = combine_two_observations(observation_queue[0], observation_queue[1])
-        else:
-            observation = transform.resize(color.rgb2gray(observation), (RAW_WIDTH, RAW_HEIGHT))
-        action = agent.make_action(observation)
-        next_observation, reward, done, _ = env.step(action)
+        action = agent.make_action(observation_queue, mode=DEBUG)
+        observation, reward, done, _ = env.step(action)
         total_reward += reward
-        observation_queue.append(next_observation)
-
-        if len(observation_queue) >= 2:
-            next_observation = \
-                combine_two_observations(observation_queue[0], observation_queue[1])
-        else:
-            next_observation = \
-                transform.resize(color.rgb2gray(observation), (RAW_WIDTH, RAW_HEIGHT))
-
-        observation = next_observation
+        observation_queue.append(observation)
 
         if done:
             break
