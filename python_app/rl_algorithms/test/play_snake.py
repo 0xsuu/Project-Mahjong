@@ -14,14 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from breakout_test import *
+from snake_test import *
 
 import gym
 
 
 def main():
-    env = gym.make("Breakout-v0")
-    agent = DQNBreakout(env.action_space.n, mode=PLAY, load=True)
+    env = gym.make("Snake-v0")
+    agent = DQNSnake(env.action_space.n, mode=PLAY, load=True)
 
     total_reward = 0
     observation_queue = deque(maxlen=STATE_LENGTH)

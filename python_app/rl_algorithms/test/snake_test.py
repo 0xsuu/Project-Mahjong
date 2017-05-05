@@ -28,14 +28,15 @@ import numpy as np
 from skimage import color, transform
 
 import gym
+import gym_ple
 
-RAW_WIDTH = 84
-RAW_HEIGHT = 84
+RAW_WIDTH = 64
+RAW_HEIGHT = 64
 STATE_LENGTH = 4
 
 
-class DQNBreakout(DoubleDQN):
-    def __init__(self, action_count, weights_file_path="breakout_weights.h5",
+class DQNSnake(DoubleDQN):
+    def __init__(self, action_count, weights_file_path="snake_weights.h5",
                  mode=TRAIN, load=True):
         DoubleDQN.__init__(self, action_count, weights_file_path,
                            target_update_interval=10000, gamma=0.99, mode=mode,
@@ -66,10 +67,10 @@ class DQNBreakout(DoubleDQN):
     @staticmethod
     def _pre_process(input_data):
         input_data = list(input_data)
-        final_input = color.rgb2gray(transform.resize(input_data[0], (RAW_WIDTH, RAW_HEIGHT)))
+        final_input = color.rgb2gray(input_data[0])
         final_input = final_input.reshape(RAW_WIDTH, RAW_HEIGHT, 1)
         for i in input_data[1:]:
-            i = color.rgb2gray(transform.resize(i, (RAW_WIDTH, RAW_HEIGHT)))
+            i = color.rgb2gray(i)
             i = i.reshape(RAW_WIDTH, RAW_HEIGHT, 1)
             final_input = np.append(final_input, i, axis=2)
         return final_input.reshape(1, RAW_WIDTH, RAW_HEIGHT, STATE_LENGTH)
@@ -85,8 +86,8 @@ class DQNBreakout(DoubleDQN):
 
 
 def main():
-    env = gym.make("Breakout-v0")
-    agent = DQNBreakout(env.action_space.n)
+    env = gym.make("Snake-v0")
+    agent = DQNSnake(env.action_space.n)
 
     for episode in range(1000000):
         observation_queue = deque(maxlen=STATE_LENGTH)
