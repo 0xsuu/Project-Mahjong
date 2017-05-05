@@ -19,7 +19,6 @@
 
 import numpy as np
 import numpy.random as random
-from sklearn.utils import shuffle
 
 __version__ = "0.1b"
 
@@ -108,7 +107,7 @@ class Game:
         self.current_player = None
 
     def setup(self):
-        self.tiles = shuffle(np.copy(TILE_SET))
+        self.tiles = np.shuffle(np.copy(TILE_SET))
         self.current_player = random.choice(self.players)
 
         for player in self.players:
