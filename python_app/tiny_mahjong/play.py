@@ -24,10 +24,10 @@ from rl_players.dqn_player import *
 
 
 def main():
-    player1 = UserInputPlayer("Smart Human")
-    player2 = QPlayer("Q BOT 1", DEBUG)
-    player3 = DQNPlayer("DQN BOT 2", DEBUG)
-    player4 = DQNPlayer("DQN BOT 1", DEBUG)
+    player1 = RandomPlayer("Smart Human")
+    player2 = RandomPlayer("Q BOT 1")
+    player3 = DQNPlayer("DQN BOT TRAIN", TRAIN)
+    player4 = DQNPlayer("DQN BOT SELF_PLAY", SELF_PLAY)
 
     game = Game(1, [player1, player2, player3, player4])
     game.play()
