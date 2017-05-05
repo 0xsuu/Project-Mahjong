@@ -107,7 +107,8 @@ class Game:
         self.current_player = None
 
     def setup(self):
-        self.tiles = np.shuffle(np.copy(TILE_SET))
+        self.tiles = np.copy(TILE_SET)
+        np.random.shuffle(self.tiles)
         self.current_player = random.choice(self.players)
 
         for player in self.players:
