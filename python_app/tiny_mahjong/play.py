@@ -17,17 +17,17 @@
 from adft_player import *
 from random_player import *
 from ui_player import *
-from rl.mcnn_player import *
-from rl.mc_player import *
-from rl.q_player import *
-from rl.dqn_player import *
+from rl_players.mcnn_player import *
+from rl_players.mc_player import *
+from rl_players.q_player import *
+from rl_players.dqn_player import *
 
 
 def main():
-    player1 = UserInputPlayer("Smart Human")
-    player2 = QPlayer("Q BOT 1", EVAL)
-    player3 = QPlayer("Q BOT 2", EVAL)
-    player4 = DQNPlayer("DQN BOT 1", EVAL)
+    player1 = RandomPlayer("Smart Human")
+    player2 = RandomPlayer("Q BOT 1")
+    player3 = DQNPlayer("DQN BOT TRAIN", TRAIN)
+    player4 = DQNPlayer("DQN BOT SELF_PLAY", SELF_PLAY)
 
     game = Game(1, [player1, player2, player3, player4])
     game.play()
