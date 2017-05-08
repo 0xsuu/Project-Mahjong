@@ -40,7 +40,8 @@ class DoubleDQN(DQNQueueMemoryInterface):
                 q_values[i][action_batch[i]] = \
                     reward_batch[i] + \
                     self._gamma * next_q_values_target[i][np.argmax(next_q_values[i])]
-        self._model.train_on_batch(observation_batch, q_values)
+        train_metrics = self._model.train_on_batch(observation_batch, q_values)
+        self._losses.append(train_metrics[0] if type(train_metrics) is list else train_metrics)
 
     @staticmethod
     @abstractstaticmethod
