@@ -87,6 +87,7 @@ class DQNInterface:
         # Episode-wised status variables.
         self._max_q_history = []
         self._total_reward = 0
+        self._losses = []
 
         # Period-wised status variables.
         self._period_max_q_histories = []
@@ -213,12 +214,14 @@ class DQNInterface:
     def episode_finished(self, additional_logs):
         self._episode += 1
         if self._mode == TRAIN:
+            summary = tf.Summary()
             if len(self._max_q_history) > 0:
                 average_max_q = sum(self._max_q_history) / len(self._max_q_history)
-            else:
-                average_max_q = 0
-            summary = tf.Summary()
-            summary.value.add(tag="Average Max Q", simple_value=average_max_q)
+                summary.value.add(tag="Average Max Q", simple_value=average_max_q)
+            if len(self._losses) > 0:
+                average_loss = sum(self._losses) / len(self._losses)
+                summary.value.add(tag="Average Loss", simple_value=average_loss)
+
             summary.value.add(tag="Total Reward", simple_value=self._total_reward)
             for tag in additional_logs:
                 summary.value.add(tag=tag, simple_value=additional_logs[tag])
@@ -245,7 +248,7 @@ class DQNInterface:
                       period_average_max_q, "\t",
                       tag_rewards + ":",
                       period_average_total_reward)
-                summary.value.add(tag=tag_max_qs, simple_value=average_max_q)
+                summary.value.add(tag=tag_max_qs, simple_value=period_average_max_q)
                 summary.value.add(
                     tag=tag_rewards,
                     simple_value=period_average_total_reward)
