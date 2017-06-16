@@ -29,8 +29,8 @@ class DQNCartpole(PrioritisedDoubleDQN):
     def __init__(self, action_count, weights_file_path="cartpole_weights.h5",
                  mode=TRAIN, load=False):
         PrioritisedDoubleDQN.__init__(self, action_count, weights_file_path, train_step_interval=1,
-                                      target_update_interval=1000, gamma=0.9, mode=mode,
-                                      load_previous_model=load)
+                           target_update_interval=1000, gamma=0.9, mode=mode,
+                           load_previous_model=load)
 
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
@@ -44,3 +44,4 @@ class DQNCartpole(PrioritisedDoubleDQN):
     @staticmethod
     def _pre_process(input_data):
         return input_data.reshape(1, 4)
+
