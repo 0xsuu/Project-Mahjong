@@ -41,7 +41,9 @@ class DQNQueueMemoryInterface(DQNInterface):
                          action_batch,
                          reward_batch,
                          observation_next_batch,
-                         done_batch):
+                         done_batch,
+                         weights=None,
+                         batch_indexes=None):
         raise Exception("Do not call abstract method.")
 
     @staticmethod
