@@ -100,6 +100,12 @@ class DQNInterface:
         if self._mode == TRAIN:
             self._writer = self.setup_tensorboard_writer()
 
+        # Print info.
+        print("Mode:", mode,
+              "| Replay memory size:", replay_memory_size,
+              "| Train step interval:", train_step_interval,
+              "| Target update interval:", target_update_interval)
+
     @staticmethod
     @abstractstaticmethod
     def _create_replay_memory(max_size=None):
@@ -138,15 +144,11 @@ class DQNInterface:
 
         if len(self._replay_memory) > self._replay_memory_batch_size and \
            self._timestamp % self._train_step_interval == 0:
-            # Sample the mini batch and expand.
-            mini_batch = self._sample_replay_memory()
+            # Sample the mini batch.
+            observation_batch, action_batch, reward_batch, observation_next_batch, done_batch = \
+                self._sample_replay_memory()
             # Observations must be in the shape of (1, ...).
             # This should be handled in _pre_process function.
-            observation_batch = np.array([m[0][0] for m in mini_batch])
-            action_batch = [m[1] for m in mini_batch]
-            reward_batch = [m[2] for m in mini_batch]
-            observation_next_batch = np.array([m[3][0] for m in mini_batch])
-            done_batch = [m[4] for m in mini_batch]
             self._train_on_memory(observation_batch,
                                   action_batch,
                                   reward_batch,

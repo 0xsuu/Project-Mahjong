@@ -28,7 +28,13 @@ class DQNQueueMemoryInterface(DQNInterface):
         return deque(maxlen=max_size)
 
     def _sample_replay_memory(self):
-        return sample(list(self._replay_memory), self._replay_memory_batch_size)
+        mini_batch = sample(list(self._replay_memory), self._replay_memory_batch_size)
+        observation_batch = np.array([m[0][0] for m in mini_batch])
+        action_batch = [m[1] for m in mini_batch]
+        reward_batch = [m[2] for m in mini_batch]
+        observation_next_batch = np.array([m[3][0] for m in mini_batch])
+        done_batch = [m[4] for m in mini_batch]
+        return observation_batch, action_batch, reward_batch, observation_next_batch, done_batch
 
     @abstractmethod
     def _train_on_memory(self, observation_batch,
