@@ -19,6 +19,7 @@ import sys
 sys.path.append("../")
 
 from double_dqn import *
+from prioritised_double_dqn import *
 
 from keras.models import Sequential
 from keras.layers import Conv2D, Dense, Flatten
@@ -31,11 +32,12 @@ RAW_WIDTH = 9
 RAW_HEIGHT = 9
 
 
-class DQNGomoku(DoubleDQN):
+class DQNGomoku(PrioritisedDoubleDQN):
     def __init__(self, action_count, weights_file_path="gomoku_weights.h5", mode=TRAIN):
-        DoubleDQN.__init__(self, action_count, weights_file_path,
-                           target_update_interval=1000, gamma=0.99,
-                           load_previous_model=True, mode=mode)
+        PrioritisedDoubleDQN.__init__(self, action_count, weights_file_path,
+                                      replay_memory_size=100000,
+                                      target_update_interval=1000, gamma=0.99,
+                                      load_previous_model=True, mode=mode)
 
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
@@ -65,7 +67,7 @@ class DQNGomoku(DoubleDQN):
 
 
 def main():
-    env = GomokuEnv("black", "random", 9)
+    env = GomokuEnv("black", "beginner", 9)
     agent = DQNGomoku(env.action_space.n)
 
     win_rate = 0.0

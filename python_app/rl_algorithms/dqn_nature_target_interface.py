@@ -33,7 +33,9 @@ class DQNNatureTargetInterface(DQNQueueMemoryInterface):
                          action_batch,
                          reward_batch,
                          observation_next_batch,
-                         done_batch):
+                         done_batch,
+                         weights=None,
+                         batch_indexes=None):
         q_values = self._model.predict(observation_batch)
         next_q_values_target = self._target_model.predict(observation_next_batch)
         for i in range(self._replay_memory_batch_size):

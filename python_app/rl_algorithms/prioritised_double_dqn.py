@@ -14,15 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""
-This is an implementation of the Deep Q Network initially published on Nature paper.
-<http://add-link-later>
-"""
+from dqn_prioritised_memory_interface import *
 
-from dqn_queue_memory_interface import *
+prioritized_replay_epsilon = 1e-6
 
 
-class DQNNatureInterface(DQNQueueMemoryInterface):
+class PrioritisedDoubleDQN(DQNPrioritisedMemoryInterface):
     __metaclass__ = ABCMeta
 
     @staticmethod
@@ -39,13 +36,23 @@ class DQNNatureInterface(DQNQueueMemoryInterface):
                          batch_indexes=None):
         q_values = self._model.predict(observation_batch)
         next_q_values = self._model.predict(observation_next_batch)
+        next_q_values_target = self._target_model.predict(observation_next_batch)
+        td_error = np.array([0.0]*self._replay_memory_batch_size)
         for i in range(self._replay_memory_batch_size):
             if done_batch[i]:
-                q_values[i][action_batch[i]] = reward_batch[i]
+                update_q_value = reward_batch[i]
             else:
-                q_values[i][action_batch[i]] = \
+                update_q_value = \
                     reward_batch[i] + \
-                    self._gamma * np.max(next_q_values[i])
+                    self._gamma * next_q_values_target[i][np.argmax(next_q_values[i])]
+            td_error[i] = update_q_value - q_values[i][action_batch[i]]
+            q_values[i][action_batch[i]] = update_q_value
+
+        # Update prioritised memory priorities.
+        new_priorities = np.abs(td_error) + prioritized_replay_epsilon
+        self._replay_memory.update_priorities(batch_indexes, new_priorities)
+
+        # Add loss to the plot.
         train_metrics = self._model.train_on_batch(observation_batch, q_values)
         self._losses.append(train_metrics[0] if type(train_metrics) is list else train_metrics)
 
