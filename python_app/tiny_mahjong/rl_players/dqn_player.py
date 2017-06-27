@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 from model_generator import tiny_mahjong_dqn_model
-from double_dqn import DoubleDQN
+from prioritised_double_dqn import PrioritisedDoubleDQN
 from dqn_interface import *
 
 from game import *
@@ -26,10 +26,11 @@ WIN_REWARD = 1.0
 DISCARD_REWARD = 0.0
 
 
-class DDQNTinyMahjong(DoubleDQN):
+class DDQNTinyMahjong(PrioritisedDoubleDQN):
     def __init__(self, mode, load=True):
-        DoubleDQN.__init__(self, action_count=5, weights_file_path=DQN_WEIGHTS_FILE,
-                           mode=mode, load_previous_model=load)
+        PrioritisedDoubleDQN.__init__(self, action_count=5, weights_file_path=DQN_WEIGHTS_FILE,
+                                      replay_memory_size=100000, mode=mode,
+                                      target_update_interval=10000, load_previous_model=load)
 
     @staticmethod
     def _pre_process(input_data):
