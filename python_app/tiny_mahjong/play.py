@@ -17,19 +17,21 @@
 from adft_player import *
 from random_player import *
 from ui_player import *
-from rl_players.mcnn_player import *
-from rl_players.mc_player import *
+from greedy_player import *
+# from rl_players.mcnn_player import *
+# from rl_players.mc_player import *
 from rl_players.q_player import *
 from rl_players.dqn_player import *
 
 
 def main():
     player1 = RandomPlayer("Smart Human")
-    player2 = RandomPlayer("Q BOT 1")
-    player3 = DQNPlayer("DQN BOT TRAIN", TRAIN)
-    player4 = DQNPlayer("DQN BOT SELF_PLAY", SELF_PLAY)
+    player2 = QPlayer("Q BOT 1", EVAL)
+    player3 = DQNPlayer("DQN BOT TRAIN", EVAL)
+    # player4 = DQNPlayer("DQN BOT SELF_PLAY", SELF_PLAY)
+    player5 = GreedyPlayer("Greedy BOT")
 
-    game = Game(1, [player1, player2, player3, player4])
+    game = Game(100, [player1, player2, player3, player5])
     game.play()
 
 
