@@ -45,6 +45,7 @@ class Player:
         self.average_turn = 0
         self.rounds_won = 0
         self.__game = None
+        self._temporary_removed_tile = None
 
     def initial_hand_obtained(self):
         assert len(self.hand) == 4
@@ -96,6 +97,17 @@ class Player:
             return self.has_tile_in_stack(tile) / self.get_remaining_tiles()
         else:
             return 0
+
+    def temporary_remove_tile_from_stack(self, tile):
+        self._temporary_removed_tile = tile
+        if len(np.argwhere(self.__game.tiles == tile)) > 0:
+            self.__game.tiles = \
+                np.delete(self.__game.tiles, np.argwhere(self.__game.tiles == tile)[0])
+
+    def restore_temporary_removed_tile(self):
+        self.__game.tiles = np.append(self.__game.tiles, self._temporary_removed_tile)
+        self.__game.tiles.sort()
+        self._temporary_removed_tile = None
 
 
 class Game:
