@@ -23,7 +23,7 @@ from game import *
 DQN_WEIGHTS_FILE = "tm_dqn_weights.h5"
 
 WIN_REWARD = 1.0
-DISCARD_REWARD = 0.0
+DISCARD_REWARD = -0.01
 
 
 class DDQNTinyMahjong(PrioritisedDoubleDQN):
