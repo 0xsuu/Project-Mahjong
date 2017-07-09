@@ -5,7 +5,6 @@ This is a pure Python project.
 ### Requirements
 * Python 3 (Python 3.4+ for macOS/Ubuntu, Python 3.5+ for Windows)
 * Numpy
-* sklearn
 * pymp (not required by Windows)
   * install by:
     ```
