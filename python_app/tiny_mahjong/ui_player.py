@@ -37,7 +37,7 @@ class UserInputPlayer(Player):
         choice = input(":")
         return DISCARD, choice
 
-    def game_ends(self, win, drain=False):
+    def game_ends(self, win, lose, self_win=False, drain=False):
         Player.game_ends(self, win, drain)
-        if not win:
+        if lose:
             print("Player lose.")

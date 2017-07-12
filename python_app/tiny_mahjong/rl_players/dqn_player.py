@@ -60,7 +60,6 @@ class DQNPlayer(Player):
         self._prev_hand = None
         self._prev_action = None
 
-        self._win_rounds = 0
         self._drain_rounds = 0
 
         self._total_rounds = 0
@@ -98,17 +97,31 @@ class DQNPlayer(Player):
             self._prev_action = action
             return DISCARD, action
 
-    def game_ends(self, win, drain=False):
-        Player.game_ends(self, win, drain)
+    def player_discarded(self, discarded_tile):
+        training = self._prev_hand is not None and self._mode == TRAIN
+        if self.test_win_hand(self.hand, discarded_tile):
+            if training:
+                self._dqn_model.notify_reward(WIN_REWARD)
+                self._dqn_model.append_memory_and_train(self._prev_hand,
+                                                        self._prev_action,
+                                                        WIN_REWARD,
+                                                        self.hand,
+                                                        True)
+            return WIN
+        else:
+            return PASS
+
+    def game_ends(self, win, lose, self_win=False, drain=False):
+        Player.game_ends(self, win, lose, drain)
 
         # Summary.
-        if win:
-            self._win_rounds += 1
         if drain:
             self._drain_rounds += 1
 
         self._dqn_model.episode_finished({"Win rate":
-                                          self._win_rounds * 1.0 / self._total_rounds,
+                                          self.rounds_won * 1.0 / self._total_rounds,
+                                          "Lose rate":
+                                          self.rounds_lost * 1.0 / self._total_rounds,
                                           "Drain rate":
                                           self._drain_rounds * 1.0 / self._total_rounds})
 
@@ -117,7 +130,9 @@ class DQNPlayer(Player):
             if win:
                 print("Won!")
         elif self._mode == EVAL:
-            print("Win rate:", str(self.rounds_won * 100.0 / self._total_rounds) + "%")
+            print(self.name + ":")
+            print("Win rate:", str(self.rounds_won * 100.0 / self._total_rounds) + "%, Lose rate:",
+                  str(self.rounds_lost * 100.0 / self._total_rounds) + "%")
         elif self._mode == DEBUG:
             if win:
                 print(self.name, "won!")
