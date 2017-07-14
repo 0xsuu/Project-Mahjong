@@ -24,6 +24,9 @@ DQN_WEIGHTS_FILE = "tm_dqn_weights.h5"
 
 WIN_REWARD = 1.0
 DISCARD_REWARD = -0.01
+LOSE_REWARD = -1.0
+
+HAND_SIZE = 5
 
 
 class DDQNTinyMahjong(PrioritisedDoubleDQN):
@@ -34,14 +37,12 @@ class DDQNTinyMahjong(PrioritisedDoubleDQN):
 
     @staticmethod
     def _pre_process(input_data):
-        reshaped_input = np.array([])
-        for tile in input_data:
-            binarized = [0] * 18
-            binarized[int(tile) - 1] = 1
-            if reshaped_input.size == 0:
-                reshaped_input = np.array(binarized)
-            else:
-                reshaped_input = np.append(reshaped_input, binarized, axis=0)
+        assert len(input_data) == HAND_SIZE
+        reshaped_input = np.array([[0] * 18] * 5)
+        for tile_index in range(HAND_SIZE):
+            tile = int(input_data[tile_index]) - 1
+            if tile >= 0:
+                reshaped_input[tile_index][tile] = 1
         reshaped_input = reshaped_input.reshape(1, 5, 18, 1)
         return reshaped_input
 
@@ -93,7 +94,7 @@ class DQNPlayer(Player):
                                                         DISCARD_REWARD,
                                                         self.hand,
                                                         False)
-            self._prev_hand = self.hand
+            self._prev_hand = np.copy(self.hand)
             self._prev_action = action
             return DISCARD, action
 
@@ -105,7 +106,7 @@ class DQNPlayer(Player):
                 self._dqn_model.append_memory_and_train(self._prev_hand,
                                                         self._prev_action,
                                                         WIN_REWARD,
-                                                        self.hand,
+                                                        np.append(self.hand, 0),
                                                         True)
             return WIN
         else:
@@ -113,6 +114,16 @@ class DQNPlayer(Player):
 
     def game_ends(self, win, lose, self_win=False, drain=False):
         Player.game_ends(self, win, lose, drain)
+
+        if lose:
+            training = self._prev_hand is not None and self._mode == TRAIN
+            if training:
+                self._dqn_model.notify_reward(WIN_REWARD)
+                self._dqn_model.append_memory_and_train(self._prev_hand,
+                                                        self._prev_action,
+                                                        LOSE_REWARD,
+                                                        self.hand,
+                                                        True)
 
         # Summary.
         if drain:
