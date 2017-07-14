@@ -109,8 +109,8 @@ class QPlayer(Player):
         self.last_hand = self.hand
         return return_action, return_discard_tile
 
-    def game_ends(self, win, drain=False):
-        Player.game_ends(self, win, drain)
+    def game_ends(self, win, lose, self_win=False, drain=False):
+        Player.game_ends(self, win, lose, self_win, drain)
         if self._mode == TRAIN:
             if self.current_episode % 100 == 0:
                 print("Finished", self.current_episode, "episodes.")
@@ -131,7 +131,8 @@ class QPlayer(Player):
             np.savetxt(Q_VALUES_FILE, self.all_q_values, fmt='%f')
         elif self._mode == EVAL:
             print(self.name + ":")
-            print("Win rate:", str(self.rounds_won * 100.0 / self.current_episode) + "%")
+            print("Win rate:", str(self.rounds_won * 100.0 / self.current_episode) + "%, Lose rate:",
+                  str(self.rounds_lost * 100.0 / self.current_episode) + "%")
         elif self._mode == DEBUG:
             if win:
                 print(self.name, "won!")

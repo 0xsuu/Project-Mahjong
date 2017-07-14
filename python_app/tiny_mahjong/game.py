@@ -20,7 +20,7 @@
 import numpy as np
 import numpy.random as random
 
-__version__ = "0.1b"
+__version__ = "0.2b"
 
 TILE_SET = np.array(
     [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3,
@@ -34,6 +34,7 @@ TILE_SET = np.array(
 
 WIN = 6666
 DISCARD = 1111
+PASS = 2222
 
 
 class Player:
@@ -44,6 +45,7 @@ class Player:
         self.turn_count = 0
         self.average_turn = 0
         self.rounds_won = 0
+        self.rounds_lost = 0
         self.__game = None
         self._temporary_removed_tile = None
 
@@ -52,16 +54,32 @@ class Player:
         self.turn_count = 0
 
     def tile_picked(self):
+        """
+        This method should return an action of Win or Discard,
+        and the index of the tile in player's hand to discard if the action is Discard.
+        """
         assert len(self.hand) == 5
         self.turn_count += 1
 
-    def game_ends(self, win, drain=False):
+    def player_discarded(self, discarded_tile):
+        if self.test_win_hand(self.hand, discarded_tile):
+            return WIN
+        else:
+            return PASS
+
+    def game_ends(self, win, lose, self_win=False, drain=False):
         if win:
             self.rounds_won += 1
             self.average_turn += 1/self.rounds_won * (self.turn_count - self.average_turn)
+        if lose:
+            print(self.name, "lost")
+            self.rounds_lost += 1
 
     @staticmethod
-    def test_win_hand(hand):
+    def test_win_hand(hand, tile=None):
+        if tile is not None:
+            hand = np.append(hand, tile)
+            hand = np.sort(hand)
         for i in range(len(hand)-1):
             if hand[i] == hand[i+1]:
                 copy_hand = np.copy(hand)
@@ -111,12 +129,13 @@ class Player:
 
 
 class Game:
-    def __init__(self, round_count, players):
+    def __init__(self, round_count, players, win_on_discard):
         self.players = players
         self.round_count = round_count
         self.current_round = 0
         self.tiles = None
         self.current_player = None
+        self.win_on_discard = win_on_discard
 
     def setup(self):
         self.tiles = np.copy(TILE_SET)
@@ -143,27 +162,52 @@ class Game:
     def play_round(self):
         self.setup()
         while True:
+            # Current player draws tile.
             self.current_player.insert(self.tiles[0])
             self.tiles = np.delete(self.tiles, 0)
+
+            # Get current player's action (and discarded tiles).
             action, index = self.current_player.tile_picked()
             if action == WIN:
+                # Self-Win.
                 self.current_player.hand = \
                     np.delete(self.current_player.hand, index)
+                # Notify all the players the game result.
                 for player in self.players:
                     if player == self.current_player:
-                        player.game_ends(True)
+                        player.game_ends(True, False, self_win=True)
                     else:
-                        player.game_ends(False)
+                        player.game_ends(False, False, self_win=True)
                 return self.current_player.name
             elif action == DISCARD:
+                # Notify all the other players of the discard.
+                if self.win_on_discard:
+                    for discard_react_player in self.players:
+                        # Skip current player.
+                        if discard_react_player is not self.current_player:
+                            action = discard_react_player.player_discarded(self.current_player.hand[index])
+                            if action == WIN:
+                                # Notify all the players the game result.
+                                for player_to_notify in self.players:
+                                    if player_to_notify == discard_react_player:
+                                        # Win player.
+                                        player_to_notify.game_ends(True, False)
+                                    elif player_to_notify == self.current_player:
+                                        # Lose player.
+                                        player_to_notify.game_ends(False, True)
+                                    else:
+                                        # Non of the rest players business.
+                                        player_to_notify.game_ends(False, False)
+                                return discard_react_player.name
                 self.current_player.hand = \
                     np.delete(self.current_player.hand, index)
             else:
                 raise ValueError("Unknown action")
 
             if len(self.tiles) == 0:
+                # Notify all the players the game has drained.
                 for player in self.players:
-                    player.game_ends(False, drain=True)
+                    player.game_ends(False, False, drain=True)
                 return ""
             else:
                 self.current_player = self._next_player()
@@ -179,5 +223,6 @@ class Game:
         for player in self.players:
             print(player.name + "'s win rate: " +
                   str(counter[player.name] / self.round_count * 100) + "%" +
+                  ", lose rate: " + str(player.rounds_lost * 100 / self.round_count) + "%" +
                   ", average turn to win: " + str(player.average_turn))
         print("Drain rate: " + str(counter[""] * 100.0 / self.round_count) + "%")

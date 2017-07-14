@@ -143,7 +143,7 @@ class MCNNPlayer(Player):
             self.gain = DISCARD_REWARD + GAMMA * self.gain
             return DISCARD, self._epsilon_greedy_choose()
 
-    def game_ends(self, win, drain=False):
+    def game_ends(self, win, lose, self_win=False, drain=False):
         Player.game_ends(self, win, drain)
         input_set = np.array([])
         for visited_hand_tuple in self.hand_tuple_visits:
