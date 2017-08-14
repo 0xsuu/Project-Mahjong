@@ -56,8 +56,8 @@ class Player(object):
             else:
                 from mahjong.ai.random import MainAI
 
-        from mahjong.myAI.SLCNNPlayer import SLCNNPlayer
-        from mahjong.myAI.GreedyPlayer import GreedyAII
+        from mahjong.myAI.slcnn_player import SLCNNPlayer
+        from mahjong.myAI.greedy_player import GreedyAII
         self.ai = random.choice([MainAI(table, self), SLCNNPlayer(table, self)])
         #self.ai = SLCNNPlayer(table, self)
         #self.ai = GreedyAII(table, self)

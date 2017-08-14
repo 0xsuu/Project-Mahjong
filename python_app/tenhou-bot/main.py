@@ -8,7 +8,7 @@ from tenhou.main import connect_and_play
 from utils.logger import set_up_logging
 from utils.settings_handler import settings
 
-from mahjong.myAI.SLCNNPlayer import SLCNNPlayer
+from mahjong.myAI.slcnn_player import SLCNNPlayer
 
 def parse_args_and_set_up_settings():
     parser = OptionParser()
