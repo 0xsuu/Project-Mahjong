@@ -242,3 +242,4 @@ class Game:
                   ", lose rate: " + str(player.rounds_lost * 100 / self.round_count) + "%" +
                   ", average turn to win: " + str(player.average_turn))
         print("Drain rate: " + str(counter[""] * 100.0 / self.round_count) + "%")
+

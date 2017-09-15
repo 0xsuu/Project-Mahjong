@@ -32,7 +32,7 @@ class GameState:
             self._other_player_discards[i] = []
 
     def on_player_default_hand_obtained(self, hand):
-        hand = np.append(hand, -1)
+        hand = np.append(hand, 0)
         assert hand.shape[0] == 5
         self._player_hand = hand
 
@@ -54,9 +54,9 @@ class GameState:
 
         for p in self._other_player_discards:
             result = np.append(result, self._other_player_discards[p])
-            for k in range(FULL_DISCARD_COUNT - self._other_player_discards[p].shape[0]):
+            for k in range(FULL_DISCARD_COUNT - len(self._other_player_discards[p])):
                 result = np.append(result, 0)
 
-        assert result.shape[0] == len(self._other_player_ids) * FULL_DISCARD_COUNT + 5
+        assert result.shape[0] == (len(self._other_player_ids) + 1) * FULL_DISCARD_COUNT + 5
 
         return result
