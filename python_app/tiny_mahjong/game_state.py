@@ -18,7 +18,7 @@
 
 import numpy as np
 
-FULL_DISCARD_COUNT = 31
+FULL_DISCARD_COUNT = 32
 
 
 class GameState:
