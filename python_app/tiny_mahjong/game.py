@@ -20,6 +20,8 @@
 import numpy as np
 import numpy.random as random
 
+from game_state import GameState
+
 __version__ = "0.2b"
 
 TILE_SET = np.array(
@@ -48,6 +50,7 @@ class Player:
         self.rounds_lost = 0
         self.__game = None
         self._temporary_removed_tile = None
+        self.game_state = None
 
     def initial_hand_obtained(self):
         assert len(self.hand) == 4
@@ -149,7 +152,14 @@ class Game:
                 player.hand = np.append(player.hand, self.tiles[0])
                 self.tiles = np.delete(self.tiles, 0)
         for player in self.players:
+            # Generate game states for players.
+            other_players = self.players[:]
+            other_players.remove(player)
+            player.game_state = GameState(other_players)
+
             player.sort_hand()
+            player.game_state.on_player_default_hand_obtained(player.hand)
+
             player.initial_hand_obtained()
 
     def _next_player(self):
@@ -163,10 +173,17 @@ class Game:
         while True:
             # Current player draws tile.
             self.current_player.insert(self.tiles[0])
+            self.current_player.game_state.on_player_pick_new_tile(self.current_player.hand)
             self.tiles = np.delete(self.tiles, 0)
 
-            # Get current player's action (and discarded tiles).
+            # Get current player's action (and discarded tile's index).
             action, index = self.current_player.tile_picked()
+            for p in self.players:
+                if p == self.current_player:
+                    p.game_state.on_player_discard(self.current_player.hand[index])
+                else:
+                    p.game_state.on_other_player_discard(player_id=self.current_player,
+                                                         tile=self.current_player.hand[index])
             if action == WIN:
                 # Self-Win.
                 self.current_player.hand = \
@@ -176,7 +193,7 @@ class Game:
                     if player == self.current_player:
                         player.game_ends(True, False, self_win=True)
                     else:
-                        player.game_ends(False, False, self_win=True)
+                        player.game_ends(False, True, self_win=True)
                 return self.current_player.name
             elif action == DISCARD:
                 # Notify all the other players of the discard.
