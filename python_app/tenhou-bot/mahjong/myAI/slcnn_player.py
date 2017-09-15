@@ -62,7 +62,7 @@ class SLCNNPlayer(BaseAI):
         if shanten == 0:
             self.player.in_tempai = True
 
-        if h.testWin():
+        if h.test_win():
             return Shanten.AGARI_STATE
         elif self.player.in_tempai:
             results, st = self.calculate_outs()
