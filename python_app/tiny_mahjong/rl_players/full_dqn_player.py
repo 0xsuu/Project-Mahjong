@@ -98,10 +98,9 @@ class FullDQNPlayer(Player):
                                                         True)
             return WIN, -1
         else:
-            if training:
-                self._dqn_model.notify_reward(DISCARD_REWARD)
             action = self._dqn_model.make_action(self.game_state.get())
             if training:
+                self._dqn_model.notify_reward(DISCARD_REWARD)
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
                                                         DISCARD_REWARD,
@@ -134,9 +133,10 @@ class FullDQNPlayer(Player):
             training = self._prev_state is not None and self._mode == TRAIN
             if training:
                 if self_win:
-                    final_reward = DISCARD_REWARD
+                    final_reward = LOSE_REWARD
                 else:
                     final_reward = LOSE_REWARD
+                # print(final_reward, self._prev_action, "\n", self._prev_state, "\n", self.game_state.get(), "\n")
                 self._dqn_model.notify_reward(final_reward)
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
