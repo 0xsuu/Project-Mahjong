@@ -118,10 +118,14 @@ class DQNPlayer(Player):
         if lose:
             training = self._prev_hand is not None and self._mode == TRAIN
             if training:
-                self._dqn_model.notify_reward(WIN_REWARD)
+                if self_win:
+                    final_reward = DISCARD_REWARD
+                else:
+                    final_reward = LOSE_REWARD
+                self._dqn_model.notify_reward(final_reward)
                 self._dqn_model.append_memory_and_train(self._prev_hand,
                                                         self._prev_action,
-                                                        LOSE_REWARD,
+                                                        final_reward,
                                                         self.hand,
                                                         True)
 
