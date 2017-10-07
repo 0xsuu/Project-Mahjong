@@ -22,16 +22,18 @@ from greedy_player import *
 # from rl_players.mc_player import *
 from rl_players.q_player import *
 from rl_players.dqn_player import *
+from rl_players.full_dqn_player import *
 
 
 def main():
     player1 = RandomPlayer("Smart Human")
     player2 = QPlayer("Q BOT 1", EVAL)
-    player3 = DQNPlayer("DQN BOT TRAIN", EVAL)
+    player3 = DQNPlayer("DQN BOT TRAIN", TRAIN)
     # player4 = DQNPlayer("DQN BOT SELF_PLAY", SELF_PLAY)
     player5 = GreedyPlayer("Greedy BOT")
+    player6 = FullDQNPlayer("Full DQN BOT", TRAIN)
 
-    game = Game(100, [player1, player2, player3, player5], win_on_discard=True)
+    game = Game(10000, [player5, player6], win_on_discard=True)
     game.play()
 
 
