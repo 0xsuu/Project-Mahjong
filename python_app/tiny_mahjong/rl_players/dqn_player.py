@@ -122,6 +122,8 @@ class DQNPlayer(Player):
                     final_reward = DISCARD_REWARD
                 else:
                     final_reward = LOSE_REWARD
+                if self.hand.shape[0] == 4:
+                    self.hand = np.append(self.hand, 0)
                 self._dqn_model.notify_reward(final_reward)
                 self._dqn_model.append_memory_and_train(self._prev_hand,
                                                         self._prev_action,
