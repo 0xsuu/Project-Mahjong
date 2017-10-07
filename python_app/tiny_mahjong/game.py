@@ -158,7 +158,7 @@ class Game:
             player.game_state = GameState(other_players)
 
             player.sort_hand()
-            player.game_state.on_player_default_hand_obtained(player.hand)
+            player.game_state.on_player_default_hand_obtained(np.copy(player.hand))
 
             player.initial_hand_obtained()
 
@@ -173,7 +173,7 @@ class Game:
         while True:
             # Current player draws tile.
             self.current_player.insert(self.tiles[0])
-            self.current_player.game_state.on_player_pick_new_tile(self.current_player.hand)
+            self.current_player.game_state.on_player_pick_new_tile(np.copy(self.current_player.hand))
             self.tiles = np.delete(self.tiles, 0)
 
             # Get current player's action (and discarded tile's index).
