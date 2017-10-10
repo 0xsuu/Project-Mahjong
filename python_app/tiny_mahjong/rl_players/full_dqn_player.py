@@ -31,7 +31,8 @@ LOSE_REWARD = -1.0
 
 HAND_SIZE = 5
 
-STATE_SIZE = 69  # TODO: replace with a more proper way of setting this variable.
+# 74 for disclosed, 69 for non-disclosed.
+STATE_SIZE = 74  # TODO: replace with a more proper way of setting this variable.
 
 
 class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
