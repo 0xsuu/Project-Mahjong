@@ -31,6 +31,9 @@ LOSE_REWARD = -1.0
 
 HAND_SIZE = 5
 
+# 74 for disclosed, 69 for non-disclosed.
+STATE_SIZE = 74  # TODO: replace with a more proper way of setting this variable.
+
 
 class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
     def __init__(self, mode, load=True):
@@ -40,18 +43,23 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
 
     @staticmethod
     def _pre_process(input_data):
-        return input_data.reshape(1, 69, 1)
+        return input_data.reshape(1, STATE_SIZE, 1)
 
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
         model = Sequential()
-        model.add(Conv1D(input_shape=(69, 1),
-                         filters=256,
+        model.add(Conv1D(input_shape=(STATE_SIZE, 1),
+                         filters=32,
                          kernel_size=3,
-                         padding="valid",
+                         padding="same",
                          activation="relu"))
-        model.add(Dropout(0.25))
+        model.add(Conv1D(filters=64,
+                         kernel_size=3,
+                         padding="same",
+                         activation="relu"))
         model.add(MaxPooling1D())
+        model.add(Dropout(0.25))
+
         model.add(Flatten())
         model.add(Dense(256, activation="relu"))
         model.add(Dropout(0.5))

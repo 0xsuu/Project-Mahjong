@@ -22,14 +22,18 @@ FULL_DISCARD_COUNT = 32
 
 
 class GameState:
-    def __init__(self, other_player_ids):
+    def __init__(self, other_player_ids, disclose_all):
         self._player_hand = None
-        self._player_discard = []
+        self._opponents_hands = None
+        self._player_discards = []
         assert len(other_player_ids) != 0
         self._other_player_ids = other_player_ids
         self._other_player_discards = {}
         for i in other_player_ids:
             self._other_player_discards[i] = []
+        self.__disclose_all = disclose_all
+
+    # Player's hand update.
 
     def on_player_default_hand_obtained(self, hand):
         hand = np.append(hand, 0)
@@ -39,24 +43,43 @@ class GameState:
     def on_player_pick_new_tile(self, hand):
         self._player_hand = hand
 
+    # Opponents' hands update (for disclose option).
+
+    def on_other_players_hands_obtained(self, hands):
+        self._opponents_hands = hands
+
+
+    # Players' discards update.
+
     def on_player_discard(self, tile):
-        self._player_discard.append(tile)
+        self._player_discards.append(tile)
 
     def on_other_player_discard(self, player_id, tile):
         self._other_player_discards[player_id].append(tile)
 
     def get(self):
+        # Append player's hand.
         result = np.array(self._player_hand)
-        result = np.append(result, self._player_discard)
 
-        for i in range(FULL_DISCARD_COUNT - len(self._player_discard)):
+        # If the disclose option is enabled, append opponents' hands.
+        if self.__disclose_all:
+            result = np.append(result, self._opponents_hands)
+
+        # Append player's discards.
+        result = np.append(result, self._player_discards)
+
+        # Fill up 0s for non-full games. i.e. use fixed size input, thus the maximum number of discards are used.
+        for i in range(FULL_DISCARD_COUNT - len(self._player_discards)):
             result = np.append(result, 0)
 
+        # Append opponents' discards and fill up with 0s.
         for p in self._other_player_discards:
             result = np.append(result, self._other_player_discards[p])
             for k in range(FULL_DISCARD_COUNT - len(self._other_player_discards[p])):
                 result = np.append(result, 0)
 
-        assert result.shape[0] == (len(self._other_player_ids) + 1) * FULL_DISCARD_COUNT + 5
+        other_players_count = len(self._other_player_ids)
+        assert result.shape[0] == (other_players_count + 1) * FULL_DISCARD_COUNT + 5 + \
+            self.__disclose_all * other_players_count * 5
 
         return result

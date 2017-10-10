@@ -131,13 +131,14 @@ class Player:
 
 
 class Game:
-    def __init__(self, round_count, players, win_on_discard):
+    def __init__(self, round_count, players, win_on_discard, disclose_all=False):
         self.players = players
         self.round_count = round_count
         self.current_round = 0
         self.tiles = None
         self.current_player = None
         self.win_on_discard = win_on_discard
+        self._disclose_all = disclose_all
 
     def setup(self):
         self.tiles = np.copy(TILE_SET)
@@ -155,12 +156,20 @@ class Game:
             # Generate game states for players.
             other_players = self.players[:]
             other_players.remove(player)
-            player.game_state = GameState(other_players)
+            player.game_state = GameState(other_players, disclose_all=self._disclose_all)
 
             player.sort_hand()
             player.game_state.on_player_default_hand_obtained(np.copy(player.hand))
 
             player.initial_hand_obtained()
+
+        if self._disclose_all:
+            for target in self.players:
+                hands = np.array([])
+                for objective in self.players:
+                    if target != objective:
+                        hands = np.append(hands, np.append(objective.hand, 0))
+                target.game_state.on_other_players_hands_obtained(hands)
 
     def _next_player(self):
         index = self.players.index(self.current_player) + 1
@@ -173,7 +182,22 @@ class Game:
         while True:
             # Current player draws tile.
             self.current_player.insert(self.tiles[0])
+
+            # Update hand in Game State for current player.
             self.current_player.game_state.on_player_pick_new_tile(np.copy(self.current_player.hand))
+
+            # Update opponents hands in Game State for all other players.
+            if self._disclose_all:
+                for target in self.players:
+                    hands = np.array([])
+                    for objective in self.players:
+                        if target != objective:
+                            if objective.hand.shape[0] == 4:
+                                hands = np.append(hands, np.append(objective.hand, 0))
+                            else:
+                                hands = np.append(hands, objective.hand)
+                    target.game_state.on_other_players_hands_obtained(hands)
+
             self.tiles = np.delete(self.tiles, 0)
 
             # Get current player's action (and discarded tile's index).
