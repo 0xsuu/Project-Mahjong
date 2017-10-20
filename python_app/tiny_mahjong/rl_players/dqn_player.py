@@ -113,7 +113,7 @@ class DQNPlayer(Player):
             return PASS
 
     def game_ends(self, win, lose, self_win=False, drain=False):
-        Player.game_ends(self, win, lose, drain)
+        Player.game_ends(self, win, lose, self_win, drain)
 
         if lose:
             training = self._prev_hand is not None and self._mode == TRAIN
