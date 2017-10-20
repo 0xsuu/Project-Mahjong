@@ -48,7 +48,6 @@ class GameState:
     def on_other_players_hands_obtained(self, hands):
         self._opponents_hands = hands
 
-
     # Players' discards update.
 
     def on_player_discard(self, tile):

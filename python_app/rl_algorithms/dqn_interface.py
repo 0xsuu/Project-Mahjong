@@ -221,6 +221,8 @@ class DQNInterface:
         q_values = self._model.predict(input_data)[0]
         choice = np.argmax(q_values)
         if self._mode == DEBUG:
+            print(self.__class__.__name__)
+            print("Input features:", input_data.flatten())
             print("Q values:", q_values)
             print("Choice:", choice)
             print()
