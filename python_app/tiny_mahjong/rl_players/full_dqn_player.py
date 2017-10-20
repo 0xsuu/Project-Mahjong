@@ -32,7 +32,7 @@ LOSE_REWARD = -1.0
 HAND_SIZE = 5
 
 # 74 for disclosed, 69 for non-disclosed.
-STATE_SIZE = 74  # TODO: replace with a more proper way of setting this variable.
+STATE_SIZE = 69  # TODO: replace with a more proper way of setting this variable.
 
 
 class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
@@ -173,4 +173,14 @@ class FullDQNPlayer(Player):
                   str(self.rounds_lost * 100.0 / self._total_rounds) + "%")
         elif self._mode == DEBUG:
             if win:
-                print(self.name, "won!")
+                if self_win:
+                    print(self.name, "self win!")
+                else:
+                    print(self.name, "win on discard!")
+            elif lose:
+                if self_win:
+                    print(self.name, "lose, opponent self win.")
+                else:
+                    print(self.name, "lose, opponent win on this discard.")
+            else:
+                print("Tile stack drained.")

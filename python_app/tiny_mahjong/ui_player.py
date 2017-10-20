@@ -24,20 +24,49 @@ TERMINAL_END = "\033[0m"
 class UserInputPlayer(Player):
     def tile_picked(self):
         Player.tile_picked(self)
-        for i in self.hand:
-            if i <= 9:
-                print(TERMINAL_BLUE + "A" + str(int(i)) + TERMINAL_END, end="\t")
-            else:
-                print(TERMINAL_GREEN + "B" + str(int(i - 9)) + TERMINAL_END, end="\t")
-        print()
-        if self.test_win():
-            print("You won!")
-            return WIN, -1
-        print("0\t1\t2\t3\t4")
-        choice = input(":")
+        choice = None
+        while choice is None:
+            print("Discards:")
+            print(self.game_state.get()[5:])
+            print()
+            for i in self.hand:
+                if i <= 9:
+                    print(TERMINAL_BLUE + "A" + str(int(i)) + TERMINAL_END, end="\t")
+                else:
+                    print(TERMINAL_GREEN + "B" + str(int(i - 9)) + TERMINAL_END, end="\t")
+            print()
+            if self.test_win():
+                print("You won!")
+                return WIN, -1
+            print("0\t1\t2\t3\t4")
+
+            choice = input(":")
+            try:
+                choice = int(choice)
+            except ValueError:
+                choice = None
+                print("Illegal input, please re-input your choice.\n")
+                continue
+
+            if choice < 0 or choice >= 5:
+                choice = None
+                print("Illegal input, please re-input your choice.\n")
+                continue
+
         return DISCARD, choice
 
     def game_ends(self, win, lose, self_win=False, drain=False):
         Player.game_ends(self, win, drain)
-        if lose:
-            print("Player lose.")
+        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        if win:
+            if self_win:
+                print(self.name, "self win!")
+            else:
+                print(self.name, "win on discard!")
+        elif lose:
+            if self_win:
+                print(self.name, "lose, opponent self win.")
+            else:
+                print(self.name, "lose, opponent win on this discard.")
+        else:
+            print("Tile stack drained.")
