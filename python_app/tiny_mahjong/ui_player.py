@@ -26,7 +26,7 @@ class UserInputPlayer(Player):
         Player.tile_picked(self)
         choice = None
         while choice is None:
-            opponent_names_discards = self.game_state.get_opponent_discards()
+            opponent_names_discards = self.game_state.get_opponents_discards()
             for player in opponent_names_discards.keys():
                 print(player.name, "discards:")
                 for tile in opponent_names_discards[player]:

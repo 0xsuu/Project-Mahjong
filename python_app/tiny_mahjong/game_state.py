@@ -87,8 +87,11 @@ class GameState:
 
         return result
 
+    def get_player_hand(self):
+        return self._player_hand
+
     def get_player_discards(self):
         return self._player_discards
 
-    def get_opponent_discards(self):
+    def get_opponents_discards(self):
         return self._other_player_discards
