@@ -19,6 +19,8 @@ from keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
 from keras.optimizers import Adam
 from keras import backend
 
+from resnet import *
+
 from prioritised_double_dqn import PrioritisedDoubleDQN
 from dqn_interface import *
 
@@ -91,23 +93,25 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
         backend.set_image_dim_ordering("th")
-        model = Sequential()
-        model.add(Conv2D(filters=32,
-                         input_shape=(7, 11, 11),
-                         kernel_size=(3, 3),
-                         padding="same",
-                         activation="relu"))
-        model.add(Conv2D(filters=64,
-                         kernel_size=(3, 3),
-                         padding="same",
-                         activation="relu"))
-        model.add(MaxPooling2D())
-        model.add(Dropout(0.25))
-
-        model.add(Flatten())
-        model.add(Dense(256, activation="relu"))
-        model.add(Dropout(0.5))
-        model.add(Dense(5))
+        # model = Sequential()
+        # model.add(Conv2D(filters=32,
+        #                  input_shape=(7, 11, 11),
+        #                  kernel_size=(3, 3),
+        #                  padding="same",
+        #                  activation="relu"))
+        # model.add(Conv2D(filters=64,
+        #                  kernel_size=(3, 3),
+        #                  padding="same",
+        #                  activation="relu"))
+        # model.add(MaxPooling2D())
+        # model.add(Dropout(0.25))
+        #
+        # model.add(Flatten())
+        # model.add(Dense(256, activation="relu"))
+        # model.add(Dropout(0.5))
+        # model.add(Dense(5))
+        #
+        model = ResnetBuilder.build_resnet_18((7, 11, 11), 5)
 
         model.compile(loss='mean_squared_error',
                       optimizer=Adam(lr=0.00025),

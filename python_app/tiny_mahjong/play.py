@@ -31,9 +31,9 @@ def main():
     # player3 = DQNPlayer("DQN BOT TRAIN", EVAL)
     # player4 = FullDQNPlayer("Full DQN BOT SELF_PLAY", SELF_PLAY)
     player5 = GreedyPlayer("Greedy BOT")
-    player6 = FullDQNPlayer("Full DQN BOT", EVAL)
+    player6 = FullDQNPlayer("Full DQN BOT", TRAIN)
 
-    game = Game(1000, [player6, player5], win_on_discard=True, disclose_all=False)
+    game = Game(100000, [player6, player5], win_on_discard=True, disclose_all=False)
     game.play()
 
 

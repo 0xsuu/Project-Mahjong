@@ -18,3 +18,4 @@ import sys
 
 sys.path.append("../keras_models")
 sys.path.append("../rl_algorithms")
+sys.path.append("../third_party/keras-resnet")
