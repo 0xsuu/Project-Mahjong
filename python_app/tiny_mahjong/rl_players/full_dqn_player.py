@@ -75,7 +75,7 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
 
         # Set opponent discards.
         index = 0
-        page = 1
+        page = 4
         opponents_discards = input_data.get_opponents_discards()
         assert len(opponents_discards) == 1
         discards = None
