@@ -107,7 +107,7 @@ class MCPlayer(Player):
             return DISCARD, self._epsilon_greedy_choose()
 
     def game_ends(self, win, lose, self_win=False, drain=False):
-        Player.game_ends(self, win, drain)
+        Player.game_ends(self, win, lose, self_win, drain)
         for visited_hand_tuple in self.hand_tuple_visits:
             index = self._get_hand_index(list(visited_hand_tuple))
             last_count = self.values[index][0]

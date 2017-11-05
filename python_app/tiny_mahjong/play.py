@@ -28,12 +28,12 @@ from rl_players.full_dqn_player import *
 def main():
     player1 = UserInputPlayer("Smart Human")
     player2 = QPlayer("Q BOT 1", EVAL)
-    # player3 = DQNPlayer("DQN BOT TRAIN", TRAIN)
-    # player4 = DQNPlayer("DQN BOT SELF_PLAY", SELF_PLAY)
+    # player3 = DQNPlayer("DQN BOT TRAIN", EVAL)
+    # player4 = FullDQNPlayer("Full DQN BOT SELF_PLAY", SELF_PLAY)
     player5 = GreedyPlayer("Greedy BOT")
-    player6 = FullDQNPlayer("Full DQN BOT", DEBUG)
+    player6 = FullDQNPlayer("Full DQN BOT", TRAIN)
 
-    game = Game(10, [player1, player6], win_on_discard=True, disclose_all=False)
+    game = Game(100000, [player6, player5], win_on_discard=True, disclose_all=False)
     game.play()
 
 

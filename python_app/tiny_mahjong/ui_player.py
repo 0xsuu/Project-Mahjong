@@ -26,15 +26,22 @@ class UserInputPlayer(Player):
         Player.tile_picked(self)
         choice = None
         while choice is None:
-            print("Discards:")
-            print(self.game_state.get()[5:])
+            opponent_names_discards = self.game_state.get_opponents_discards()
+            for player in opponent_names_discards.keys():
+                print(player.name, "discards:")
+                for tile in opponent_names_discards[player]:
+                    self.print_tile(tile)
+                print("\n")
+
+            print("Your discards:")
+            for tile in self.game_state.get_player_discards():
+                self.print_tile(tile)
+            print("\n")
+
+            for tile in self.hand:
+                self.print_tile(tile)
             print()
-            for i in self.hand:
-                if i <= 9:
-                    print(TERMINAL_BLUE + "A" + str(int(i)) + TERMINAL_END, end="\t")
-                else:
-                    print(TERMINAL_GREEN + "B" + str(int(i - 9)) + TERMINAL_END, end="\t")
-            print()
+
             if self.test_win():
                 print("You won!")
                 return WIN, -1
@@ -56,7 +63,7 @@ class UserInputPlayer(Player):
         return DISCARD, choice
 
     def game_ends(self, win, lose, self_win=False, drain=False):
-        Player.game_ends(self, win, drain)
+        Player.game_ends(self, win, lose, self_win, drain)
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         if win:
             if self_win:
@@ -70,3 +77,10 @@ class UserInputPlayer(Player):
                 print(self.name, "lose, opponent win on this discard.")
         else:
             print("Tile stack drained.")
+
+    @staticmethod
+    def print_tile(tile):
+        if tile <= 9:
+            print(TERMINAL_BLUE + "A" + str(int(tile)) + TERMINAL_END, end="\t",)
+        else:
+            print(TERMINAL_GREEN + "B" + str(int(tile - 9)) + TERMINAL_END, end="\t",)

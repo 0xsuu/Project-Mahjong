@@ -15,8 +15,11 @@
 #  limitations under the License.
 
 from keras.models import Sequential
-from keras.layers import Conv1D, Dense, Dropout, Flatten, MaxPooling1D
+from keras.layers import Conv1D, Conv2D, Dense, Dropout, Flatten, MaxPooling1D, MaxPooling2D
 from keras.optimizers import Adam
+from keras import backend
+
+from resnet import *
 
 from prioritised_double_dqn import PrioritisedDoubleDQN
 from dqn_interface import *
@@ -34,6 +37,8 @@ HAND_SIZE = 5
 # 74 for disclosed, 69 for non-disclosed.
 STATE_SIZE = 69  # TODO: replace with a more proper way of setting this variable.
 
+MODEL = "1D_CNN"
+
 
 class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
     def __init__(self, mode, load=True):
@@ -43,33 +48,116 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
 
     @staticmethod
     def _pre_process(input_data):
-        return input_data.reshape(1, STATE_SIZE, 1)
+        """
+        NOTE: ONLY FOR DUAL MAHJONG.
+
+        Final shape for 1D CNN will be (1, STATE_SIZE, 1)
+        Final shape for 2D CNN and Resnet will be (1, 7, 11, 11).
+        Each tile is encoded into suit(2 bits one-hot) following by number(9 bits one-hot).
+        The first frame is player's hand.
+        The last 6 frames are players' and opponents' discards.
+        """
+        if MODEL == "1D_CNN":
+            return input_data.get().reshape(1, STATE_SIZE, 1)
+        else:
+            processed_features = np.zeros([7, 11, 11], dtype=np.int)
+
+            # Set the hand.
+            index = 0
+            for tile in input_data.get_player_hand():
+                processed_features[0][index] = FullDDQNTinyMahjong._encode_tile(tile)
+                index += 1
+
+            # Set player discards.
+            index = 0
+            page = 1
+            for tile in input_data.get_player_discards():
+                processed_features[page][index] = FullDDQNTinyMahjong._encode_tile(tile)
+                if index >= 10:
+                    index = 0
+                    page += 1
+                else:
+                    index += 1
+
+            # Set opponent discards.
+            index = 0
+            page = 4
+            opponents_discards = input_data.get_opponents_discards()
+            assert len(opponents_discards) == 1
+            discards = None
+            for i in opponents_discards.values():
+                discards = i
+            for tile in discards:
+                processed_features[page][index] = FullDDQNTinyMahjong._encode_tile(tile)
+                if index >= 10:
+                    index = 0
+                    page += 1
+                else:
+                    index += 1
+            return processed_features.reshape(1, 7, 11, 11)
 
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
-        model = Sequential()
-        model.add(Conv1D(input_shape=(STATE_SIZE, 1),
-                         filters=32,
-                         kernel_size=3,
-                         padding="same",
-                         activation="relu"))
-        model.add(Conv1D(filters=64,
-                         kernel_size=3,
-                         padding="same",
-                         activation="relu"))
-        model.add(MaxPooling1D())
-        model.add(Dropout(0.25))
+        backend.set_image_dim_ordering("th")
+        if MODEL == "1D_CNN":
+            model = Sequential()
+            model.add(Conv1D(input_shape=(STATE_SIZE, 1),
+                             filters=32,
+                             kernel_size=3,
+                             padding="same",
+                             activation="relu"))
+            model.add(Conv1D(filters=32,
+                             kernel_size=2,
+                             padding="same",
+                             activation="relu"))
+            model.add(MaxPooling1D())
+            model.add(Dropout(0.25))
 
-        model.add(Flatten())
-        model.add(Dense(256, activation="relu"))
-        model.add(Dropout(0.5))
-        model.add(Dense(5))
+            model.add(Flatten())
+            model.add(Dense(256, activation="relu"))
+            model.add(Dropout(0.5))
+            model.add(Dense(5))
+        elif MODEL == "2D_CNN":
+            model = Sequential()
+            model.add(Conv2D(filters=32,
+                             input_shape=(7, 11, 11),
+                             kernel_size=(3, 3),
+                             padding="same",
+                             activation="relu"))
+            model.add(Conv2D(filters=64,
+                             kernel_size=(3, 3),
+                             padding="same",
+                             activation="relu"))
+            model.add(MaxPooling2D())
+            model.add(Dropout(0.25))
+
+            model.add(Flatten())
+            model.add(Dense(256, activation="relu"))
+            model.add(Dropout(0.5))
+            model.add(Dense(5))
+        elif MODEL == "RESNET":
+            model = ResnetBuilder.build_resnet_18((7, 11, 11), 5)
+        else:
+            model = None
 
         model.compile(loss='mean_squared_error',
                       optimizer=Adam(lr=0.00025),
                       metrics=['accuracy'])
 
         return model
+
+    @staticmethod
+    def _encode_tile(tile):
+        tile = int(tile)
+        result = [0] * 11
+        if tile > 9:
+            result[1] = 1
+            tile -= 9
+        else:
+            result[0] = 1
+
+        result[tile + 1] = 1
+        return result
 
 
 class FullDQNPlayer(Player):
@@ -102,19 +190,19 @@ class FullDQNPlayer(Player):
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
                                                         WIN_REWARD,
-                                                        self.game_state.get(),
+                                                        self.game_state,
                                                         True)
             return WIN, -1
         else:
-            action = self._dqn_model.make_action(self.game_state.get())
+            action = self._dqn_model.make_action(self.game_state)
             if training:
                 self._dqn_model.notify_reward(DISCARD_REWARD)
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
                                                         DISCARD_REWARD,
-                                                        self.game_state.get(),
+                                                        self.game_state,
                                                         False)
-            self._prev_state = self.game_state.get()
+            self._prev_state = self.game_state
             self._prev_action = action
             return DISCARD, action
 
@@ -123,19 +211,18 @@ class FullDQNPlayer(Player):
         if self.test_win_hand(self.hand, discarded_tile):
             if training:
                 self._dqn_model.notify_reward(WIN_REWARD)
-                temp_state = self.game_state.get()
-                temp_state[4] = 0
+                # Hand only has 4 tiles at this stage.
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
                                                         WIN_REWARD,
-                                                        temp_state,
+                                                        self.game_state,
                                                         True)
             return WIN
         else:
             return PASS
 
     def game_ends(self, win, lose, self_win=False, drain=False):
-        Player.game_ends(self, win, lose, drain)
+        Player.game_ends(self, win, lose, self_win, drain)
 
         if lose:
             training = self._prev_state is not None and self._mode == TRAIN
@@ -149,7 +236,7 @@ class FullDQNPlayer(Player):
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
                                                         final_reward,
-                                                        self.game_state.get(),
+                                                        self.game_state,
                                                         True)
 
         # Summary.

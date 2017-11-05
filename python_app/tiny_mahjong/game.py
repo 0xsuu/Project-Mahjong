@@ -74,7 +74,7 @@ class Player:
         if win:
             self.rounds_won += 1
             self.average_turn += 1/self.rounds_won * (self.turn_count - self.average_turn)
-        if lose:
+        if lose and not self_win:
             self.rounds_lost += 1
 
     @staticmethod
