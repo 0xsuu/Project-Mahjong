@@ -26,6 +26,8 @@ from dqn_interface import *
 
 from game import *
 
+from greedy_player import GreedyPlayer
+
 DQN_WEIGHTS_FILE = "tm_full_dqn_weights.h5"
 
 WIN_REWARD = 1.0
@@ -243,12 +245,23 @@ class FullDQNPlayer(Player):
         if drain:
             self._drain_rounds += 1
 
-        self._dqn_model.episode_finished({"Win rate":
-                                          self.rounds_won * 1.0 / self._total_rounds,
-                                          "Lose rate":
-                                          self.rounds_lost * 1.0 / self._total_rounds,
-                                          "Drain rate":
-                                          self._drain_rounds * 1.0 / self._total_rounds})
+        summary_dict = {"Win rate":
+                        self.rounds_won * 1.0 / self._total_rounds,
+                        "Lose rate":
+                        self.rounds_lost * 1.0 / self._total_rounds,
+                        "Drain rate":
+                        self._drain_rounds * 1.0 / self._total_rounds}
+        if self._mode == SELF_PLAY:
+            if self._total_rounds % 1000 == 0:
+                opponent = GreedyPlayer("Greedy BOT")
+                eval_player = FullDQNPlayer("Full DQN BOT", MUTE)
+
+                game = Game(100, [opponent, eval_player], win_on_discard=True, disclose_all=False)
+                game.play()
+
+                summary_dict["Eval win rate"] = eval_player.rounds_won
+
+        self._dqn_model.episode_finished(summary_dict)
 
         if self._mode == PLAY:
             print(self.name + ":")
