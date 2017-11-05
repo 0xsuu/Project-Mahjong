@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
+from keras.layers import Conv1D, Conv2D, Dense, Dropout, Flatten, MaxPooling1D, MaxPooling2D
 from keras.optimizers import Adam
 from keras import backend
 
@@ -37,6 +37,8 @@ HAND_SIZE = 5
 # 74 for disclosed, 69 for non-disclosed.
 STATE_SIZE = 69  # TODO: replace with a more proper way of setting this variable.
 
+MODEL = "1D_CNN"
+
 
 class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
     def __init__(self, mode, load=True):
@@ -49,69 +51,94 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
         """
         NOTE: ONLY FOR DUAL MAHJONG.
 
-        Final shape will be (1, 7, 11, 11).
+        Final shape for 1D CNN will be (1, STATE_SIZE, 1)
+        Final shape for 2D CNN and Resnet will be (1, 7, 11, 11).
         Each tile is encoded into suit(2 bits one-hot) following by number(9 bits one-hot).
         The first frame is player's hand.
         The last 6 frames are players' and opponents' discards.
         """
-        processed_features = np.zeros([7, 11, 11], dtype=np.int)
+        if MODEL == "1D_CNN":
+            return input_data.get().reshape(1, STATE_SIZE, 1)
+        else:
+            processed_features = np.zeros([7, 11, 11], dtype=np.int)
 
-        # Set the hand.
-        index = 0
-        for tile in input_data.get_player_hand():
-            processed_features[0][index] = FullDDQNTinyMahjong._encode_tile(tile)
-            index += 1
-
-        # Set player discards.
-        index = 0
-        page = 1
-        for tile in input_data.get_player_discards():
-            processed_features[page][index] = FullDDQNTinyMahjong._encode_tile(tile)
-            if index >= 10:
-                index = 0
-                page += 1
-            else:
+            # Set the hand.
+            index = 0
+            for tile in input_data.get_player_hand():
+                processed_features[0][index] = FullDDQNTinyMahjong._encode_tile(tile)
                 index += 1
 
-        # Set opponent discards.
-        index = 0
-        page = 4
-        opponents_discards = input_data.get_opponents_discards()
-        assert len(opponents_discards) == 1
-        discards = None
-        for i in opponents_discards.values():
-            discards = i
-        for tile in discards:
-            processed_features[page][index] = FullDDQNTinyMahjong._encode_tile(tile)
-            if index >= 10:
-                index = 0
-                page += 1
-            else:
-                index += 1
-        return processed_features.reshape(1, 7, 11, 11)
+            # Set player discards.
+            index = 0
+            page = 1
+            for tile in input_data.get_player_discards():
+                processed_features[page][index] = FullDDQNTinyMahjong._encode_tile(tile)
+                if index >= 10:
+                    index = 0
+                    page += 1
+                else:
+                    index += 1
+
+            # Set opponent discards.
+            index = 0
+            page = 4
+            opponents_discards = input_data.get_opponents_discards()
+            assert len(opponents_discards) == 1
+            discards = None
+            for i in opponents_discards.values():
+                discards = i
+            for tile in discards:
+                processed_features[page][index] = FullDDQNTinyMahjong._encode_tile(tile)
+                if index >= 10:
+                    index = 0
+                    page += 1
+                else:
+                    index += 1
+            return processed_features.reshape(1, 7, 11, 11)
 
     @staticmethod
     def _create_model(input_shape=None, action_count=None):
         backend.set_image_dim_ordering("th")
-        # model = Sequential()
-        # model.add(Conv2D(filters=32,
-        #                  input_shape=(7, 11, 11),
-        #                  kernel_size=(3, 3),
-        #                  padding="same",
-        #                  activation="relu"))
-        # model.add(Conv2D(filters=64,
-        #                  kernel_size=(3, 3),
-        #                  padding="same",
-        #                  activation="relu"))
-        # model.add(MaxPooling2D())
-        # model.add(Dropout(0.25))
-        #
-        # model.add(Flatten())
-        # model.add(Dense(256, activation="relu"))
-        # model.add(Dropout(0.5))
-        # model.add(Dense(5))
-        #
-        model = ResnetBuilder.build_resnet_18((7, 11, 11), 5)
+        if MODEL == "1D_CNN":
+            model = Sequential()
+            model.add(Conv1D(input_shape=(STATE_SIZE, 1),
+                             filters=32,
+                             kernel_size=3,
+                             padding="same",
+                             activation="relu"))
+            model.add(Conv1D(filters=32,
+                             kernel_size=2,
+                             padding="same",
+                             activation="relu"))
+            model.add(MaxPooling1D())
+            model.add(Dropout(0.25))
+
+            model.add(Flatten())
+            model.add(Dense(256, activation="relu"))
+            model.add(Dropout(0.5))
+            model.add(Dense(5))
+        elif MODEL == "2D_CNN":
+            model = Sequential()
+            model.add(Conv2D(filters=32,
+                             input_shape=(7, 11, 11),
+                             kernel_size=(3, 3),
+                             padding="same",
+                             activation="relu"))
+            model.add(Conv2D(filters=64,
+                             kernel_size=(3, 3),
+                             padding="same",
+                             activation="relu"))
+            model.add(MaxPooling2D())
+            model.add(Dropout(0.25))
+
+            model.add(Flatten())
+            model.add(Dense(256, activation="relu"))
+            model.add(Dropout(0.5))
+            model.add(Dense(5))
+        elif MODEL == "RESNET":
+            model = ResnetBuilder.build_resnet_18((7, 11, 11), 5)
+        else:
+            model = None
 
         model.compile(loss='mean_squared_error',
                       optimizer=Adam(lr=0.00025),
