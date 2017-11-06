@@ -204,10 +204,12 @@ class Game:
             action, index = self.current_player.tile_picked()
             for p in self.players:
                 if p == self.current_player:
-                    p.game_state.on_player_discard(self.current_player.hand[index])
+                    p.game_state.on_player_discard(self.current_player.hand[index],
+                                                   np.delete(self.current_player.hand, index))
                 else:
                     p.game_state.on_other_player_discard(player_id=self.current_player,
-                                                         tile=self.current_player.hand[index])
+                                                         tile=self.current_player.hand[index],
+                                                         new_hand=np.delete(self.current_player.hand, index))
             if action == WIN:
                 # Self-Win.
                 self.current_player.hand = \

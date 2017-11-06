@@ -50,11 +50,13 @@ class GameState:
 
     # Players' discards update.
 
-    def on_player_discard(self, tile):
+    def on_player_discard(self, tile, new_hand):
         self._player_discards.append(tile)
+        self._player_hand = np.append(new_hand, 0)
 
-    def on_other_player_discard(self, player_id, tile):
+    def on_other_player_discard(self, player_id, tile, new_hand):
         self._other_player_discards[player_id].append(tile)
+        self._opponents_hands = np.append(new_hand, 0)
 
     def get(self):
         # Append player's hand.

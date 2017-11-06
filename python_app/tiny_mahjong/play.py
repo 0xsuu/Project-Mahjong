@@ -33,7 +33,7 @@ def main():
     player5 = GreedyPlayer("Greedy BOT")
     player6 = FullDQNPlayer("Full DQN BOT", DEBUG)
 
-    game = Game(10, [player1, player6], win_on_discard=True, disclose_all=False)
+    game = Game(10000, [player4, player6], win_on_discard=True, disclose_all=False)
     game.play()
 
 
