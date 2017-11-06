@@ -33,6 +33,17 @@ class GameState:
             self._other_player_discards[i] = []
         self.__disclose_all = disclose_all
 
+    def copy(self):
+        copy_object = GameState(["TO BE OVER WRITEN"], self.__disclose_all)
+        if self._player_hand is not None:
+            copy_object._player_hand = self._player_hand.copy()
+        if self._opponents_hands is not None:
+            copy_object._opponents_hands = self._opponents_hands.copy()
+        copy_object._player_discards = self._player_discards.copy()
+        copy_object._other_player_ids = self._other_player_ids.copy()
+        copy_object._other_player_discards = self._other_player_discards.copy()
+        return copy_object
+
     # Player's hand update.
 
     def on_player_default_hand_obtained(self, hand):

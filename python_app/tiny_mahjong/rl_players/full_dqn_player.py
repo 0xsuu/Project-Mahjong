@@ -39,7 +39,7 @@ HAND_SIZE = 5
 # 74 for disclosed, 69 for non-disclosed.
 STATE_SIZE = 69  # TODO: replace with a more proper way of setting this variable.
 
-MODEL = "1D_MLP"
+MODEL = "1D_CNN"
 
 
 class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
@@ -110,8 +110,8 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
                              kernel_size=3,
                              padding="same",
                              activation="relu"))
-            model.add(Conv1D(filters=32,
-                             kernel_size=2,
+            model.add(Conv1D(filters=64,
+                             kernel_size=3,
                              padding="same",
                              activation="relu"))
             model.add(MaxPooling1D())
@@ -174,9 +174,10 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
 
 
 class FullDQNPlayer(Player):
-    def __init__(self, name, mode):
+    def __init__(self, name, mode, evaluate=False):
         Player.__init__(self, name)
         self._mode = mode
+        self._evaluate = evaluate
 
         self._dqn_model = FullDDQNTinyMahjong(mode)
 
@@ -215,7 +216,7 @@ class FullDQNPlayer(Player):
                                                         DISCARD_REWARD,
                                                         self.game_state,
                                                         False)
-            self._prev_state = self.game_state
+            self._prev_state = self.game_state.copy()
             self._prev_action = action
             return DISCARD, action
 
@@ -244,7 +245,8 @@ class FullDQNPlayer(Player):
                     final_reward = LOSE_REWARD / 2.0
                 else:
                     final_reward = LOSE_REWARD
-                # print(final_reward, self._prev_action, "\n", self._prev_state, "\n", self.game_state.get(), "\n")
+                # print(final_reward, self._prev_action, "\n",
+                #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.notify_reward(final_reward)
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
@@ -262,8 +264,8 @@ class FullDQNPlayer(Player):
                         self.rounds_lost * 1.0 / self._total_rounds,
                         "Drain rate":
                         self._drain_rounds * 1.0 / self._total_rounds}
-        if self._mode == SELF_PLAY:
-            if self._total_rounds % 1000 == 0:
+        if self._mode == TRAIN and self._evaluate:
+            if self._total_rounds % 1000 == 1:
                 opponent = GreedyPlayer("Greedy BOT")
                 eval_player = FullDQNPlayer("Full DQN BOT", MUTE)
 
