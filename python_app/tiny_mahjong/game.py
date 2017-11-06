@@ -216,16 +216,18 @@ class Game:
                 return self.current_player.name
             elif action == DISCARD:
                 discarded_tile = self.current_player.hand[index]
+                hand_with_zero = self.current_player.hand.copy()
+                hand_with_zero[index] = 0
                 self.current_player.hand = \
                     np.delete(self.current_player.hand, index)
                 for p in self.players:
                     if p == self.current_player:
                         p.game_state.on_player_discard(discarded_tile,
-                                                       self.current_player.hand)
+                                                       hand_with_zero)
                     else:
                         p.game_state.on_other_player_discard(player_id=self.current_player,
                                                              tile=discarded_tile,
-                                                             new_hand=self.current_player.hand)
+                                                             new_hand=hand_with_zero)
                 # Notify all the other players of the discard.
                 if self.win_on_discard:
                     for discard_react_player in self.players:

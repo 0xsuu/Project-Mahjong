@@ -63,11 +63,11 @@ class GameState:
 
     def on_player_discard(self, tile, new_hand):
         self._player_discards.append(tile)
-        self._player_hand = np.append(new_hand, 0)
+        self._player_hand = new_hand
 
     def on_other_player_discard(self, player_id, tile, new_hand):
         self._other_player_discards[player_id].append(tile)
-        self._opponents_hands = np.append(new_hand, 0)
+        self._opponents_hands = new_hand
 
     # Accessors.
 
