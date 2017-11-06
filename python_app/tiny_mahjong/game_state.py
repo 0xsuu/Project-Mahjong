@@ -58,7 +58,11 @@ class GameState:
         self._other_player_discards[player_id].append(tile)
         self._opponents_hands = np.append(new_hand, 0)
 
+    # Accessors.
+
     def get(self):
+        """ Get the vector of the whole state information. """
+
         # Append player's hand.
         result = np.array(self._player_hand)
 
@@ -84,3 +88,12 @@ class GameState:
             self.__disclose_all * other_players_count * 5
 
         return result
+
+    def get_player_hand(self):
+        return self._player_hand
+
+    def get_player_discards(self):
+        return self._player_discards
+
+    def get_opponents_discards(self):
+        return self._other_player_discards

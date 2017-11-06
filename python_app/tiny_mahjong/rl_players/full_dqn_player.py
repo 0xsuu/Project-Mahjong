@@ -41,6 +41,7 @@ STATE_SIZE = 69  # TODO: replace with a more proper way of setting this variable
 
 MODEL = "1D_MLP"
 
+
 class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
     def __init__(self, mode, load=True):
         PrioritisedDoubleDQN.__init__(self, action_count=5, weights_file_path=DQN_WEIGHTS_FILE,
