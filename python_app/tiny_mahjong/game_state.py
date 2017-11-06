@@ -26,22 +26,27 @@ class GameState:
         self._player_hand = None
         self._opponents_hands = None
         self._player_discards = []
-        assert len(other_player_ids) != 0
-        self._other_player_ids = other_player_ids
         self._other_player_discards = {}
-        for i in other_player_ids:
-            self._other_player_discards[i] = []
+        if other_player_ids is not None:
+            if len(other_player_ids) != 0:
+                self._other_player_ids = other_player_ids
+                for i in other_player_ids:
+                    self._other_player_discards[i] = []
+            else:
+                raise ValueError("Empty number of player ids.")
+
         self.__disclose_all = disclose_all
 
     def copy(self):
-        copy_object = GameState(["TO BE OVER WRITEN"], self.__disclose_all)
+        copy_object = GameState(None, self.__disclose_all)
         if self._player_hand is not None:
             copy_object._player_hand = self._player_hand.copy()
         if self._opponents_hands is not None:
             copy_object._opponents_hands = self._opponents_hands.copy()
         copy_object._player_discards = self._player_discards.copy()
         copy_object._other_player_ids = self._other_player_ids.copy()
-        copy_object._other_player_discards = self._other_player_discards.copy()
+        for player_id in copy_object._other_player_ids:
+            copy_object._other_player_discards[player_id] = self._other_player_discards[player_id].copy()
         return copy_object
 
     # Player's hand update.

@@ -201,6 +201,8 @@ class FullDQNPlayer(Player):
         if self.test_win():
             if training:
                 self._dqn_model.notify_reward(WIN_REWARD)
+                # print("Self win", self._prev_action, "\n",
+                #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
                                                         WIN_REWARD,
@@ -211,6 +213,8 @@ class FullDQNPlayer(Player):
             action = self._dqn_model.make_action(self.game_state)
             if training:
                 self._dqn_model.notify_reward(DISCARD_REWARD)
+                # print("Discard", self._prev_action, "\n",
+                #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
                                                         DISCARD_REWARD,
@@ -226,6 +230,8 @@ class FullDQNPlayer(Player):
             if training:
                 self._dqn_model.notify_reward(WIN_REWARD)
                 # Hand only has 4 tiles at this stage.
+                # print("Win on discard", self._prev_action, "\n",
+                #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
                                                         WIN_REWARD,
@@ -245,7 +251,7 @@ class FullDQNPlayer(Player):
                     final_reward = LOSE_REWARD / 2.0
                 else:
                     final_reward = LOSE_REWARD
-                # print(final_reward, self._prev_action, "\n",
+                # print("Lose", final_reward, self._prev_action, "\n",
                 #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.notify_reward(final_reward)
                 self._dqn_model.append_memory_and_train(self._prev_state,
