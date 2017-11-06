@@ -241,7 +241,7 @@ class FullDQNPlayer(Player):
             training = self._prev_state is not None and self._mode == TRAIN
             if training:
                 if self_win:
-                    final_reward = LOSE_REWARD / 2
+                    final_reward = LOSE_REWARD / 2.0
                 else:
                     final_reward = LOSE_REWARD
                 # print(final_reward, self._prev_action, "\n", self._prev_state, "\n", self.game_state.get(), "\n")
