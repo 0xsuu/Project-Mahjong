@@ -279,6 +279,7 @@ class FullDQNPlayer(Player):
                 game.play()
 
                 summary_dict["Eval win rate"] = eval_player.rounds_won
+                summary_dict["Eval lose rate"] = eval_player.rounds_lost
 
         self._dqn_model.episode_finished(summary_dict)
 
