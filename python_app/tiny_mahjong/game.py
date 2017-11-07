@@ -202,16 +202,10 @@ class Game:
 
             # Get current player's action (and discarded tile's index).
             action, index = self.current_player.tile_picked()
-            for p in self.players:
-                if p == self.current_player:
-                    p.game_state.on_player_discard(self.current_player.hand[index])
-                else:
-                    p.game_state.on_other_player_discard(player_id=self.current_player,
-                                                         tile=self.current_player.hand[index])
+
             if action == WIN:
                 # Self-Win.
-                self.current_player.hand = \
-                    np.delete(self.current_player.hand, index)
+                self._delete_tile_and_notify(index)
                 # Notify all the players the game result.
                 for player in self.players:
                     if player == self.current_player:
@@ -220,12 +214,13 @@ class Game:
                         player.game_ends(False, True, self_win=True)
                 return self.current_player.name
             elif action == DISCARD:
+                discarded_tile = self._delete_tile_and_notify(index)
                 # Notify all the other players of the discard.
                 if self.win_on_discard:
                     for discard_react_player in self.players:
                         # Skip current player.
                         if discard_react_player is not self.current_player:
-                            action = discard_react_player.player_discarded(self.current_player.hand[index])
+                            action = discard_react_player.player_discarded(discarded_tile)
                             if action == WIN:
                                 # Notify all the players the game result.
                                 for player_to_notify in self.players:
@@ -239,8 +234,6 @@ class Game:
                                         # Non of the rest players business.
                                         player_to_notify.game_ends(False, False)
                                 return discard_react_player.name
-                self.current_player.hand = \
-                    np.delete(self.current_player.hand, index)
             else:
                 raise ValueError("Unknown action")
 
@@ -251,6 +244,23 @@ class Game:
                 return ""
             else:
                 self.current_player = self._next_player()
+
+    def _delete_tile_and_notify(self, index):
+        discarded_tile = self.current_player.hand[index]
+        hand_with_zero = self.current_player.hand.copy()
+        hand_with_zero[index] = 0
+        self.current_player.hand = \
+            np.delete(self.current_player.hand, index)
+        for p in self.players:
+            # TODO: Add a player list to improve efficiency.
+            if p == self.current_player:
+                p.game_state.on_player_discard(discarded_tile,
+                                               hand_with_zero)
+            else:
+                p.game_state.on_other_player_discard(player_id=self.current_player,
+                                                     tile=discarded_tile,
+                                                     new_hand=hand_with_zero)
+        return discarded_tile
 
     def play(self):
         counter = {"": 0}
