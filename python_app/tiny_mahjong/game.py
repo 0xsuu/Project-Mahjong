@@ -248,7 +248,7 @@ class Game:
     def _delete_tile_and_notify(self, index):
         discarded_tile = self.current_player.hand[index]
         hand_with_zero = self.current_player.hand.copy()
-        # hand_with_zero[index] = 0
+        hand_with_zero[index] = 0
         self.current_player.hand = \
             np.delete(self.current_player.hand, index)
         for p in self.players:
