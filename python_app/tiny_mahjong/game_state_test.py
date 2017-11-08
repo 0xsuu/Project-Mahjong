@@ -45,6 +45,8 @@ g._player_hand = np.array([1, 1, 2, 3])
 assert g.calc_shanten_tenpai() == (1, 6)
 g._player_hand = np.array([1, 1, 2, 2, 3])
 assert g.calc_shanten_tenpai() == (1, 6)
+g._player_hand = np.array([1, 1, 5, 6])
+assert g.calc_shanten_tenpai() == (1, 8)
 
 # 2-Shanten states.
 g._player_hand = np.array([1, 2, 4, 6])
@@ -52,6 +54,8 @@ assert g.calc_shanten_tenpai() == (2, 0)
 g._player_hand = np.array([1, 2, 4, 6, 8])
 assert g.calc_shanten_tenpai() == (2, 0)
 g._player_hand = np.array([1, 1, 6, 9, 10])
+assert g.calc_shanten_tenpai() == (2, 0)
+g._player_hand = np.array([9, 10, 12, 13, 15])
 assert g.calc_shanten_tenpai() == (2, 0)
 
 # 3-Shanten states.

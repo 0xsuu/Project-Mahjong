@@ -23,7 +23,7 @@ PLAYER_COUNT = 2
 INITIAL_HAND_COUNT = 4
 FULL_HAND_COUNT = INITIAL_HAND_COUNT + 1
 FULL_DISCARD_COUNT = int((TILE_STACK_COUNT - PLAYER_COUNT * INITIAL_HAND_COUNT) / PLAYER_COUNT)
-ADDITIONAL_FEATURES = 2
+ADDITIONAL_FEATURES = 5
 
 
 class GameState:
@@ -87,11 +87,14 @@ class GameState:
         # Append player's hand.
         result = np.array(self._player_hand)
 
+        # Append shanten number and tenpai count if in tenpai state.
         result = np.append(result, np.array(self.calc_shanten_tenpai()))
-
-        # If the disclose option is enabled, append opponents' hands.
-        if self.__disclose_all:
-            result = np.append(result, self._opponents_hands)
+        # Append count for tiles left in tile stack.
+        result = np.append(result, np.array([np.sum(self.calc_tile_count()[1:]) - FULL_HAND_COUNT]))
+        # Append major suit's tile count.
+        result = np.append(result, np.array([self.calc_major_suit_count()]))
+        # Append 2-8 tile count.
+        result = np.append(result, np.array([self.calc_two_to_eight_count()]))
 
         # Append player's discards.
         result = np.append(result, self._player_discards)
@@ -99,10 +102,14 @@ class GameState:
         # Fill up 0s for non-full games. i.e. use fixed size input, thus the maximum number of discards are used.
         result = np.append(result, np.zeros((FULL_DISCARD_COUNT - len(self._player_discards),)))
 
+        # If the disclose option is enabled, append opponents' hands.
+        if self.__disclose_all:
+            result = np.append(result, self._opponents_hands)
+
         # Append opponents' discards and fill up with 0s.
         for p in self._other_player_discards:
             result = np.append(result, self._other_player_discards[p])
-            result = np.append(result, np.zeros((FULL_DISCARD_COUNT - len(self._other_player_discards[p]), )))
+            result = np.append(result, np.zeros((FULL_DISCARD_COUNT - len(self._other_player_discards[p]),)))
 
         other_players_count = len(self._other_player_ids)
         assert result.shape[0] == (other_players_count + 1) * FULL_DISCARD_COUNT + FULL_HAND_COUNT + \
@@ -125,12 +132,12 @@ class GameState:
         sum_tenpai = 0
         for i in range(player_hand.shape[0] - 2):
             # Avoid duplicate initial tile.
-            if i > 0 and player_hand[i] == player_hand[i-1]:
+            if i > 0 and player_hand[i] == player_hand[i - 1]:
                 continue
-            if player_hand[i] == player_hand[i+1] and player_hand[i+1] == player_hand[i+2]:
+            if player_hand[i] == player_hand[i + 1] and player_hand[i + 1] == player_hand[i + 2]:
                 removed_trio_hand = player_hand.copy()
-                removed_trio_hand = np.delete(removed_trio_hand, i+2)
-                removed_trio_hand = np.delete(removed_trio_hand, i+1)
+                removed_trio_hand = np.delete(removed_trio_hand, i + 2)
+                removed_trio_hand = np.delete(removed_trio_hand, i + 1)
                 removed_trio_hand = np.delete(removed_trio_hand, i)
                 # If a trio is removed, we can derive the shanten directly.
                 if removed_trio_hand.shape[0] == 1:
@@ -176,18 +183,17 @@ class GameState:
             if i > 0 and player_hand[i] == player_hand[i - 1]:
                 continue
             tile_i = player_hand[i]
-            temp_hand = player_hand.copy()
-            temp_hand = np.delete(temp_hand, i)
-            for j in range(len(temp_hand)):
-                tile_j = temp_hand[j]
+            for j in range(i + 1, player_hand.shape[0]):
+                tile_j = player_hand[j]
                 if tile_i <= 9 < tile_j or tile_i > 9 >= tile_j:
                     # Break the loop if the suit does not match.
                     break
                 if tile_i == tile_j + 1 or tile_i == tile_j - 1 or \
                         tile_i == tile_j + 2 or tile_i == tile_j - 2 or tile_i == tile_j:
                     found_one_potential_combo = True
-                    remove_one_hand = temp_hand.copy()
+                    remove_one_hand = player_hand.copy()
                     remove_one_hand = np.delete(remove_one_hand, j)
+                    remove_one_hand = np.delete(remove_one_hand, i)
                     for i2 in range(remove_one_hand.shape[0] - 1):
                         for j2 in range(i2 + 1, remove_one_hand.shape[0]):
                             if remove_one_hand[i2] == remove_one_hand[j2]:
@@ -240,6 +246,24 @@ class GameState:
             for j in i:
                 tile_count[int(j)] -= 1
         return tile_count
+
+    def calc_major_suit_count(self):
+        major_suit_count = 0
+        for i in self._player_hand:
+            if i <= 9:
+                major_suit_count += 1
+        if major_suit_count < int(self._player_hand.shape[0] / 2):
+            major_suit_count = self._player_hand.shape[0]
+
+        return major_suit_count
+
+    def calc_two_to_eight_count(self):
+        count = 0
+        for i in self._player_hand:
+            if i != 0 and i != 9 and i != 10 and i != 18:
+                count += 1
+
+        return count
 
     @staticmethod
     def calc_tile_distribution(tile_count):

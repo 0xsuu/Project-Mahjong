@@ -25,6 +25,7 @@ from prioritised_double_dqn import PrioritisedDoubleDQN
 from dqn_interface import *
 
 from game import *
+from game_state import ADDITIONAL_FEATURES
 
 from greedy_player import GreedyPlayer
 
@@ -37,7 +38,7 @@ LOSE_REWARD = -1.0
 HAND_SIZE = 5
 
 # 74 for disclosed, 69 for non-disclosed.
-STATE_SIZE = 69 + 2  # TODO: replace with a more proper way of setting this variable.
+STATE_SIZE = 69 + ADDITIONAL_FEATURES  # TODO: replace with a more proper way of setting this variable.
 
 MODEL = "1D_CNN"
 
@@ -200,12 +201,12 @@ class FullDQNPlayer(Player):
         training = self._prev_state is not None and self._mode == TRAIN
         if self.test_win():
             if training:
-                self._dqn_model.notify_reward(WIN_REWARD)
+                self._dqn_model.notify_reward(WIN_REWARD / 2.0)
                 # print("Self win", self._prev_action, "\n",
                 #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
-                                                        WIN_REWARD,
+                                                        WIN_REWARD / 2.0,
                                                         self.game_state,
                                                         True)
             return WIN, -1
