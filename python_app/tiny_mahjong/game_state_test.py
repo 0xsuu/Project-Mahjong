@@ -20,38 +20,44 @@ import numpy as np
 
 from game_state import GameState
 
-g = GameState(None, False)
+g = GameState("Empty", False)
 
 # Win states.
 g._player_hand = np.array([1, 1, 2, 3, 4])
-assert g.calc_shanten() == 0
+assert g.calc_shanten_tenpai() == (0, 67)
 g._player_hand = np.array([1, 2, 2, 2, 3])
-assert g.calc_shanten() == 0
+assert g.calc_shanten_tenpai() == (0, 67)
 g._player_hand = np.array([1, 2, 3, 3, 3])
-assert g.calc_shanten() == 0
+assert g.calc_shanten_tenpai() == (0, 67)
 
 # Tenpai states.
 g._player_hand = np.array([1, 2, 3, 4])
-assert g.calc_shanten() == 1
+assert g.calc_shanten_tenpai() == (1, 6)
 g._player_hand = np.array([2, 3, 4, 10])
-assert g.calc_shanten() == 1
+assert g.calc_shanten_tenpai() == (1, 3)
 g._player_hand = np.array([1, 2, 3, 4, 10])
-assert g.calc_shanten() == 1
+assert g.calc_shanten_tenpai() == (1, 6)
 g._player_hand = np.array([1, 1, 8, 9, 10])
-assert g.calc_shanten() == 1
+assert g.calc_shanten_tenpai() == (1, 4)
+g._player_hand = np.array([1, 1, 3, 3, 10])
+assert g.calc_shanten_tenpai() == (1, 4)
+g._player_hand = np.array([1, 1, 2, 3])
+assert g.calc_shanten_tenpai() == (1, 6)
+g._player_hand = np.array([1, 1, 2, 2, 3])
+assert g.calc_shanten_tenpai() == (1, 6)
 
 # 2-Shanten states.
 g._player_hand = np.array([1, 2, 4, 6])
-assert g.calc_shanten() == 2
+assert g.calc_shanten_tenpai() == (2, 0)
 g._player_hand = np.array([1, 2, 4, 6, 8])
-assert g.calc_shanten() == 2
+assert g.calc_shanten_tenpai() == (2, 0)
 g._player_hand = np.array([1, 1, 6, 9, 10])
-assert g.calc_shanten() == 2
+assert g.calc_shanten_tenpai() == (2, 0)
 
 # 3-Shanten states.
 g._player_hand = np.array([1, 4, 7, 10, 13])
-assert g.calc_shanten() == 3
+assert g.calc_shanten_tenpai() == (3, 0)
 g._player_hand = np.array([1, 5, 9, 10, 13])
-assert g.calc_shanten() == 3
+assert g.calc_shanten_tenpai() == (3, 0)
 g._player_hand = np.array([1, 4, 7, 10])
-assert g.calc_shanten() == 3
+assert g.calc_shanten_tenpai() == (3, 0)

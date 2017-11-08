@@ -37,7 +37,7 @@ LOSE_REWARD = -1.0
 HAND_SIZE = 5
 
 # 74 for disclosed, 69 for non-disclosed.
-STATE_SIZE = 69  # TODO: replace with a more proper way of setting this variable.
+STATE_SIZE = 69 + 2  # TODO: replace with a more proper way of setting this variable.
 
 MODEL = "1D_CNN"
 
