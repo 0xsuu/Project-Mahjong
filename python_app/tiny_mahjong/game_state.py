@@ -96,6 +96,12 @@ class GameState:
         # Append 2-8 tile count.
         result = np.append(result, np.array([self.calc_two_to_eight_count()]))
 
+        # Append tile stack counts.
+        # tile_count = self.calc_tile_count()[1:]
+        # tile_not_appeared = np.argwhere(tile_count == 4)
+        # result = np.append(result, tile_not_appeared)
+        # result = np.append(result, np.array([0] * (18 - tile_not_appeared.shape[0])))
+
         # Append player's discards.
         result = np.append(result, self._player_discards)
 
@@ -104,13 +110,14 @@ class GameState:
 
         # If the disclose option is enabled, append opponents' hands.
         if self.__disclose_all:
-            result = np.append(result, self._opponents_hands)
+            result = np.append(result, self._opponents_hands.copy)
 
         # Append opponents' discards and fill up with 0s.
         for p in self._other_player_discards:
             result = np.append(result, self._other_player_discards[p])
             result = np.append(result, np.zeros((FULL_DISCARD_COUNT - len(self._other_player_discards[p]),)))
 
+        # Check state size.
         other_players_count = len(self._other_player_ids)
         assert result.shape[0] == (other_players_count + 1) * FULL_DISCARD_COUNT + FULL_HAND_COUNT + \
             self.__disclose_all * other_players_count * 5 + ADDITIONAL_FEATURES
@@ -268,6 +275,11 @@ class GameState:
     @staticmethod
     def calc_tile_distribution(tile_count):
         return tile_count * 1.0 / np.sum(tile_count[1:])
+
+    @staticmethod
+    def suit_shift(tiles):
+        tiles[np.argwhere(tiles > 9)] += 11
+        return tiles
 
     def get_player_discards(self):
         return self._player_discards

@@ -33,6 +33,8 @@ DQN_WEIGHTS_FILE = "tm_full_dqn_weights.h5"
 
 WIN_REWARD = 1.0
 DISCARD_REWARD = -0.01
+ENTER_TENPAI_REWARD = 0.02
+TENPAI_DISCARD_REWARD = -0.01
 LOSE_REWARD = -1.0
 
 HAND_SIZE = 5
@@ -111,15 +113,14 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
                              kernel_size=3,
                              padding="same",
                              activation="relu"))
-            model.add(Conv1D(filters=64,
+            model.add(Conv1D(filters=32,
                              kernel_size=3,
                              padding="same",
                              activation="relu"))
-            model.add(MaxPooling1D())
             model.add(Dropout(0.25))
 
             model.add(Flatten())
-            model.add(Dense(256, activation="relu"))
+            model.add(Dense(128, activation="relu"))
             model.add(Dropout(0.5))
             model.add(Dense(5))
         elif MODEL == "1D_MLP":
@@ -175,8 +176,8 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
 
 
 class FullDQNPlayer(Player):
-    def __init__(self, name, mode, evaluate=False):
-        Player.__init__(self, name)
+    def __init__(self, name, mode, evaluate=False, log_game_state=False):
+        Player.__init__(self, name, log_game_state)
         self._mode = mode
         self._evaluate = evaluate
 
@@ -188,6 +189,8 @@ class FullDQNPlayer(Player):
         self._drain_rounds = 0
 
         self._total_rounds = 0
+
+        self._tenpai = False
 
     def initial_hand_obtained(self):
         Player.initial_hand_obtained(self)
@@ -213,8 +216,19 @@ class FullDQNPlayer(Player):
         else:
             action = self._dqn_model.make_action(self.game_state)
             if training:
-                self._dqn_model.notify_reward(DISCARD_REWARD)
-                # print("Discard", self._prev_action, "\n",
+                is_tenpai = self.game_state.calc_shanten_tenpai()[0] == 1
+                if not self._tenpai:
+                    if is_tenpai:
+                        discard_reward = ENTER_TENPAI_REWARD
+                        self._tenpai = True
+                    else:
+                        discard_reward = DISCARD_REWARD
+                else:
+                    self._tenpai = is_tenpai
+                    discard_reward = TENPAI_DISCARD_REWARD
+
+                self._dqn_model.notify_reward(discard_reward)
+                # print("Discard", discard_reward, self._prev_action, "\n",
                 #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
