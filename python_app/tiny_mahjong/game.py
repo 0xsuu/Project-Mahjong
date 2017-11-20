@@ -40,7 +40,7 @@ PASS = 2222
 
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, log_game_state=False):
         assert name != ""
         self.name = name
         self.hand = np.array([])
@@ -51,6 +51,7 @@ class Player:
         self.__game = None
         self._temporary_removed_tile = None
         self.game_state = None
+        self.log_game_state = log_game_state
 
     def initial_hand_obtained(self):
         assert len(self.hand) == 4
@@ -156,10 +157,12 @@ class Game:
             # Generate game states for players.
             other_players = self.players[:]
             other_players.remove(player)
-            player.game_state = GameState(other_players, disclose_all=self._disclose_all)
+            if player.log_game_state:
+                player.game_state = GameState(other_players, disclose_all=self._disclose_all)
 
             player.sort_hand()
-            player.game_state.on_player_default_hand_obtained(np.copy(player.hand))
+            if player.log_game_state:
+                player.game_state.on_player_default_hand_obtained(np.copy(player.hand))
 
             player.initial_hand_obtained()
 
@@ -184,7 +187,8 @@ class Game:
             self.current_player.insert(self.tiles[0])
 
             # Update hand in Game State for current player.
-            self.current_player.game_state.on_player_pick_new_tile(np.copy(self.current_player.hand))
+            if self.current_player.log_game_state:
+                self.current_player.game_state.on_player_pick_new_tile(np.copy(self.current_player.hand))
 
             # Update opponents hands in Game State for all other players.
             if self._disclose_all:
@@ -196,7 +200,8 @@ class Game:
                                 hands = np.append(hands, np.append(objective.hand, 0))
                             else:
                                 hands = np.append(hands, objective.hand)
-                    target.game_state.on_other_players_hands_obtained(hands)
+                    if target.log_game_state:
+                        target.game_state.on_other_players_hands_obtained(hands)
 
             self.tiles = np.delete(self.tiles, 0)
 
@@ -254,12 +259,14 @@ class Game:
         for p in self.players:
             # TODO: Add a player list to improve efficiency.
             if p == self.current_player:
-                p.game_state.on_player_discard(discarded_tile,
-                                               hand_with_zero)
+                if p.log_game_state:
+                    p.game_state.on_player_discard(discarded_tile,
+                                                   hand_with_zero)
             else:
-                p.game_state.on_other_player_discard(player_id=self.current_player,
-                                                     tile=discarded_tile,
-                                                     new_hand=hand_with_zero)
+                if p.log_game_state:
+                    p.game_state.on_other_player_discard(player_id=self.current_player,
+                                                         tile=discarded_tile,
+                                                         new_hand=hand_with_zero)
         return discarded_tile
 
     def play(self):
