@@ -23,6 +23,7 @@ from resnet import *
 
 from prioritised_double_dqn import PrioritisedDoubleDQN
 from dqn_interface import *
+from rl_players.TileCoder.multi_tile_coder import MultiTileCoder
 
 from game import *
 from game_state import ADDITIONAL_FEATURES
@@ -64,7 +65,7 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
         """
         if MODEL == "1D_CNN":
             return input_data.get().reshape(1, STATE_SIZE, 1)
-        elif MODEL == "1D_MLP":
+        elif MODEL == "1D_MLP" or MODEL == "1D_TC":
             return input_data.get().reshape(1, STATE_SIZE)
         else:
             processed_features = np.zeros([7, 11, 11], dtype=np.int)
@@ -114,7 +115,11 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
                              padding="same",
                              activation="relu"))
             model.add(Conv1D(filters=32,
-                             kernel_size=3,
+                             kernel_size=2,
+                             padding="same",
+                             activation="relu"))
+            model.add(Conv1D(filters=32,
+                             kernel_size=1,
                              padding="same",
                              activation="relu"))
             model.add(Dropout(0.25))
@@ -132,6 +137,12 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
             model.add(Dense(32, activation="relu"))
             model.add(Dropout(0.5))
             model.add(Dense(5))
+        elif MODEL == "1D_TC":
+            # Only run with 10 features.
+            limits = [(1, 18)] * 5
+            limits += ((1, 3), (0, 8), (0, 64), (3, 5), (0, 5))
+            model = MultiTileCoder([4] * STATE_SIZE, limits, 8, 5)
+            return model
         elif MODEL == "2D_CNN":
             model = Sequential()
             model.add(Conv2D(filters=32,
@@ -143,7 +154,6 @@ class FullDDQNTinyMahjong(PrioritisedDoubleDQN):
                              kernel_size=(3, 3),
                              padding="same",
                              activation="relu"))
-            model.add(MaxPooling2D())
             model.add(Dropout(0.25))
 
             model.add(Flatten())
@@ -204,12 +214,12 @@ class FullDQNPlayer(Player):
         training = self._prev_state is not None and self._mode == TRAIN
         if self.test_win():
             if training:
-                self._dqn_model.notify_reward(WIN_REWARD / 2.0)
+                self._dqn_model.notify_reward(WIN_REWARD)
                 # print("Self win", self._prev_action, "\n",
                 #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
-                                                        WIN_REWARD / 2.0,
+                                                        WIN_REWARD,
                                                         self.game_state,
                                                         True)
             return WIN, -1
