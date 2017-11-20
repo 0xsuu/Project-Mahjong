@@ -40,10 +40,10 @@ class GameState:
             else:
                 raise ValueError("Empty number of player ids.")
 
-        self.__disclose_all = disclose_all
+        self._disclose_all = disclose_all
 
     def copy(self):
-        copy_object = GameState(None, self.__disclose_all)
+        copy_object = GameState(None, self._disclose_all)
         if self._player_hand is not None:
             copy_object._player_hand = self._player_hand.copy()
         if self._opponents_hands is not None:
@@ -109,7 +109,7 @@ class GameState:
         result = np.append(result, np.zeros((FULL_DISCARD_COUNT - len(self._player_discards),)))
 
         # If the disclose option is enabled, append opponents' hands.
-        if self.__disclose_all:
+        if self._disclose_all:
             result = np.append(result, self._opponents_hands.copy)
 
         # Append opponents' discards and fill up with 0s.
@@ -120,7 +120,7 @@ class GameState:
         # Check state size.
         other_players_count = len(self._other_player_ids)
         assert result.shape[0] == (other_players_count + 1) * FULL_DISCARD_COUNT + FULL_HAND_COUNT + \
-            self.__disclose_all * other_players_count * 5 + ADDITIONAL_FEATURES
+                                  self._disclose_all * other_players_count * 5 + ADDITIONAL_FEATURES
 
         return result
 
@@ -155,7 +155,7 @@ class GameState:
                 removed_trio_hand = np.delete(removed_trio_hand, i)
                 # If a trio is removed, we can derive the shanten directly.
                 if removed_trio_hand.shape[0] == 1:
-                    return 1, tile_count[int(removed_trio_hand[0])], [removed_trio_hand[0]]
+                    return 1, tile_count[int(removed_trio_hand[0])], [int(removed_trio_hand[0])]
                 if removed_trio_hand.shape[0] == 2:
                     if removed_trio_hand[0] == removed_trio_hand[1]:
                         return 0, np.sum(tile_count[1:]), []
@@ -170,7 +170,7 @@ class GameState:
                 if player_hand[i] == player_hand[j] - 1:
                     for k in range(j + 1, player_hand.shape[0]):
                         if player_hand[j] <= 9 < player_hand[k] or \
-                                player_hand[j] > 9 >= player_hand[k]:
+                                                player_hand[j] > 9 >= player_hand[k]:
                             # Break the loop if the suit does not match.
                             break
                         if player_hand[j] == player_hand[k] - 1:
@@ -180,8 +180,9 @@ class GameState:
                             removed_straight_hand = np.delete(removed_straight_hand, i)
                             # If a trio is removed, we can find the minimum shanten.
                             if removed_straight_hand.shape[0] == 1:
-                                sum_tenpai += tile_count[int(removed_straight_hand[0])]
-                                sum_tenpai_tiles.append(int(removed_straight_hand[0]))
+                                if int(removed_straight_hand[0]) not in sum_tenpai_tiles:
+                                    sum_tenpai += tile_count[int(removed_straight_hand[0])]
+                                    sum_tenpai_tiles.append(int(removed_straight_hand[0]))
                                 found_combo = True
                             if removed_straight_hand.shape[0] == 2:
                                 if removed_straight_hand[0] == removed_straight_hand[1]:
@@ -207,7 +208,7 @@ class GameState:
                     # Break the loop if the suit does not match.
                     break
                 if tile_i == tile_j + 1 or tile_i == tile_j - 1 or \
-                        tile_i == tile_j + 2 or tile_i == tile_j - 2 or tile_i == tile_j:
+                                tile_i == tile_j + 2 or tile_i == tile_j - 2 or tile_i == tile_j:
                     found_one_potential_combo = True
                     remove_one_hand = player_hand.copy()
                     remove_one_hand = np.delete(remove_one_hand, j)
@@ -227,19 +228,19 @@ class GameState:
                                 elif tile_i == tile_j + 1:
                                     return_tenpai = 0
                                     tenpai_tiles = []
-                                    if tile_i != 9 and tile_i != 18:
+                                    if tile_i != 1 and tile_i != 9 and tile_i != 10 and tile_i != 18:
                                         return_tenpai += tile_count[int(tile_i) + 1]
                                         tenpai_tiles.append(int(tile_i) + 1)
-                                    if tile_j != 0 and tile_j != 10:
+                                    if tile_j != 1 and tile_j != 9 and tile_j != 10 and tile_j != 18:
                                         return_tenpai += tile_count[int(tile_j) - 1]
                                         tenpai_tiles.append(int(tile_j) - 1)
                                 elif tile_i == tile_j - 1:
                                     return_tenpai = 0
                                     tenpai_tiles = []
-                                    if tile_j != 9 and tile_j != 18:
+                                    if tile_j != 1 and tile_j != 9 and tile_j != 10 and tile_j != 18:
                                         return_tenpai += tile_count[int(tile_j) + 1]
                                         tenpai_tiles.append(int(tile_j) + 1)
-                                    if tile_i != 0 and tile_i != 10:
+                                    if tile_i != 1 and tile_i != 9 and tile_i != 10 and tile_i != 18:
                                         return_tenpai += tile_count[int(tile_i) - 1]
                                         tenpai_tiles.append(int(tile_i) - 1)
                                 elif tile_i == tile_j:
@@ -247,7 +248,7 @@ class GameState:
                                     tenpai_tiles = [int(tile_i), int(remove_one_hand[i2])]
                                 if return_tenpai > max_return_tenpai:
                                     max_return_tenpai = return_tenpai
-                                    if hand.shape[0] == 4:
+                                    if player_hand.shape[0] == 4:
                                         max_tenpai_tiles = tenpai_tiles
         if found_two_potential_combo:
             if found_combo:
@@ -273,6 +274,9 @@ class GameState:
         tile_count[0] = -100000  # A large number made easier when debugging.
         for i in self._player_hand:
             tile_count[int(i)] -= 1
+        if self._disclose_all:
+            for i in self._opponents_hands:
+                tile_count[int(i)] -= 1
         for i in self._player_discards:
             tile_count[int(i)] -= 1
         for i in self._other_player_discards.values():
