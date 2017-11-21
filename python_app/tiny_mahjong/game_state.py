@@ -130,11 +130,14 @@ class GameState:
     def get_opponents_hands(self):
         return self._opponents_hands
 
+    def get_opponents_discards(self):
+        return self._other_player_discards
+
     def calc_shanten_tenpai_tiles(self, hand):
         """
         :return: Shanten, Tenpai count, Tenpai tiles(only applies to four tiles hand).
         """
-        tile_count = self.calc_tile_count()
+        tile_count = self.calc_tile_count(disclose=self._disclose_all)
 
         player_hand = hand.copy()
         if 0 in player_hand:
@@ -269,12 +272,22 @@ class GameState:
                         return 2, 0, []
             return 3, 0, []
 
-    def calc_tile_count(self):
+    def calc_discarded_tile_count(self):
         tile_count = np.array([4] * 19)
-        tile_count[0] = -100000  # A large number made easier when debugging.
+        tile_count[0] = -123456789  # A large number made easier for debugging.
+        for i in self._player_discards:
+            tile_count[int(i)] -= 1
+        for i in self._other_player_discards.values():
+            for j in i:
+                tile_count[int(j)] -= 1
+        return tile_count
+
+    def calc_tile_count(self, disclose=False):
+        tile_count = np.array([4] * 19)
+        tile_count[0] = -123456789  # A large number made easier for debugging.
         for i in self._player_hand:
             tile_count[int(i)] -= 1
-        if self._disclose_all:
+        if disclose:
             for i in self._opponents_hands:
                 tile_count[int(i)] -= 1
         for i in self._player_discards:
@@ -304,7 +317,7 @@ class GameState:
 
     @staticmethod
     def calc_tile_distribution(tile_count):
-        return tile_count * 1.0 / np.sum(tile_count[1:])
+        return tile_count * 1.0 / np.sum(tile_count)
 
     @staticmethod
     def suit_shift(tiles):
@@ -314,5 +327,42 @@ class GameState:
     def get_player_discards(self):
         return self._player_discards
 
-    def get_opponents_discards(self):
-        return self._other_player_discards
+    def process_dangerousness_input(self):
+        processed_inputs = []
+
+        # Get tile probability distribution.
+        tile_distribution = self.calc_discarded_tile_count()[1:]
+        processed_inputs += tile_distribution.tolist()
+
+        # Calculate tiles left and A/B ratio.
+        opponents_and_discards = self.get_opponents_discards()
+        opponent_discards = []
+        for p in opponents_and_discards:
+            opponent_discards = opponents_and_discards[p]
+            break
+        tiles_left = np.sum(self.calc_tile_count()[1:])
+        a_ratio = 0
+        b_ratio = 0
+        for t in opponent_discards:
+            if t <= 9:
+                a_ratio += 1
+            else:
+                b_ratio += 1
+        opponent_discard_length = len(opponent_discards)
+        if opponent_discard_length == 0:
+            return []
+        a_ratio /= opponent_discard_length
+        b_ratio /= opponent_discard_length
+
+        processed_inputs.append(tiles_left)
+        processed_inputs.append(a_ratio)
+        processed_inputs.append(b_ratio)
+
+        # Get last five discards.
+        if opponent_discard_length < 5:
+            for i in range(5 - opponent_discard_length):
+                opponent_discards.insert(0, 0)
+
+        processed_inputs += opponent_discards[-5:]
+
+        return processed_inputs
