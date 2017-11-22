@@ -30,12 +30,12 @@ from utils.combination_calculator import get_combinations
 Q_VALUES_FILE = "q_values.txt"
 ALL_COMBINATIONS = get_combinations()
 
-SL_MODEL_WEIGHTS_FILE = "tm_safety_sl_weights_0.001.h5"
+SL_MODEL_WEIGHTS_FILE = "tm_safety_sl_weights.h5"
 SAVE_WEIGHT_INTERVAL = 2000
 
 TRAIN_STEP_INTERVAL = 4
-MINI_BATCH_SIZE = 32
-MEMORY_MAX_LEN = 1000000
+MINI_BATCH_SIZE = 256
+MEMORY_MAX_LEN = 5000000
 
 HAND_SIZE = 5
 
@@ -95,10 +95,10 @@ class SafetyFirstPlayer(Player):
         model = Sequential()
         model.add(Dense(64, input_shape=(STATE_SIZE,), activation="relu"))
         model.add(Dense(32, activation="relu"))
-        model.add(Dense(OUTPUT_SIZE, activation="softmax"))
+        model.add(Dense(OUTPUT_SIZE, activation="sigmoid"))
 
         model.compile(loss='mean_squared_error',
-                      optimizer=Adam(lr=0.001),
+                      optimizer=Adam(lr=0.00025),
                       metrics=['accuracy'])
 
         return model
@@ -129,8 +129,7 @@ class SafetyFirstPlayer(Player):
 
             # q_values = self.q_values[ALL_COMBINATIONS.index(self.hand.tolist())]
             # for i in range(5):
-            #     q_values[i] -= hand_dangerousness[i] * 10000
-
+            #     q_values[i] -= hand_dangerousness[i] * 8
             # action = np.argmax(q_values)
 
             action = np.argmin(hand_dangerousness)
@@ -197,8 +196,8 @@ class SafetyFirstPlayer(Player):
 
             if self._total_rounds % SAVE_WEIGHT_INTERVAL == 0:
                 print("Win rate:", self.rounds_won * 1.0 / self._total_rounds,
-                      "\t| Lose rate:", self.rounds_lost * 1.0 / self._total_rounds,
-                      "\t| Drain rate:", self._drain_rounds * 1.0 / self._total_rounds)
+                      "\t\t\t| Lose rate:", self.rounds_lost * 1.0 / self._total_rounds,
+                      "\t\t\t| Drain rate:", self._drain_rounds * 1.0 / self._total_rounds)
                 self._sl_model.save_weights(SL_MODEL_WEIGHTS_FILE)
 
         if self._mode == PLAY:

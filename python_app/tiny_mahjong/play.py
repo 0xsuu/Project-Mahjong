@@ -28,7 +28,7 @@ from safety_first_player import SafetyFirstPlayer
 
 def main():
     player1 = UserInputPlayer("Smart Human", log_game_state=True)
-    # player2 = QPlayer("Q BOT 1", EVAL)
+    player2 = QPlayer("Q BOT 1", EVAL)
     # player3 = DQNPlayer("DQN BOT TRAIN", EVAL)
     # player4 = FullDQNPlayer("Full DQN BOT SELF_PLAY", SELF_PLAY)
     player5 = GreedyPlayer("Greedy BOT")
