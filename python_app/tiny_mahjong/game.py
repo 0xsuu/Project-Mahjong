@@ -168,11 +168,12 @@ class Game:
 
         if self._disclose_all:
             for target in self.players:
-                hands = np.array([])
-                for objective in self.players:
-                    if target != objective:
-                        hands = np.append(hands, np.append(objective.hand, 0))
-                target.game_state.on_other_players_hands_obtained(hands)
+                if target.log_game_state:
+                    hands = np.array([])
+                    for objective in self.players:
+                        if target != objective:
+                            hands = np.append(hands, np.append(objective.hand, 0))
+                    target.game_state.on_other_players_hands_obtained(hands)
 
     def _next_player(self):
         index = self.players.index(self.current_player) + 1
