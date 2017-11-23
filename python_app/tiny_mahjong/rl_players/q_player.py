@@ -26,10 +26,10 @@ ALL_COMBINATIONS = get_combinations()
 COMBINATIONS_SIZE = len(ALL_COMBINATIONS)
 Q_VALUES_FILE = "q_values.txt"
 EPSILON = 0.01
-LAMBDA = 0.1
+GAMMA = 0.9
 ALPHA = 0.1
-WIN_REWARD = 100
-DISCARD_REWARD = -1
+WIN_REWARD = 1
+DISCARD_REWARD = -0.01
 
 
 class QPlayer(Player):
@@ -79,7 +79,7 @@ class QPlayer(Player):
         hand_index = self._get_hand_index(hand.tolist())
         next_hand_index = self._get_hand_index(next_hand.tolist())
         self.all_q_values[hand_index][action] += \
-            ALPHA * (reward + LAMBDA * max(self.all_q_values[next_hand_index]) -
+            ALPHA * (reward + GAMMA * max(self.all_q_values[next_hand_index]) -
                      self.all_q_values[hand_index][action])
 
     def initial_hand_obtained(self):
@@ -112,7 +112,7 @@ class QPlayer(Player):
     def game_ends(self, win, lose, self_win=False, drain=False):
         Player.game_ends(self, win, lose, self_win, drain)
         if self._mode == TRAIN:
-            if self.current_episode % 100 == 0:
+            if self.current_episode % 2000 == 0:
                 print("Finished", self.current_episode, "episodes.")
                 if os.path.isfile(Q_VALUES_FILE):
                     print("Error since last save:",
