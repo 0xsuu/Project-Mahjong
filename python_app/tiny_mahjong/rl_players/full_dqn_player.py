@@ -226,7 +226,7 @@ class FullDQNPlayer(Player):
         else:
             action = self._dqn_model.make_action(self.game_state)
             if training:
-                is_tenpai = self.game_state.calc_shanten_tenpai_tiles(self.game_state._player_hand)[0] == 1
+                is_tenpai = self.game_state.calc_shanten_tenpai_tiles(self.game_state.get_player_hand())[0] == 1
                 if not self._tenpai:
                     if is_tenpai:
                         discard_reward = ENTER_TENPAI_REWARD
