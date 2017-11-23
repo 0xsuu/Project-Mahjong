@@ -67,14 +67,13 @@ class SafetyFirstPlayer(Player):
         Player.__init__(self, name, log_game_state)
         self._mode = mode
 
-        if os.path.isfile(Q_VALUES_FILE):
-            self.q_values = np.loadtxt(Q_VALUES_FILE)
-        else:
-            raise FileNotFoundError("No Q values file present.")
+        # if os.path.isfile(Q_VALUES_FILE):
+        #     self.q_values = np.loadtxt(Q_VALUES_FILE)
+        # else:
+        #     raise FileNotFoundError("No Q values file present.")
         self._sl_model = SafetyFirstPlayer.build_model()
-        if os.path.isfile(SL_MODEL_WEIGHTS_FILE):
-            self._sl_model.load_weights(SL_MODEL_WEIGHTS_FILE)
-            print(SL_MODEL_WEIGHTS_FILE, "loaded.")
+        self.load_weights(self._sl_model)
+
         self._replay_memory = ReplayMemory(MEMORY_MAX_LEN)
 
         self._drain_rounds = 0
@@ -103,6 +102,24 @@ class SafetyFirstPlayer(Player):
 
         return model
 
+    @staticmethod
+    def load_weights(model):
+        if os.path.isfile(SL_MODEL_WEIGHTS_FILE):
+            model.load_weights(SL_MODEL_WEIGHTS_FILE)
+            print(SL_MODEL_WEIGHTS_FILE, "loaded.")
+
+    @staticmethod
+    def get_dangerousness_distribution(model, processed_input, hand):
+        if processed_input.shape[0] == 0:
+            tile_dangerousness_distribution = [0.0] * 18
+        else:
+            tile_dangerousness_distribution = \
+                model.predict(processed_input.reshape(1, processed_input.shape[0]))[0]
+        hand_dangerousness = []
+        for i in hand:
+            hand_dangerousness.append(tile_dangerousness_distribution[int(i) - 1])
+        return tile_dangerousness_distribution, hand_dangerousness
+
     def initial_hand_obtained(self):
         Player.initial_hand_obtained(self)
 
@@ -118,18 +135,13 @@ class SafetyFirstPlayer(Player):
             return WIN, -1
         else:
             processed_input = np.array(self.game_state.process_dangerousness_input())
-            if processed_input.shape[0] == 0:
-                tile_dangerousness_distribution = [0.0] * 18
-            else:
-                tile_dangerousness_distribution = \
-                    self._sl_model.predict(processed_input.reshape(1, processed_input.shape[0]))[0]
-            hand_dangerousness = []
-            for i in self.hand:
-                hand_dangerousness.append(tile_dangerousness_distribution[int(i) - 1])
+
+            tile_dangerousness_distribution, hand_dangerousness = \
+                self.get_dangerousness_distribution(self._sl_model, processed_input, self.hand)
 
             # q_values = self.q_values[ALL_COMBINATIONS.index(self.hand.tolist())]
             # for i in range(5):
-            #     q_values[i] -= hand_dangerousness[i] * 8
+            #     q_values[i] -= hand_dangerousness[i]
             # action = np.argmax(q_values)
 
             action = np.argmin(hand_dangerousness)
