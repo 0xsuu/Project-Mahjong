@@ -360,9 +360,11 @@ class GameState:
 
         # Get last five discards.
         if opponent_discard_length < 5:
+            copy_discards = opponent_discards.copy()
             for i in range(5 - opponent_discard_length):
-                opponent_discards.insert(0, 0)
-
-        processed_inputs += opponent_discards[-5:]
+                copy_discards.insert(0, 0)
+            processed_inputs += copy_discards[-5:]
+        else:
+            processed_inputs += opponent_discards[-5:]
 
         return processed_inputs

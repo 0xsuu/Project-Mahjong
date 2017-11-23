@@ -24,6 +24,7 @@ from resnet import *
 from prioritised_double_dqn import PrioritisedDoubleDQN
 from dqn_interface import *
 from rl_players.TileCoder.multi_tile_coder import MultiTileCoder
+from safety_first_player import SafetyFirstPlayer, DANGEROUSNESS_SL_MODEL_WEIGHTS_FILE
 
 from game import *
 from game_state import ADDITIONAL_FEATURES
@@ -33,7 +34,7 @@ from greedy_player import GreedyPlayer
 DQN_WEIGHTS_FILE = "tm_full_dqn_weights.h5"
 
 WIN_REWARD = 1.0
-DISCARD_REWARD = -0.01
+DISCARD_REWARD = 0.0 # -0.01
 ENTER_TENPAI_REWARD = 0.02
 TENPAI_DISCARD_REWARD = -0.01
 LOSE_REWARD = -1.0
@@ -192,6 +193,8 @@ class FullDQNPlayer(Player):
         self._evaluate = evaluate
 
         self._dqn_model = FullDDQNTinyMahjong(mode)
+        self._dangerousness_model = SafetyFirstPlayer.build_model()
+        self._dangerousness_model.load_weights(DANGEROUSNESS_SL_MODEL_WEIGHTS_FILE)
 
         self._prev_state = None
         self._prev_action = None
@@ -237,12 +240,16 @@ class FullDQNPlayer(Player):
                     self._tenpai = is_tenpai
                     discard_reward = TENPAI_DISCARD_REWARD
 
+                dangerousness = SafetyFirstPlayer.get_dangerousness_distribution(
+                    self._dangerousness_model,
+                    np.array(self.game_state.process_dangerousness_input()),
+                    self.hand)[1][action]
                 self._dqn_model.notify_reward(discard_reward)
                 # print("Discard", discard_reward, self._prev_action, "\n",
                 #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
-                                                        DISCARD_REWARD,
+                                                        DISCARD_REWARD - dangerousness,
                                                         self.game_state,
                                                         False)
             self._prev_state = self.game_state.copy()
