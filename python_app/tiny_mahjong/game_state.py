@@ -120,7 +120,7 @@ class GameState:
         # Check state size.
         other_players_count = len(self._other_player_ids)
         assert result.shape[0] == (other_players_count + 1) * FULL_DISCARD_COUNT + FULL_HAND_COUNT + \
-                                  self._disclose_all * other_players_count * 5 + ADDITIONAL_FEATURES
+            self._disclose_all * other_players_count * 5 + ADDITIONAL_FEATURES
 
         return result
 
