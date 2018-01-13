@@ -35,7 +35,7 @@ def main():
     # player6 = FullDQNPlayer("Full DQN BOT", EVAL, evaluate=True, log_game_state=True)
     # player7 = SafetyFirstPlayer("Safety First Bot", EVAL, log_game_state=True)
 
-    game = Game(100, [player6, player5], win_on_discard=True, disclose_all=False)
+    game = Game(100000, [player3, RandomPlayer("RD")], win_on_discard=True, disclose_all=False)
     game.play()
 
 
