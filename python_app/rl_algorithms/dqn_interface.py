@@ -37,8 +37,8 @@ REPLAY_MEMORY_BATCH_SIZE_DEFAULT = 32
 
 TRAIN_STEP_INTERVAL_DEFAULT = 4
 TARGET_UPDATE_INTERVAL_DEFAULT = 100
-SAVE_WEIGHTS_INTERVAL_DEFAULT = 3000
-SELF_PLAY_UPDATE_INTERVAL_DEFAULT = 6001
+SAVE_WEIGHTS_INTERVAL_DEFAULT = 1000
+SELF_PLAY_UPDATE_INTERVAL_DEFAULT = 1001
 PRINT_SUMMARY_INTERVAL_DEFAULT = 100
 
 GAMMA_DEFAULT = 0.99  # Reward discount factor.
@@ -232,6 +232,14 @@ class DQNInterface:
             print("Choice:", choice)
             print()
         return choice
+
+    def predict_q_values(self, observation):
+        return self._model.predict(self.unwrap(self._pre_process(observation)))[0]
+
+    def update_info_for_risk_choose(self, q_values):
+        self._max_q_history.append(np.max(q_values))
+        if self._epsilon > self._final_epsilon:
+            self._epsilon -= self._epsilon_decay_value
 
     def load_previous_run(self):
         if os.path.isfile(self._weights_file_path):

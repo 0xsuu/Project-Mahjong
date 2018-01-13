@@ -341,8 +341,20 @@ class FullDQNPlayer(Player):
                                                         True)
             return WIN, -1
         else:
-            action = self._dqn_model.make_action(self.game_state)
+            # action = self._dqn_model.make_action(self.game_state)
+            # q_values = self._dqn_model.predict_q_values(self.game_state)
+            # One step look ahead q values.
+            q_values = np.array([0.0] * 5)
+            for i in range(5):
+                q_values[i] = self.game_state.calc_expectation_one_lookahead(self._dqn_model, i)
+            # dangerousness = SafetyFirstPlayer.get_dangerousness_distribution(
+            #     DANGEROUSNESS_MODEL,
+            #     np.array(self.game_state.process_dangerousness_input()),
+            #     self.hand)[1]
+            # action = np.argmax(q_values - 0.1 * np.array(dangerousness))
+            action = np.argmax(q_values)
             if training:
+                self._dqn_model.update_info_for_risk_choose(q_values)
                 is_tenpai = self.game_state.calc_shanten_tenpai_tiles(self.game_state.get_player_hand())[0] == 1
                 if not self._tenpai:
                     if is_tenpai:
@@ -354,16 +366,16 @@ class FullDQNPlayer(Player):
                     self._tenpai = is_tenpai
                     discard_reward = TENPAI_DISCARD_REWARD
 
-                dangerousness = SafetyFirstPlayer.get_dangerousness_distribution(
-                    DANGEROUSNESS_MODEL,
-                    np.array(self.game_state.process_dangerousness_input()),
-                    self.hand)[1][action]
-                self._dqn_model.notify_reward(discard_reward - dangerousness)
+                # dangerousness = SafetyFirstPlayer.get_dangerousness_distribution(
+                #     DANGEROUSNESS_MODEL,
+                #     np.array(self.game_state.process_dangerousness_input()),
+                #     self.hand)[1][action]
+                self._dqn_model.notify_reward(discard_reward)
                 # print("Discard", discard_reward - dangerousness, self._prev_action, "\n",
                 #       self._prev_state.get(), "\n", self.game_state.get(), "\n")
                 self._dqn_model.append_memory_and_train(self._prev_state,
                                                         self._prev_action,
-                                                        discard_reward - dangerousness,
+                                                        discard_reward,
                                                         self.game_state,
                                                         False)
             self._prev_state = self.game_state.copy()
