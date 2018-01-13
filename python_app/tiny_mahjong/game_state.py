@@ -54,6 +54,20 @@ class GameState:
             copy_object._other_player_discards[player_id] = self._other_player_discards[player_id].copy()
         return copy_object
 
+    def calc_expectation_one_lookahead(self, model, action):
+        expectation = 0.0
+        for i in range(1, 18 + 1):
+            new_state = self.copy()
+            new_state._player_hand[action] = i
+            new_state._player_hand = np.sort(new_state._player_hand)
+            new_state._player_discards.append(i)
+            transition_probability = new_state.calc_tile_distribution(new_state.calc_tile_count()[1:])[i - 1]
+            if transition_probability == 0:
+                continue
+            state_value = np.max(model.predict_q_values(new_state))
+            expectation += new_state.calc_tile_distribution(new_state.calc_tile_count()[1:])[i - 1] * state_value
+        return expectation
+
     # Player's hand update.
 
     def on_player_default_hand_obtained(self, hand):
@@ -120,7 +134,7 @@ class GameState:
         # Check state size.
         other_players_count = len(self._other_player_ids)
         assert result.shape[0] == (other_players_count + 1) * FULL_DISCARD_COUNT + FULL_HAND_COUNT + \
-                                  self._disclose_all * other_players_count * 5 + ADDITIONAL_FEATURES
+            self._disclose_all * other_players_count * 5 + ADDITIONAL_FEATURES
 
         return result
 
@@ -283,6 +297,7 @@ class GameState:
         return tile_count
 
     def calc_tile_count(self, disclose=False):
+        """ Return 19 integers where the index 0 is invalid. """
         tile_count = np.array([4] * 19)
         tile_count[0] = -123456789  # A large number made easier for debugging.
         for i in self._player_hand:
@@ -317,6 +332,7 @@ class GameState:
 
     @staticmethod
     def calc_tile_distribution(tile_count):
+        """ Take the 18 integer list. """
         return tile_count * 1.0 / np.sum(tile_count)
 
     @staticmethod
@@ -360,9 +376,11 @@ class GameState:
 
         # Get last five discards.
         if opponent_discard_length < 5:
+            copy_discards = opponent_discards.copy()
             for i in range(5 - opponent_discard_length):
-                opponent_discards.insert(0, 0)
-
-        processed_inputs += opponent_discards[-5:]
+                copy_discards.insert(0, 0)
+            processed_inputs += copy_discards[-5:]
+        else:
+            processed_inputs += opponent_discards[-5:]
 
         return processed_inputs

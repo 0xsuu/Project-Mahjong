@@ -37,7 +37,7 @@ REPLAY_MEMORY_BATCH_SIZE_DEFAULT = 32
 
 TRAIN_STEP_INTERVAL_DEFAULT = 4
 TARGET_UPDATE_INTERVAL_DEFAULT = 100
-SAVE_WEIGHTS_INTERVAL_DEFAULT = 3000
+SAVE_WEIGHTS_INTERVAL_DEFAULT = 1000
 SELF_PLAY_UPDATE_INTERVAL_DEFAULT = 1001
 PRINT_SUMMARY_INTERVAL_DEFAULT = 100
 
@@ -136,6 +136,10 @@ class DQNInterface:
     def _pre_process(input_data):
         raise Exception("Do not call abstract method.")
 
+    @staticmethod
+    def unwrap(input_data):
+        return input_data
+
     def append_memory_and_train(self, observation, action, reward, observation_next, done):
         assert self._mode == TRAIN
 
@@ -171,10 +175,10 @@ class DQNInterface:
                 raise Exception("Unexpected number of returns from _sample_replay_memory()!")
             # Observations must be in the shape of (1, ...).
             # This should be handled in _pre_process function.
-            self._train_on_memory(observation_batch,
+            self._train_on_memory(self.unwrap(observation_batch),
                                   action_batch,
                                   reward_batch,
-                                  observation_next_batch,
+                                  self.unwrap(observation_next_batch),
                                   done_batch,
                                   weights,
                                   batch_indexes)
@@ -189,11 +193,11 @@ class DQNInterface:
             backup_mode = self._mode
             self._mode = mode
         if mode == TRAIN:
-            choice = self._epsilon_greedy_choose(self._pre_process(observation))
+            choice = self._epsilon_greedy_choose(self.unwrap(self._pre_process(observation)))
             if self._epsilon > self._final_epsilon:
                 self._epsilon -= self._epsilon_decay_value
         else:
-            choice = self._max_q_choose(self._pre_process(observation))
+            choice = self._max_q_choose(self.unwrap(self._pre_process(observation)))
         if backup_mode:
             self._mode = backup_mode
         return choice
@@ -223,11 +227,19 @@ class DQNInterface:
         choice = np.argmax(q_values)
         if self._mode == DEBUG:
             print(self.__class__.__name__)
-            print("Input features:", input_data.flatten())
+            print("Input features:", input_data)
             print("Q values:", q_values)
             print("Choice:", choice)
             print()
         return choice
+
+    def predict_q_values(self, observation):
+        return self._model.predict(self.unwrap(self._pre_process(observation)))[0]
+
+    def update_info_for_risk_choose(self, q_values):
+        self._max_q_history.append(np.max(q_values))
+        if self._epsilon > self._final_epsilon:
+            self._epsilon -= self._epsilon_decay_value
 
     def load_previous_run(self):
         if os.path.isfile(self._weights_file_path):

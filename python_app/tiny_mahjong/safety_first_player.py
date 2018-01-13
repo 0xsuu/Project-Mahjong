@@ -30,7 +30,7 @@ from utils.combination_calculator import get_combinations
 Q_VALUES_FILE = "q_values.txt"
 ALL_COMBINATIONS = get_combinations()
 
-SL_MODEL_WEIGHTS_FILE = "tm_safety_sl_weights.h5"
+DANGEROUSNESS_SL_MODEL_WEIGHTS_FILE = "tm_safety_sl_weights.h5"
 SAVE_WEIGHT_INTERVAL = 2000
 
 TRAIN_STEP_INTERVAL = 4
@@ -104,9 +104,9 @@ class SafetyFirstPlayer(Player):
 
     @staticmethod
     def load_weights(model):
-        if os.path.isfile(SL_MODEL_WEIGHTS_FILE):
-            model.load_weights(SL_MODEL_WEIGHTS_FILE)
-            print(SL_MODEL_WEIGHTS_FILE, "loaded.")
+        if os.path.isfile(DANGEROUSNESS_SL_MODEL_WEIGHTS_FILE):
+            model.load_weights(DANGEROUSNESS_SL_MODEL_WEIGHTS_FILE)
+            print(DANGEROUSNESS_SL_MODEL_WEIGHTS_FILE, "loaded.")
 
     @staticmethod
     def get_dangerousness_distribution(model, processed_input, hand):
@@ -210,7 +210,7 @@ class SafetyFirstPlayer(Player):
                 print("Win rate:", self.rounds_won * 1.0 / self._total_rounds,
                       "\t\t\t| Lose rate:", self.rounds_lost * 1.0 / self._total_rounds,
                       "\t\t\t| Drain rate:", self._drain_rounds * 1.0 / self._total_rounds)
-                self._sl_model.save_weights(SL_MODEL_WEIGHTS_FILE)
+                self._sl_model.save_weights(DANGEROUSNESS_SL_MODEL_WEIGHTS_FILE)
 
         if self._mode == PLAY:
             print(self.name + ":")

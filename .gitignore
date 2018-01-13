@@ -9,4 +9,6 @@ __pycache__
 n*.csv
 logs
 *.pyc
+*.lyx#
+*.lyx~
 
